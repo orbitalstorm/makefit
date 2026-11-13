@@ -1,0 +1,24 @@
+name: makefit
+description: "MakeFit (Tactical Bodyweight Ops) — Application Flutter Store-Ready & Gamifiée de Military Calisthenics 100% Sans Matériel."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/branding/
+    - assets/branding/thumbnails/
+    - assets/vectors/

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shield-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="55%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </linearGradient>
+    <linearGradient id="rank-lit" x1="0%" y1="0%" x2="100%" y2="85%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="rank-dark" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="rank-stroke" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="rank-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="55%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+
+  <g id="base-shadow">
+    <polygon points="256,28 456,108 424,368 256,488 88,368 56,108" fill="#020408" opacity="0.65"/>
+  </g>
+
+  <g id="main-body">
+    <!-- Outer Shield Frame -->
+    <polygon points="256,20 448,98 418,358 256,476 94,358 64,98"
+             fill="url(#shield-bg)" stroke="url(#rank-lit)" stroke-width="10" stroke-linejoin="round"/>
+    <!-- Inner Tactical Bevel -->
+    <polygon points="256,42 426,112 400,346 256,452 112,346 86,112"
+             fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-opacity="0.45"/>
+    <!-- Corner Rivets -->
+    <g fill="#0F172A" stroke="#FEF08A" stroke-width="2.5">
+      <circle cx="256" cy="36" r="5"/>
+      <circle cx="432" cy="106" r="5"/>
+      <circle cx="404" cy="350" r="5"/>
+      <circle cx="108" cy="350" r="5"/>
+      <circle cx="80" cy="106" r="5"/>
+    </g>
+  </g>
+
+  <g id="rank-insignia">
+    
+        
+    <g>
+      <polygon points="256,150 140,221.92000000000002 140,253.92000000000002 256,182" fill="url(#rank-lit)"/>
+      <polygon points="256,150 372,221.92000000000002 372,253.92000000000002 256,182" fill="url(#rank-dark)"/>
+      <polygon points="256,150 372,221.92000000000002 372,253.92000000000002 256,182 140,253.92000000000002 140,221.92000000000002"
+               fill="none" stroke="url(#rank-stroke)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+        
+    <g>
+      <polygon points="256,204 140,275.92 140,307.92 256,236" fill="url(#rank-lit)"/>
+      <polygon points="256,204 372,275.92 372,307.92 256,236" fill="url(#rank-dark)"/>
+      <polygon points="256,204 372,275.92 372,307.92 256,236 140,307.92 140,275.92"
+               fill="none" stroke="url(#rank-stroke)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+        <polygon points="256.0,270.0 261.9,285.8 278.8,286.6 265.6,297.1 270.1,313.4 256.0,304.1 241.9,313.4 246.4,297.1 233.2,286.6 250.1,285.8" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2" stroke-linejoin="round"/>
+      
+  </g>
+
+  <g id="specular-highlights">
+    <!-- Rank Code Cartouche -->
+    <polygon points="154,366 358,366 338,414 174,414" fill="#0A0E14" stroke="#F59E0B" stroke-width="3" stroke-linejoin="round"/>
+    <text x="256" y="400" font-family="Roboto" font-weight="900" font-size="30" letter-spacing="3" fill="#F8FAFC" text-anchor="middle">E-3</text>
+  </g>
+</svg>

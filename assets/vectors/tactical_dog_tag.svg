@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="tag-steel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="35%" stop-color="#CBD5E1"/>
+      <stop offset="70%" stop-color="#64748B"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="tag-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="45%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+
+  <g id="base-shadow">
+    <!-- Ball Chain Loop -->
+    <g fill="#E2E8F0" stroke="#0F172A" stroke-width="2">
+      <circle cx="210" cy="48" r="8"/><circle cx="192" cy="60" r="8"/><circle cx="180" cy="78" r="8"/>
+      <circle cx="176" cy="100" r="8"/><circle cx="184" cy="122" r="8"/>
+      <circle cx="232" cy="44" r="8"/><circle cx="254" cy="46" r="8"/><circle cx="274" cy="58" r="8"/>
+      <circle cx="286" cy="78" r="8"/><circle cx="286" cy="100" r="8"/>
+    </g>
+  </g>
+
+  <g id="main-body">
+    <!-- Rear Secondary Dog Tag (Brushed Steel, Tilted +14 deg) -->
+    <g transform="translate(290, 276) rotate(14)">
+      <rect x="-104" y="-164" width="208" height="328" rx="58" fill="#0F172A" stroke="#475569" stroke-width="14"/>
+      <rect x="-94" y="-154" width="188" height="308" rx="48" fill="url(#tag-steel)"/>
+      <circle cx="0" cy="-122" r="14" fill="#0A0E14" stroke="#475569" stroke-width="4"/>
+    </g>
+
+    <!-- Front Primary Golden Tactical Dog Tag (Tilted -8 deg) -->
+    <g transform="translate(222, 268) rotate(-8)">
+      <!-- Rubber Silencer Rim -->
+      <rect x="-112" y="-172" width="224" height="344" rx="62" fill="#0F172A" stroke="#F59E0B" stroke-width="6"/>
+      <!-- Metallic Gold Plate -->
+      <rect x="-96" y="-156" width="192" height="312" rx="48" fill="url(#tag-gold)" stroke="#FEF08A" stroke-width="2.5"/>
+      <!-- Chain Hole -->
+      <circle cx="0" cy="-122" r="15" fill="#0A0E14" stroke="#78350F" stroke-width="4"/>
+      <!-- Embossed Chevron & SpecOps Star -->
+      <polygon points="0,-68 58,-22 58,4 0,-42 -58,4 -58,-22" fill="#0A0E14"/>
+      <polygon points="0,-28 48,10 48,32 0,-6 -48,32 -48,10" fill="#0A0E14"/>
+      <rect x="-68" y="54" width="136" height="32" rx="6" fill="#0A0E14"/>
+      <text x="0" y="77" font-family="Roboto" font-weight="900" font-size="20" letter-spacing="3" fill="#FEF08A" text-anchor="middle">LEAVE PASS</text>
+      <line x1="-54" y1="106" x2="54" y2="106" stroke="#78350F" stroke-width="5" stroke-linecap="round"/>
+      <line x1="-38" y1="122" x2="38" y2="122" stroke="#78350F" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

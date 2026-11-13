@@ -1,0 +1,88 @@
+name: Build MakeFit Android APK & Store Bundles
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Analyze, Test & Build MakeFit Android APK + AAB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter 3.47.9
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.9'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run static analysis
+        run: flutter analyze
+
+      - name: Run unit & widget tests (Store Portrait 1080x2400)
+        run: flutter test
+
+      - name: Build Android Release APK & Play Store AppBundle
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Copy APK with versioned names
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          if [[ "$TAG_NAME" != v* ]]; then TAG_NAME="v1.0.0"; fi
+          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/makefit-${TAG_NAME}.apk"
+          ls -lh build/app/outputs/flutter-apk/
+          ls -lh build/app/outputs/bundle/release/
+
+      - name: Upload Store Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: makefit-store-bundles
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/release/*.aab
+          if-no-files-found: error
+
+      - name: Publish Android APK & AAB to GitHub Release on Tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" \
+              build/app/outputs/flutter-apk/*.apk \
+              build/app/outputs/bundle/release/*.aab \
+              assets/branding/makefit_logo_1024.png \
+              assets/branding/makefit_feature_graphic_1024x500.png \
+              assets/branding/thumbnails/*.png \
+              screenshots/*.png \
+              --clobber
+          else
+            gh release create "$TAG_NAME" \
+              build/app/outputs/flutter-apk/*.apk \
+              build/app/outputs/bundle/release/*.aab \
+              assets/branding/makefit_logo_1024.png \
+              assets/branding/makefit_feature_graphic_1024x500.png \
+              assets/branding/thumbnails/*.png \
+              screenshots/*.png \
+              --title "MakeFit $TAG_NAME — Military Calisthenics Tactical RPG (100% Sans Matériel • Android APK + AAB)" \
+              --generate-notes
+          fi

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shield-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="55%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </linearGradient>
+    <linearGradient id="rank-lit" x1="0%" y1="0%" x2="100%" y2="85%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="50%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#991B1B"/>
+    </linearGradient>
+    <linearGradient id="rank-dark" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#991B1B"/>
+    </linearGradient>
+    <linearGradient id="rank-stroke" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EF4444"/>
+    </linearGradient>
+    <linearGradient id="rank-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="55%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+
+  <g id="base-shadow">
+    <polygon points="256,28 456,108 424,368 256,488 88,368 56,108" fill="#020408" opacity="0.65"/>
+  </g>
+
+  <g id="main-body">
+    <!-- Outer Shield Frame -->
+    <polygon points="256,20 448,98 418,358 256,476 94,358 64,98"
+             fill="url(#shield-bg)" stroke="url(#rank-lit)" stroke-width="10" stroke-linejoin="round"/>
+    <!-- Inner Tactical Bevel -->
+    <polygon points="256,42 426,112 400,346 256,452 112,346 86,112"
+             fill="none" stroke="#EF4444" stroke-width="2.5" stroke-opacity="0.45"/>
+    <!-- Corner Rivets -->
+    <g fill="#0F172A" stroke="#FEF08A" stroke-width="2.5">
+      <circle cx="256" cy="36" r="5"/>
+      <circle cx="432" cy="106" r="5"/>
+      <circle cx="404" cy="350" r="5"/>
+      <circle cx="108" cy="350" r="5"/>
+      <circle cx="80" cy="106" r="5"/>
+    </g>
+  </g>
+
+  <g id="rank-insignia">
+    
+        <!-- Golden Prestige Wreath -->
+        <path d="M 256,352 C 150,336 120,246 154,148 C 176,214 204,284 256,316 Z" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2.5"/>
+        <path d="M 256,352 C 362,336 392,246 358,148 C 336,214 308,284 256,316 Z" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2.5"/>
+        <!-- Winged SpecOps Chevrons -->
+        
+    <g>
+      <polygon points="256,138 148,204.95999999999998 148,230.95999999999998 256,164" fill="url(#rank-lit)"/>
+      <polygon points="256,138 364,204.95999999999998 364,230.95999999999998 256,164" fill="url(#rank-dark)"/>
+      <polygon points="256,138 364,204.95999999999998 364,230.95999999999998 256,164 148,230.95999999999998 148,204.95999999999998"
+               fill="none" stroke="url(#rank-stroke)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+        
+    <g>
+      <polygon points="256,184 160,243.51999999999998 160,267.52 256,208" fill="url(#rank-lit)"/>
+      <polygon points="256,184 352,243.51999999999998 352,267.52 256,208" fill="url(#rank-dark)"/>
+      <polygon points="256,184 352,243.51999999999998 352,267.52 256,208 160,267.52 160,243.51999999999998"
+               fill="none" stroke="url(#rank-stroke)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+        <!-- Central Commando Dagger -->
+        <polygon points="256,82 274,242 256,268 238,242" fill="#FFFFFF" stroke="#0A0E14" stroke-width="3"/>
+        <rect x="210" y="238" width="92" height="14" rx="5" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2"/>
+        <polygon points="256.0,226.0 266.4,253.7 295.9,255.0 272.8,273.5 280.7,302.0 256.0,285.6 231.3,302.0 239.2,273.5 216.1,255.0 245.6,253.7" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2" stroke-linejoin="round"/>
+      
+  </g>
+
+  <g id="specular-highlights">
+    <!-- Rank Code Cartouche -->
+    <polygon points="154,366 358,366 338,414 174,414" fill="#0A0E14" stroke="#EF4444" stroke-width="3" stroke-linejoin="round"/>
+    <text x="256" y="400" font-family="Roboto" font-weight="900" font-size="30" letter-spacing="3" fill="#F8FAFC" text-anchor="middle">SF-2</text>
+  </g>
+</svg>

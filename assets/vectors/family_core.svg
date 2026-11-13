@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="fam-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="fam-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DDD6FE"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#5B21B6"/>
+    </linearGradient>
+  </defs>
+  <g id="base-shadow">
+    <rect x="36" y="36" width="440" height="440" rx="88" fill="url(#fam-bg)" stroke="url(#fam-grad)" stroke-width="10"/>
+    <rect x="58" y="58" width="396" height="396" rx="70" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-opacity="0.35"/>
+  </g>
+  <g id="main-body">
+    
+      <!-- 6-Plate Armored Abdominal Core Shield & Gyroscopic Anti-Rotation Ring -->
+      <polygon points="256,96 356,144 338,318 256,352 174,318 156,144" fill="url(#fam-grad)" stroke="#DDD6FE" stroke-width="4" stroke-linejoin="round"/>
+      <line x1="256" y1="106" x2="256" y2="344" stroke="#0A0E14" stroke-width="8"/>
+      <line x1="168" y1="184" x2="344" y2="184" stroke="#0A0E14" stroke-width="7"/>
+      <line x1="174" y1="248" x2="338" y2="248" stroke="#0A0E14" stroke-width="7"/>
+      <ellipse cx="256" cy="224" rx="146" ry="52" fill="none" stroke="#F59E0B" stroke-width="6" stroke-dasharray="24 12"/>
+    
+  </g>
+  <g id="specular-highlights">
+    <rect x="126" y="374" width="260" height="52" rx="12" fill="#0A0E14" stroke="#8B5CF6" stroke-width="3"/>
+    <text x="256" y="410" font-family="Roboto" font-weight="900" font-size="30" letter-spacing="4" fill="#F8FAFC" text-anchor="middle">CORE</text>
+  </g>
+</svg>

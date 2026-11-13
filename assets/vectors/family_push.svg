@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="fam-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="fam-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+  <g id="base-shadow">
+    <rect x="36" y="36" width="440" height="440" rx="88" fill="url(#fam-bg)" stroke="url(#fam-grad)" stroke-width="10"/>
+    <rect x="58" y="58" width="396" height="396" rx="70" fill="none" stroke="#F59E0B" stroke-width="2" stroke-opacity="0.35"/>
+  </g>
+  <g id="main-body">
+    
+      <!-- Explosive Dual Upward Push Chevrons & Flexed Pectoral/Arm Frame -->
+      <path d="M 124,296 L 184,218 L 256,246 L 328,218 L 388,296" fill="none" stroke="url(#fam-grad)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+      <polygon points="256,88 346,168 314,192 256,140 198,192 166,168" fill="url(#fam-grad)" stroke="#FEF08A" stroke-width="3"/>
+      <polygon points="256,154 326,216 298,236 256,198 214,236 186,216" fill="#FEF08A"/>
+      <line x1="116" y1="334" x2="396" y2="334" stroke="#F8FAFC" stroke-width="12" stroke-linecap="round"/>
+    
+  </g>
+  <g id="specular-highlights">
+    <rect x="126" y="374" width="260" height="52" rx="12" fill="#0A0E14" stroke="#F59E0B" stroke-width="3"/>
+    <text x="256" y="410" font-family="Roboto" font-weight="900" font-size="30" letter-spacing="4" fill="#F8FAFC" text-anchor="middle">PUSH</text>
+  </g>
+</svg>

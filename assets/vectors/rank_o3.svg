@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shield-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="55%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </linearGradient>
+    <linearGradient id="rank-lit" x1="0%" y1="0%" x2="100%" y2="85%">
+      <stop offset="0%" stop-color="#67E8F9"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#0E7490"/>
+    </linearGradient>
+    <linearGradient id="rank-dark" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#0E7490"/>
+    </linearGradient>
+    <linearGradient id="rank-stroke" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="rank-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="55%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+  </defs>
+
+  <g id="base-shadow">
+    <polygon points="256,28 456,108 424,368 256,488 88,368 56,108" fill="#020408" opacity="0.65"/>
+  </g>
+
+  <g id="main-body">
+    <!-- Outer Shield Frame -->
+    <polygon points="256,20 448,98 418,358 256,476 94,358 64,98"
+             fill="url(#shield-bg)" stroke="url(#rank-lit)" stroke-width="10" stroke-linejoin="round"/>
+    <!-- Inner Tactical Bevel -->
+    <polygon points="256,42 426,112 400,346 256,452 112,346 86,112"
+             fill="none" stroke="#06B6D4" stroke-width="2.5" stroke-opacity="0.45"/>
+    <!-- Corner Rivets -->
+    <g fill="#0F172A" stroke="#67E8F9" stroke-width="2.5">
+      <circle cx="256" cy="36" r="5"/>
+      <circle cx="432" cy="106" r="5"/>
+      <circle cx="404" cy="350" r="5"/>
+      <circle cx="108" cy="350" r="5"/>
+      <circle cx="80" cy="106" r="5"/>
+    </g>
+  </g>
+
+  <g id="rank-insignia">
+    
+        <!-- Tactical Laurel Wreath -->
+        <path d="M 256,336 C 168,324 136,248 164,162 C 182,216 206,278 256,304 Z" fill="url(#rank-lit)" stroke="#67E8F9" stroke-width="2"/>
+        <path d="M 256,336 C 344,324 376,248 348,162 C 330,216 306,278 256,304 Z" fill="url(#rank-dark)" stroke="#67E8F9" stroke-width="2"/>
+        
+    <g>
+      <polygon points="256,126 164,183.04 164,207.04 256,150" fill="url(#rank-lit)"/>
+      <polygon points="256,126 348,183.04 348,207.04 256,150" fill="url(#rank-dark)"/>
+      <polygon points="256,126 348,183.04 348,207.04 256,150 164,207.04 164,183.04"
+               fill="none" stroke="url(#rank-stroke)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+        <polygon points="256.0,180.0 267.8,211.7 301.7,213.2 275.2,234.2 284.2,266.8 256.0,248.2 227.8,266.8 236.8,234.2 210.3,213.2 244.2,211.7" fill="url(#rank-accent)" stroke="#FEF08A" stroke-width="2" stroke-linejoin="round"/>
+      
+  </g>
+
+  <g id="specular-highlights">
+    <!-- Rank Code Cartouche -->
+    <polygon points="154,366 358,366 338,414 174,414" fill="#0A0E14" stroke="#06B6D4" stroke-width="3" stroke-linejoin="round"/>
+    <text x="256" y="400" font-family="Roboto" font-weight="900" font-size="30" letter-spacing="3" fill="#F8FAFC" text-anchor="middle">O-3</text>
+  </g>
+</svg>

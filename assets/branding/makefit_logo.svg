@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Carbon OLED Background Gradient -->
+    <radialGradient id="bg-carbon" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#162238"/>
+      <stop offset="55%" stop-color="#0D1422"/>
+      <stop offset="100%" stop-color="#070A0F"/>
+    </radialGradient>
+
+    <!-- Tactical Radar Ambient Glow -->
+    <radialGradient id="emerald-aura" cx="50%" cy="54%" r="42%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.22"/>
+      <stop offset="55%" stop-color="#06B6D4" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0A0E14" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Brushed Steel Outer Armor Gradient -->
+    <linearGradient id="armor-steel" x1="15%" y1="5%" x2="85%" y2="95%">
+      <stop offset="0%" stop-color="#F1F5F9"/>
+      <stop offset="28%" stop-color="#94A3B8"/>
+      <stop offset="52%" stop-color="#475569"/>
+      <stop offset="78%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <!-- Tactical Amber/Gold Bevel Gradient -->
+    <linearGradient id="tactical-gold" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="22%" stop-color="#FBBF24"/>
+      <stop offset="55%" stop-color="#F59E0B"/>
+      <stop offset="85%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <!-- Gold Left/Right Facet Lighting -->
+    <linearGradient id="gold-lit-left" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="45%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="gold-shadow-right" x1="0%" y1="0%" x2="100%" y2="90%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="65%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <!-- Inner Shield Core -->
+    <linearGradient id="shield-core" x1="50%" y1="8%" x2="50%" y2="94%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="45%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#06090E"/>
+    </linearGradient>
+
+    <!-- Night-Vision Emerald Gradient -->
+    <linearGradient id="nv-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="45%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Radar Cyan Gradient -->
+    <linearGradient id="radar-cyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.1"/>
+      <stop offset="50%" stop-color="#22D3EE" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Athlete Titanium Body Gradient -->
+    <linearGradient id="athlete-steel" x1="15%" y1="15%" x2="85%" y2="85%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+
+    <!-- Clip Path for Shield Interior -->
+    <clipPath id="inner-shield-clip">
+      <polygon points="512,134 832,258 784,678 512,892 240,678 192,258"/>
+    </clipPath>
+  </defs>
+
+  <!-- 1. BASE SHADOW & OLED APP ICON CANVAS -->
+  <g id="base-shadow">
+    <rect x="0" y="0" width="1024" height="1024" rx="216" fill="url(#bg-carbon)"/>
+    <!-- Subtle Inner Rim Border -->
+    <rect x="18" y="18" width="988" height="988" rx="200" fill="none" stroke="#1E293B" stroke-width="4"/>
+    <!-- Technical Grid Overlay -->
+    <g stroke="#1E293B" stroke-width="1.5" opacity="0.45">
+      <line x1="0" y1="256" x2="1024" y2="256"/>
+      <line x1="0" y1="512" x2="1024" y2="512"/>
+      <line x1="0" y1="768" x2="1024" y2="768"/>
+      <line x1="256" y1="0" x2="256" y2="1024"/>
+      <line x1="512" y1="0" x2="512" y2="1024"/>
+      <line x1="768" y1="0" x2="768" y2="1024"/>
+    </g>
+    <!-- Ambient Emerald/Cyan Halo -->
+    <circle cx="512" cy="520" r="430" fill="url(#emerald-aura)"/>
+    <!-- Corner HUD Telemetry Brackets -->
+    <g stroke="#06B6D4" stroke-width="4" fill="none" opacity="0.55" stroke-linecap="square">
+      <path d="M 74,134 L 74,74 L 134,74"/>
+      <path d="M 950,134 L 950,74 L 890,74"/>
+      <path d="M 74,890 L 74,950 L 134,950"/>
+      <path d="M 950,890 L 950,950 L 890,950"/>
+    </g>
+    <!-- Drop Shadow under Shield -->
+    <polygon points="512,96 894,242 838,722 512,968 186,722 130,242" fill="#020408" opacity="0.78"/>
+  </g>
+
+  <!-- 2. MAIN SHIELD STRUCTURE & BEVELED ARMOR -->
+  <g id="main-body">
+    <!-- Outer Heavy Brushed-Steel Armor Plate (Heptagonal/Hexagonal Commando Shield) -->
+    <polygon points="512,72 882,216 828,700 512,944 196,700 142,216"
+             fill="url(#armor-steel)" stroke="#F59E0B" stroke-width="10" stroke-linejoin="round"/>
+
+    <!-- Beveled Metallic Facets Around Perimeter -->
+    <polygon points="512,72 882,216 832,258 512,134" fill="#E2E8F0" opacity="0.22"/>
+    <polygon points="142,216 512,72 512,134 192,258" fill="#FFFFFF" opacity="0.32"/>
+    <polygon points="142,216 192,258 240,678 196,700" fill="#CBD5E1" opacity="0.18"/>
+    <polygon points="882,216 828,700 784,678 832,258" fill="#0F172A" opacity="0.55"/>
+    <polygon points="240,678 512,892 512,944 196,700" fill="#334155" opacity="0.45"/>
+    <polygon points="784,678 828,700 512,944 512,892" fill="#090D16" opacity="0.72"/>
+
+    <!-- Inner Golden Tactical Frame -->
+    <polygon points="512,118 848,248 798,684 512,906 226,684 176,248"
+             fill="url(#tactical-gold)"/>
+
+    <!-- Shield Core Cavity -->
+    <polygon points="512,136 828,260 780,674 512,886 244,674 196,260"
+             fill="url(#shield-core)"/>
+
+    <!-- Clipped Tactical Interior Details -->
+    <g clip-path="url(#inner-shield-clip)">
+      <!-- Concentric Radar Rings -->
+      <circle cx="512" cy="512" r="310" fill="none" stroke="#1E293B" stroke-width="3" stroke-dasharray="14 10"/>
+      <circle cx="512" cy="512" r="230" fill="none" stroke="#06B6D4" stroke-width="2" stroke-opacity="0.30"/>
+      <circle cx="512" cy="512" r="150" fill="none" stroke="#10B981" stroke-width="2" stroke-opacity="0.25"/>
+      <!-- Crosshair Axis -->
+      <line x1="512" y1="140" x2="512" y2="880" stroke="#06B6D4" stroke-width="2" stroke-opacity="0.22"/>
+      <line x1="180" y1="512" x2="844" y2="512" stroke="url(#radar-cyan)" stroke-width="2.5"/>
+      <!-- Diagonal SpecOps Rays -->
+      <polygon points="512,512 196,260 320,190" fill="#10B981" opacity="0.06"/>
+      <polygon points="512,512 828,260 704,190" fill="#F59E0B" opacity="0.06"/>
+    </g>
+
+    <!-- Inner Emerald Night-Vision Accent Rim -->
+    <polygon points="512,154 810,272 764,664 512,866 260,664 214,272"
+             fill="none" stroke="#10B981" stroke-width="3" stroke-opacity="0.55"/>
+  </g>
+
+  <!-- 3. SUB-ASSEMBLIES: OFFICER CHEVRONS, ATHLETE SILHOUETTE, SPECOPS STAR -->
+  <g id="sub-assemblies">
+    <!-- Upper Officer Chevron (Beveled 3D Gold) -->
+    <!-- Left Wing -->
+    <polygon points="512,300 268,476 268,546 512,370" fill="url(#gold-lit-left)"/>
+    <!-- Right Wing -->
+    <polygon points="512,300 756,476 756,546 512,370" fill="url(#gold-shadow-right)"/>
+    <!-- Upper Chevron Crisp Outline -->
+    <polygon points="512,300 756,476 756,546 512,370 268,546 268,476"
+             fill="none" stroke="#FEF08A" stroke-width="3" stroke-linejoin="round"/>
+
+    <!-- Secondary Lower Officer Chevron (Beveled 3D Gold) -->
+    <polygon points="512,412 304,562 304,622 512,472" fill="url(#gold-lit-left)"/>
+    <polygon points="512,412 720,562 720,622 512,472" fill="url(#gold-shadow-right)"/>
+    <polygon points="512,412 720,562 720,622 512,472 304,622 304,562"
+             fill="none" stroke="#FDE68A" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <!-- Tactical Emerald Energy Base Platform -->
+    <polygon points="284,696 740,696 712,722 312,722" fill="url(#nv-emerald)"/>
+    <line x1="264" y1="696" x2="760" y2="696" stroke="#6EE7B7" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Geometric Calisthenics Athlete in Dynamic Plank / Push-Up Drive -->
+    <!-- Rear Leg / Core / Torso Alignment -->
+    <polygon points="306,668 576,554 598,596 322,684" fill="url(#athlete-steel)" stroke="#0A0E14" stroke-width="5" stroke-linejoin="round"/>
+    <!-- Thermal Pectoral / Core Highlight Strip -->
+    <polygon points="442,612 574,556 588,582 452,630" fill="#10B981"/>
+    <!-- Shoulder / Deltoid Power Node -->
+    <circle cx="604" cy="568" r="28" fill="#F59E0B" stroke="#0A0E14" stroke-width="6"/>
+    <circle cx="604" cy="568" r="12" fill="#FEF08A"/>
+    <!-- Flexed Pushing Arm (Humerus + Forearm planted on platform) -->
+    <path d="M 604,568 L 656,620 L 638,686" fill="none" stroke="#0A0E14" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 604,568 L 656,620 L 638,686" fill="none" stroke="url(#athlete-steel)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Joint Node at Elbow -->
+    <circle cx="656" cy="620" r="11" fill="#06B6D4" stroke="#0A0E14" stroke-width="4"/>
+    <!-- Geometric Head / Visor Helmet in Strict Cervical Alignment -->
+    <polygon points="642,508 698,518 688,566 632,558" fill="url(#athlete-steel)" stroke="#0A0E14" stroke-width="5" stroke-linejoin="round"/>
+    <!-- Night-Vision Visor Slit -->
+    <polygon points="664,526 695,532 690,548 660,542" fill="#10B981"/>
+
+    <!-- Top SpecOps 5-Point Faceted Star (Zenith of Shield) -->
+    <g transform="translate(512, 224)">
+      <!-- Star Outer Glow -->
+      <circle cx="0" cy="0" r="64" fill="#F59E0B" opacity="0.20"/>
+      <!-- Star Polygon -->
+      <polygon points="0,-64 19,-20 66,-15 30,16 41,62 0,38 -41,62 -30,16 -66,-15 -19,-20"
+               fill="url(#tactical-gold)" stroke="#FEF08A" stroke-width="3" stroke-linejoin="round"/>
+      <!-- Star Facet Lines for 3D Relief -->
+      <polygon points="0,-64 19,-20 0,0" fill="#FEF08A" opacity="0.65"/>
+      <polygon points="66,-15 30,16 0,0" fill="#B45309" opacity="0.55"/>
+      <polygon points="41,62 0,38 0,0" fill="#78350F" opacity="0.65"/>
+      <polygon points="-41,62 -30,16 0,0" fill="#F59E0B" opacity="0.45"/>
+      <polygon points="-66,-15 -19,-20 0,0" fill="#FDE68A" opacity="0.55"/>
+      <circle cx="0" cy="0" r="9" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- 4. MICRO-DETAILS, RIVETS, CARTOUCHE & SPECULAR HIGHLIGHTS -->
+  <g id="specular-highlights">
+    <!-- 6 Hexagonal Mechanical Rivets on Outer Armor Vertices -->
+    <g fill="#0F172A" stroke="#94A3B8" stroke-width="4">
+      <circle cx="512" cy="96" r="10"/>
+      <circle cx="856" cy="228" r="10"/>
+      <circle cx="806" cy="688" r="10"/>
+      <circle cx="512" cy="920" r="10"/>
+      <circle cx="218" cy="688" r="10"/>
+      <circle cx="168" cy="228" r="10"/>
+    </g>
+
+    <!-- Lower Tactical Plate with Stencil Wordmark -->
+    <polygon points="336,752 688,752 652,818 372,818"
+             fill="#0A0E14" stroke="#F59E0B" stroke-width="4" stroke-linejoin="round"/>
+    <text x="512" y="799" font-family="Roboto" font-weight="900" font-size="44"
+          letter-spacing="6" fill="#F8FAFC" text-anchor="middle">MAKEFIT</text>
+
+    <!-- Rim Lighting Specular Highlights -->
+    <path d="M 152,222 L 512,80 L 680,144" fill="none" stroke="#FEF08A" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+  </g>
+</svg>
