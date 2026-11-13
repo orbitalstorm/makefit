@@ -2,6 +2,7 @@ name: Build MakeFit Android APK & Store Bundles
 
 on:
   push:
+    branches: [ 'main' ]
     tags: [ 'v*' ]
   workflow_dispatch:
 
@@ -43,11 +44,13 @@ jobs:
           flutter build apk --release
           flutter build appbundle --release
 
-      - name: Copy APK with versioned names
+      - name: Copy APK & AAB with versioned names
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
-          if [[ "$TAG_NAME" != v* ]]; then TAG_NAME="v1.1.0"; fi
+          if [[ "$TAG_NAME" != v* ]]; then TAG_NAME="v1.1.1"; fi
           cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/makefit-${TAG_NAME}.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/makefit-v1.1.0.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "build/app/outputs/bundle/release/makefit-${TAG_NAME}.aab"
           ls -lh build/app/outputs/flutter-apk/
           ls -lh build/app/outputs/bundle/release/
 
@@ -68,8 +71,10 @@ jobs:
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release upload "$TAG_NAME" \
-              build/app/outputs/flutter-apk/*.apk \
-              build/app/outputs/bundle/release/*.aab \
+              build/app/outputs/flutter-apk/app-release.apk \
+              "build/app/outputs/flutter-apk/makefit-${TAG_NAME}.apk" \
+              build/app/outputs/bundle/release/app-release.aab \
+              "build/app/outputs/bundle/release/makefit-${TAG_NAME}.aab" \
               assets/branding/makefit_logo_1024.png \
               assets/branding/makefit_feature_graphic_1024x500.png \
               assets/branding/thumbnails/*.png \
@@ -77,12 +82,21 @@ jobs:
               --clobber
           else
             gh release create "$TAG_NAME" \
-              build/app/outputs/flutter-apk/*.apk \
-              build/app/outputs/bundle/release/*.aab \
+              build/app/outputs/flutter-apk/app-release.apk \
+              "build/app/outputs/flutter-apk/makefit-${TAG_NAME}.apk" \
+              build/app/outputs/bundle/release/app-release.aab \
+              "build/app/outputs/bundle/release/makefit-${TAG_NAME}.aab" \
               assets/branding/makefit_logo_1024.png \
               assets/branding/makefit_feature_graphic_1024x500.png \
               assets/branding/thumbnails/*.png \
               screenshots/*.png \
               --title "MakeFit $TAG_NAME — Remise en Forme 40+ • Séances Guidées 10 Min Max & Coach Animé Auto (Android APK + AAB)" \
               --generate-notes
+          fi
+          if gh release view "v1.1.0" >/dev/null 2>&1; then
+            gh release upload "v1.1.0" \
+              build/app/outputs/flutter-apk/app-release.apk \
+              build/app/outputs/flutter-apk/makefit-v1.1.0.apk \
+              build/app/outputs/bundle/release/app-release.aab \
+              --clobber
           fi

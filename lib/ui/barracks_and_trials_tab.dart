@@ -167,12 +167,16 @@ class BarracksAndTrialsTab extends StatelessWidget {
         children: <Widget>[
           Icon(icon, color: accent, size: 18),
           const SizedBox(width: 10),
-          Text(
-            '$label : ',
-            style: const TextStyle(
-              color: MakeFitTheme.textSecondary,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
+          Flexible(
+            child: Text(
+              '$label : ',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: MakeFitTheme.textSecondary,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
           ),
           Expanded(
@@ -260,22 +264,32 @@ class BarracksAndTrialsTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                'Niveau actuel : ${profile.rank.title}',
-                style: const TextStyle(
-                  color: MakeFitTheme.textPrimary,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 11.5,
+              Flexible(
+                child: Text(
+                  'Niveau actuel : ${profile.rank.title}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: MakeFitTheme.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.5,
+                  ),
                 ),
               ),
-              Text(
-                nextRank != null
-                    ? 'Prochain palier : $nextMinTxp XP'
-                    : 'Niveau maximal atteint',
-                style: const TextStyle(
-                  color: MakeFitTheme.textSecondary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  nextRank != null
+                      ? 'Prochain palier : $nextMinTxp XP'
+                      : 'Niveau maximal atteint',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    color: MakeFitTheme.textSecondary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ],
@@ -366,12 +380,18 @@ class BarracksAndTrialsTab extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                '$activeDays / 28 jours cochés',
-                style: const TextStyle(
-                  color: MakeFitTheme.emeraldH2f,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 11.5,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  '$activeDays / 28 jours cochés',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    color: MakeFitTheme.emeraldH2f,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.5,
+                  ),
                 ),
               ),
             ],

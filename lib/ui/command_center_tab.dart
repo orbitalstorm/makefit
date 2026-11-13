@@ -263,22 +263,26 @@ class CommandCenterTab extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: MakeFitTheme.amberTactical,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'TA SÉANCE DU JOUR (10 MIN MAX)',
-                  style: TextStyle(
-                    color: MakeFitTheme.oledBlack,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 10.5,
-                    letterSpacing: 0.5,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: MakeFitTheme.amberTactical,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'TA SÉANCE DU JOUR (10 MIN MAX)',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: MakeFitTheme.oledBlack,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10.5,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -581,18 +585,26 @@ class CommandCenterTab extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: MakeFitTheme.emeraldH2f.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Jour ${profile.currentCampaignDay} / 28 ($completedDaysCount validé${completedDaysCount > 1 ? 's' : ''})',
-                  style: const TextStyle(
-                    color: MakeFitTheme.emeraldH2f,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: MakeFitTheme.emeraldH2f.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Jour ${profile.currentCampaignDay} / 28 ($completedDaysCount validé${completedDaysCount > 1 ? 's' : ''})',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: MakeFitTheme.emeraldH2f,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 11,
+                    ),
                   ),
                 ),
               ),

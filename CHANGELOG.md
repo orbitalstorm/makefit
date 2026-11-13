@@ -1,5 +1,14 @@
 # Changelog — MakeFit (`cloud.orbital8.makefit`)
 
+## [v1.1.1] (`1.1.1+3`) - 2026-11-13
+
+### Fixed (`ORB-87` — Build CI GitHub Actions & Publication Automatique APK / AAB)
+
+- **Résolution de la cause racine de l'échec du build CI GitHub Actions (`RenderFlex overflow` sous police de test CI)** :
+  - Encapsulation adaptative (`Flexible` + `TextOverflow.ellipsis`) des bandeaux d'en-tête dans `lib/ui/command_center_tab.dart` et `lib/ui/barracks_and_trials_tab.dart` pour garantir 0 débordement quelle que soit la métrique de police ou la taille d'accessibilité Android/iOS.
+  - Chargement dynamique des polices `Roboto` et `MaterialIcons` via `FLUTTER_ROOT` sur les runners GitHub Actions dans `test/widget_test.dart`.
+  - Génération et publication des binaires Android `app-release.apk`, `makefit-v1.1.1.apk`, `makefit-v1.1.0.apk` et `app-release.aab` dans les GitHub Releases `v1.1.1` et `v1.1.0`.
+
 ## [v1.1.0] (`1.1.0+2`) - 2026-11-13
 
 ### Changed & Added (`ORB-87` — Refonte complète UI/UX Remise en Forme 40+ • 10 Min Max)

@@ -11,34 +11,50 @@ import 'package:makefit/main.dart';
 import 'package:makefit/models/makefit_models.dart';
 
 Future<void> _loadRobotoAndMaterialIconsIfAvailable() async {
-  const List<String> robotoPaths = <String>[
-    '/tmp/flutter-sdk/flutter/bin/cache/artifacts/material_fonts/Roboto-Black.ttf',
-    '/tmp/flutter-sdk/flutter/bin/cache/artifacts/material_fonts/Roboto-Bold.ttf',
-    '/tmp/flutter-sdk/flutter/bin/cache/artifacts/material_fonts/Roboto-Medium.ttf',
-    '/tmp/flutter-sdk/flutter/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf',
+  final String? envFlutterRoot = Platform.environment['FLUTTER_ROOT'];
+  final List<String> sdkRoots = <String>[
+    if (envFlutterRoot != null && envFlutterRoot.isNotEmpty) envFlutterRoot,
+    '/tmp/flutter-sdk/flutter',
   ];
-  final FontLoader robotoLoader = FontLoader('Roboto');
-  bool robotoLoaded = false;
-  for (final String path in robotoPaths) {
-    final File f = File(path);
-    if (f.existsSync()) {
-      final Uint8List bytes = await f.readAsBytes();
-      robotoLoader.addFont(Future<ByteData>.value(ByteData.sublistView(bytes)));
-      robotoLoaded = true;
-    }
-  }
-  if (robotoLoaded) {
-    await robotoLoader.load();
-  }
 
-  final File iconFile = File(
-    '/tmp/flutter-sdk/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
-  );
-  if (iconFile.existsSync()) {
-    final FontLoader iconLoader = FontLoader('MaterialIcons');
-    final Uint8List iconBytes = await iconFile.readAsBytes();
-    iconLoader.addFont(Future<ByteData>.value(ByteData.sublistView(iconBytes)));
-    await iconLoader.load();
+  const List<String> robotoFiles = <String>[
+    'Roboto-Black.ttf',
+    'Roboto-Bold.ttf',
+    'Roboto-Medium.ttf',
+    'Roboto-Regular.ttf',
+  ];
+
+  for (final String root in sdkRoots) {
+    final String fontDir = '$root/bin/cache/artifacts/material_fonts';
+    if (!Directory(fontDir).existsSync()) {
+      continue;
+    }
+    final FontLoader robotoLoader = FontLoader('Roboto');
+    bool robotoLoaded = false;
+    for (final String fileName in robotoFiles) {
+      final File f = File('$fontDir/$fileName');
+      if (f.existsSync()) {
+        final Uint8List bytes = await f.readAsBytes();
+        robotoLoader.addFont(
+          Future<ByteData>.value(ByteData.sublistView(bytes)),
+        );
+        robotoLoaded = true;
+      }
+    }
+    if (robotoLoaded) {
+      await robotoLoader.load();
+    }
+
+    final File iconFile = File('$fontDir/MaterialIcons-Regular.otf');
+    if (iconFile.existsSync()) {
+      final FontLoader iconLoader = FontLoader('MaterialIcons');
+      final Uint8List iconBytes = await iconFile.readAsBytes();
+      iconLoader.addFont(
+        Future<ByteData>.value(ByteData.sublistView(iconBytes)),
+      );
+      await iconLoader.load();
+    }
+    break;
   }
 }
 
