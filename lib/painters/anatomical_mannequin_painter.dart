@@ -2,19 +2,20 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/makefit_models.dart';
 
-/// Rendu biomécanique procédural 3D/2.5D à 60-120 FPS du Mannequin Anatomique MakeFit.
+/// Rendu biomécanique procédural 3D/2.5D à 60-120 FPS du Coach Animé MakeFit.
 ///
 /// Caractéristiques techniques (Moteur Impeller, Sound Null Safety strict) :
 /// - Rig squelettique et volumétrique 3D complet (19 articulations, 24 volumes
 ///   anatomiques triés en profondeur par Painter's Algorithm Z-Sorting),
-/// - Couverture intégrale et exhaustive des **25 `MannequinMotionKind`**,
-/// - Surbrillance thermique pulsante synchronisée à la phase de contraction :
-///   - Muscles primaires (`exercise.primaryMuscles`) : Rouge/Corail Thermique (`#EF4444` / `#F97316`),
-///   - Muscles secondaires (`exercise.secondaryMuscles`) : Ambre Tactique (`#F59E0B`),
-/// - Grille télémétrique 3D en perspective de l'espace `2m × 2m` au sol,
-/// - Vecteurs de force biomécaniques 3D projetés et légende compacte des muscles sollicités,
+/// - Couverture intégrale et fluide des **25 `MannequinMotionKind`**,
+/// - Contraste haute lisibilité sur fond sombre OLED et surbrillance thermique
+///   synchronisée au cycle musculaire :
+///   - Muscles principaux (`exercise.primaryMuscles`) : Corail Énergétique (`#EF4444` / `#F97316`),
+///   - Muscles secondaires (`exercise.secondaryMuscles`) : Ambre Chaud (`#F59E0B`),
+/// - Repère spatial 3D au sol (`2m × 2m`) sobre et lisible,
+/// - Bandeau épuré de rythme, respiration et cadence synchronisé en temps réel,
 /// - Caméra orbitale 3D (`threeQuarterTactical`, `sideProfile`, `frontSymmetry`) et
-///   adaptations visuelles temps réel `stealthMode` (0 saut) & `jointMode` (Poings / Genoux).
+///   adaptations visuelles temps réel `stealthMode` (sans saut) & `jointMode` (Poignets / Genoux).
 class AnatomicalMannequinView extends StatelessWidget {
   const AnatomicalMannequinView({
     super.key,
@@ -279,10 +280,12 @@ class AnatomicalMannequinPainter extends CustomPainter {
   static const Color _primaryHotCore = Color(0xFFFED7AA);
   static const Color _secondaryAmber = Color(0xFFF59E0B);
   static const Color _secondaryWarmCore = Color(0xFFFDE68A);
-  static const Color _carbonDark = Color(0xFF1E293B);
-  static const Color _carbonMid = Color(0xFF334155);
-  static const Color _carbonLight = Color(0xFF64748B);
-  static const Color _titaniumRim = Color(0xFF94A3B8);
+  static const Color _carbonDark = Color(0xFF283548);
+  static const Color _carbonMid = Color(0xFF475569);
+  static const Color _carbonLight = Color(0xFF94A3B8);
+  static const Color _titaniumRim = Color(0xFFCBD5E1);
+  static const Color _breathInhaleCyan = Color(0xFF06B6D4);
+  static const Color _breathExhaleEmerald = Color(0xFF10B981);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -298,10 +301,10 @@ class AnatomicalMannequinPainter extends CustomPainter {
     canvas.save();
     canvas.clipRRect(clipRRect);
 
-    // 1. Fond HUD tactique OLED & trame radar subtile
+    // 1. Fond sombre OLED à haut contraste & halo ambiant subtil
     _paintTacticalBackdrop(canvas, size, bounds);
 
-    // 2. Calcul cinématique 3D exact selon les 25 MannequinMotionKind
+    // 2. Calcul cinématique 3D fluide 60-120 FPS selon les 25 MannequinMotionKind
     final double normalizedPhase =
         ((animationPhase % 1.0) + 1.0) % 1.0;
     final _Pose3D pose = _computePoseForExercise(normalizedPhase);
@@ -309,14 +312,14 @@ class AnatomicalMannequinPainter extends CustomPainter {
     // 3. Construction de la caméra perspective 3D selon cameraAngle
     final _Camera3D camera = _buildCamera(size, pose);
 
-    // 4. Grille télémétrique 3D de l'espace 2m × 2m au sol + ombre portée
+    // 4. Repère 3D de l'espace 2m × 2m au sol + ombre portée douce
     _paintFloorGrid2m(canvas, size, camera, pose);
     if (pose.propBoxHeight > 0.01) {
       _paintInclineSupportBlock(canvas, camera, pose.propBoxHeight);
     }
     _paintGroundContactShadow(canvas, camera, pose);
 
-    // 5. Anneau holographique Box Breathing H2F si actif
+    // 5. Halo respiratoire guidé si exercice de cohérence respiratoire actif
     if (exercise.motionKind == MannequinMotionKind.boxBreathingH2f) {
       _paintBoxBreathingAura(canvas, camera, pose, normalizedPhase);
     }
@@ -332,14 +335,14 @@ class AnatomicalMannequinPainter extends CustomPainter {
       _paintVolumePrimitive(canvas, prim, pulse);
     }
 
-    // 7. Articulations mécaniques de précision & adaptations Poings / Genoux
+    // 7. Articulations nettes & indicateurs de confort Poignets / Genoux
     _paintArticulatedJoints(canvas, camera, pose);
 
-    // 8. Vecteurs de force biomécaniques 3D projetés
-    _paintBiomechanicalForces(canvas, camera, pose, pulse);
+    // 8. Flèches directionnelles du geste (épurées pour la lisibilité)
+    _paintBiomechanicalForces(canvas, size, camera, pose, pulse);
 
-    // 9. Télémétrie HUD supérieure & Légende thermique compacte des muscles
-    _paintTelemetryHudAndLegend(canvas, size, pose);
+    // 9. Bandeau épuré de rythme, respiration, cadence & zones musculaires actives
+    _paintTelemetryHudAndLegend(canvas, size, pose, normalizedPhase);
 
     // Bordure tactique subtile
     final Paint borderPaint = Paint()
@@ -1122,17 +1125,17 @@ class AnatomicalMannequinPainter extends CustomPainter {
       canvas.drawPath(ridge, fiberPaint);
     }
 
-    // Contour rim-light 3D net
+    // Contour rim-light 3D net à contraste élevé sur fond sombre
     final Color rimColor = switch (prim.role) {
-      _ThermalRole.primary => _primaryCoral.withValues(alpha: 0.88),
-      _ThermalRole.secondary => _secondaryAmber.withValues(alpha: 0.78),
-      _ThermalRole.structural => _titaniumRim.withValues(alpha: 0.45),
+      _ThermalRole.primary => _primaryCoral.withValues(alpha: 0.92),
+      _ThermalRole.secondary => _secondaryAmber.withValues(alpha: 0.84),
+      _ThermalRole.structural => _titaniumRim.withValues(alpha: 0.60),
     };
     canvas.drawPath(
       bodyPath,
       Paint()
         ..color = rimColor
-        ..strokeWidth = prim.role == _ThermalRole.structural ? 0.85 : 1.25
+        ..strokeWidth = prim.role == _ThermalRole.structural ? 0.95 : 1.30
         ..style = PaintingStyle.stroke,
     );
   }
@@ -1303,10 +1306,12 @@ class AnatomicalMannequinPainter extends CustomPainter {
 
   void _paintBiomechanicalForces(
     Canvas canvas,
+    Size size,
     _Camera3D camera,
     _Pose3D pose,
     double pulse,
   ) {
+    bool tagPainted = false;
     for (final _ForceVector3D fv in pose.forces) {
       final Offset p0 = camera.project(fv.origin).screen;
       final Offset p1 = camera.project(fv.tip).screen;
@@ -1337,8 +1342,10 @@ class AnatomicalMannequinPainter extends CustomPainter {
         Paint()..color = fv.color.withValues(alpha: 0.92),
       );
 
-      if (fv.tag != null) {
+      // Un seul repère court si la hauteur le permet afin d'éviter toute surcharge visuelle
+      if (!tagPainted && fv.tag != null && size.height >= 175) {
         _paintMicroTag(canvas, p1 + const Offset(4, -8), fv.tag!, fv.color);
+        tagPainted = true;
       }
     }
   }
@@ -1352,7 +1359,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
           color: accent,
           fontSize: 9.5,
           fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
+          letterSpacing: 0.4,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -1367,98 +1374,202 @@ class AnatomicalMannequinPainter extends CustomPainter {
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(pill, const Radius.circular(4)),
-      Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.82),
+      Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.86),
     );
     tp.paint(canvas, pos);
   }
 
-  void _paintTelemetryHudAndLegend(Canvas canvas, Size size, _Pose3D pose) {
+  (String, Color) _resolveBreathingAndCadenceCue(double normalizedPhase) {
+    switch (exercise.motionKind) {
+      case MannequinMotionKind.boxBreathingH2f:
+        final int quad = (normalizedPhase * 4.0).floor().clamp(0, 3);
+        return switch (quad) {
+          0 => ('INSPIRE DOUCEMENT • 4S', _breathInhaleCyan),
+          1 => ('GARDE POUMONS PLEINS • 4S', _breathExhaleEmerald),
+          2 => ('EXPIRE LONGTEMPS • 4S', _secondaryAmber),
+          _ => ('PAUSE POUMONS VIDES • 4S', const Color(0xFF8B5CF6)),
+        };
+      case MannequinMotionKind.rampMobility:
+        return normalizedPhase < 0.5
+            ? ('INSPIRE • OUVRE LA CAGE', _breathInhaleCyan)
+            : ('EXPIRE • MOBILITÉ DOUCE', _breathExhaleEmerald);
+      case MannequinMotionKind.rkcPlank:
+      case MannequinMotionKind.hollowBodyHold:
+      case MannequinMotionKind.floorLSit:
+        return normalizedPhase < 0.5
+            ? ('INSPIRE CALMEMENT • GAINE', _breathInhaleCyan)
+            : ('EXPIRE • SERRE LES ABDOS', _breathExhaleEmerald);
+      default:
+        break;
+    }
+
+    if (normalizedPhase < 0.5) {
+      return switch (exercise.family) {
+        BiomechanicalFamily.upperPush => (
+          'INSPIRE • CONTRÔLE LA DESCENTE',
+          _breathInhaleCyan,
+        ),
+        BiomechanicalFamily.noBarPull => (
+          'INSPIRE • OUVRE LES ÉPAULES',
+          _breathInhaleCyan,
+        ),
+        BiomechanicalFamily.tacticalLegs => (
+          'INSPIRE • DESCENDS SOUPLEMENT',
+          _breathInhaleCyan,
+        ),
+        BiomechanicalFamily.ironCore => (
+          'INSPIRE • GARDE LE DOS PLAQUÉ',
+          _breathInhaleCyan,
+        ),
+        BiomechanicalFamily.metCon => (
+          'INSPIRE • RYTHME RÉGULIER',
+          _breathInhaleCyan,
+        ),
+      };
+    }
+
+    return switch (exercise.family) {
+      BiomechanicalFamily.upperPush => (
+        'EXPIRE • POUSSE FLUIDE',
+        _breathExhaleEmerald,
+      ),
+      BiomechanicalFamily.noBarPull => (
+        'EXPIRE • SERRE LE HAUT DU DOS',
+        _breathExhaleEmerald,
+      ),
+      BiomechanicalFamily.tacticalLegs => (
+        'EXPIRE • REMONTE TALONS ANCRÉS',
+        _breathExhaleEmerald,
+      ),
+      BiomechanicalFamily.ironCore => (
+        'EXPIRE • ENGAGE LE GAINAGE',
+        _breathExhaleEmerald,
+      ),
+      BiomechanicalFamily.metCon => (
+        'EXPIRE • CADENCE FLUIDE',
+        _breathExhaleEmerald,
+      ),
+    };
+  }
+
+  void _paintTelemetryHudAndLegend(
+    Canvas canvas,
+    Size size,
+    _Pose3D pose,
+    double normalizedPhase,
+  ) {
     if (size.height < 115 || size.width < 160) {
       return;
     }
 
-    // Bandeau haut-gauche : Caméra 3D + Zone 2m×2m + Badge Phase/Mode
-    final String camText = '${cameraAngle.label.toUpperCase()} • 2M×2M';
+    // Bandeau haut-gauche : Guide synchronisé Respiration & Rythme
+    final (String breathLabel, Color breathColor) =
+        _resolveBreathingAndCadenceCue(normalizedPhase);
     _paintHudChip(
       canvas,
       offset: const Offset(10, 8),
-      label: pose.phaseBadge != null ? '$camText • ${pose.phaseBadge}' : camText,
-      accent: exercise.family.accentColor,
-      maxWidth: size.width * 0.62,
+      label: breathLabel,
+      accent: breathColor,
+      maxWidth: size.width * 0.58,
+      leadingDotColor: breathColor,
     );
 
-    // Bandeau haut-droite : Mode Stealth ou Adaptation Articulaire si actif
+    // Sous-pastille haut-gauche : Confort articulaire ou mode sans saut (évite le bouton Caméra haut-droite)
     if (stealthMode || jointMode != JointFriendlyMode.standard) {
       final String modeLabel = jointMode == JointFriendlyMode.wristFriendly
-          ? 'POINGS NEUTRES'
+          ? 'POIGNETS PROTÉGÉS'
           : jointMode == JointFriendlyMode.kneeFriendly
-          ? 'GENOUX PROTÉGÉS'
-          : 'STEALTH 0 SAUT';
+          ? 'GENOUX MÉNAGÉS'
+          : 'MODE SANS SAUT';
       _paintHudChip(
         canvas,
-        offset: Offset(size.width - 10, 8),
+        offset: const Offset(10, 31),
         label: modeLabel,
-        accent: const Color(0xFF10B981),
-        alignRight: true,
-        maxWidth: size.width * 0.34,
+        accent: _breathExhaleEmerald,
+        maxWidth: size.width * 0.54,
+        leadingDotColor: _breathExhaleEmerald,
       );
     }
 
-    // Légende thermique compacte en bas (Muscles Primaires Corail & Secondaires Ambre)
-    if (size.height >= 150) {
-      final String primNames = exercise.primaryMuscles
-          .take(2)
-          .map((MuscleGroup m) => _shortMuscleLabel(m))
-          .join(' · ');
-      final String secNames = exercise.secondaryMuscles
-          .take(2)
-          .map((MuscleGroup m) => _shortMuscleLabel(m))
-          .join(' · ');
+    // Bandeau bas épuré : Zones musculaires actives + barre fluide de cadence 60 FPS
+    if (size.height >= 145) {
+      final List<String> activeZones = <String>[
+        ...exercise.primaryMuscles.take(2).map(_shortMuscleLabel),
+        ...exercise.secondaryMuscles.take(1).map(_shortMuscleLabel),
+      ];
+      final String zonesText = activeZones.join(' · ');
 
-      final double barY = size.height - 26;
-      final Rect legendRect = Rect.fromLTWH(10, barY, size.width - 20, 20);
+      const double barH = 26.0;
+      final double barY = size.height - barH - 6.0;
+      final Rect legendRect = Rect.fromLTWH(10, barY, size.width - 20, barH);
       canvas.drawRRect(
-        RRect.fromRectAndRadius(legendRect, const Radius.circular(6)),
-        Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.80),
+        RRect.fromRectAndRadius(legendRect, const Radius.circular(8)),
+        Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.86),
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(legendRect, const Radius.circular(8)),
+        Paint()
+          ..color = const Color(0xFF334155).withValues(alpha: 0.55)
+          ..strokeWidth = 0.85
+          ..style = PaintingStyle.stroke,
       );
 
       final TextPainter legendTp = TextPainter(
         text: TextSpan(
           style: const TextStyle(
             fontFamily: 'Roboto',
-            fontSize: 9.5,
+            fontSize: 10.0,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.2,
           ),
           children: <InlineSpan>[
             const TextSpan(
-              text: 'AG : ',
-              style: TextStyle(color: _primaryCoral, fontSize: 10.0, fontWeight: FontWeight.w900),
+              text: 'Zones actives : ',
+              style: TextStyle(
+                color: _primaryCoral,
+                fontSize: 10.0,
+                fontWeight: FontWeight.w800,
+              ),
             ),
             TextSpan(
-              text: primNames,
+              text: zonesText,
               style: const TextStyle(color: Color(0xFFF8FAFC)),
             ),
-            if (secNames.isNotEmpty) ...<InlineSpan>[
-              const TextSpan(
-                text: '   •   SYN : ',
-                style: TextStyle(color: _secondaryAmber, fontSize: 10.0, fontWeight: FontWeight.w900),
-              ),
-              TextSpan(
-                text: secNames,
-                style: const TextStyle(color: Color(0xFFCBD5E1)),
-              ),
-            ],
           ],
         ),
         textDirection: TextDirection.ltr,
         maxLines: 1,
         ellipsis: '…',
-      )..layout(maxWidth: size.width - 34);
+      )..layout(maxWidth: size.width - 36);
 
-      legendTp.paint(
-        canvas,
-        Offset(17, barY + (20 - legendTp.height) * 0.5),
+      legendTp.paint(canvas, Offset(18, barY + 4.0));
+
+      // Piste horizontale de cadence fluide (0..100 % du cycle du mouvement)
+      final double trackLeft = 18.0;
+      final double trackWidth = math.max(24.0, size.width - 36.0);
+      final double trackY = barY + barH - 5.5;
+      final RRect trackBg = RRect.fromRectAndRadius(
+        Rect.fromLTWH(trackLeft, trackY, trackWidth, 3.0),
+        const Radius.circular(2),
+      );
+      canvas.drawRRect(
+        trackBg,
+        Paint()..color = const Color(0xFF1E293B).withValues(alpha: 0.90),
+      );
+
+      final double fillW = (trackWidth * normalizedPhase).clamp(3.0, trackWidth);
+      final RRect trackFill = RRect.fromRectAndRadius(
+        Rect.fromLTWH(trackLeft, trackY, fillW, 3.0),
+        const Radius.circular(2),
+      );
+      canvas.drawRRect(
+        trackFill,
+        Paint()..color = breathColor.withValues(alpha: 0.92),
+      );
+      canvas.drawCircle(
+        Offset(trackLeft + fillW, trackY + 1.5),
+        2.6,
+        Paint()..color = const Color(0xFFF8FAFC),
       );
     }
   }
@@ -1470,64 +1581,73 @@ class AnatomicalMannequinPainter extends CustomPainter {
     required Color accent,
     required double maxWidth,
     bool alignRight = false,
+    Color? leadingDotColor,
   }) {
+    final double dotSpace = leadingDotColor != null ? 10.0 : 0.0;
     final TextPainter tp = TextPainter(
       text: TextSpan(
         text: label,
         style: const TextStyle(
           fontFamily: 'Roboto',
-          color: Color(0xFFE2E8F0),
-          fontSize: 9.0,
+          color: Color(0xFFF8FAFC),
+          fontSize: 9.5,
           fontWeight: FontWeight.w800,
-          letterSpacing: 0.55,
+          letterSpacing: 0.45,
         ),
       ),
       textDirection: TextDirection.ltr,
       maxLines: 1,
       ellipsis: '…',
-    )..layout(maxWidth: math.max(40, maxWidth - 14));
+    )..layout(maxWidth: math.max(40, maxWidth - 16 - dotSpace));
 
-    final double boxW = tp.width + 12;
-    final double boxH = tp.height + 5;
+    final double boxW = tp.width + 14 + dotSpace;
+    final double boxH = tp.height + 6;
     final double left = alignRight ? offset.dx - boxW : offset.dx;
     final Rect r = Rect.fromLTWH(left, offset.dy, boxW, boxH);
 
     canvas.drawRRect(
-      RRect.fromRectAndRadius(r, const Radius.circular(5)),
-      Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.82),
+      RRect.fromRectAndRadius(r, const Radius.circular(6)),
+      Paint()..color = const Color(0xFF090E17).withValues(alpha: 0.88),
     );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(r, const Radius.circular(5)),
+      RRect.fromRectAndRadius(r, const Radius.circular(6)),
       Paint()
-        ..color = accent.withValues(alpha: 0.48)
-        ..strokeWidth = 0.9
+        ..color = accent.withValues(alpha: 0.62)
+        ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke,
     );
-    tp.paint(canvas, Offset(left + 6, offset.dy + 2.5));
+    if (leadingDotColor != null) {
+      canvas.drawCircle(
+        Offset(left + 8.5, offset.dy + boxH * 0.5),
+        3.0,
+        Paint()..color = leadingDotColor,
+      );
+    }
+    tp.paint(canvas, Offset(left + 7 + dotSpace, offset.dy + 3.0));
   }
 
   String _shortMuscleLabel(MuscleGroup m) {
     return switch (m) {
-      MuscleGroup.pectorals => 'Pectoral',
-      MuscleGroup.anteriorDeltoid => 'Deltoïde Ant.',
-      MuscleGroup.lateralDeltoid => 'Deltoïde Moy.',
-      MuscleGroup.posteriorDeltoid => 'Deltoïde Post.',
+      MuscleGroup.pectorals => 'Pectoraux',
+      MuscleGroup.anteriorDeltoid => 'Épaules avant',
+      MuscleGroup.lateralDeltoid => 'Épaules',
+      MuscleGroup.posteriorDeltoid => 'Arrière d\'épaule',
       MuscleGroup.triceps => 'Triceps',
-      MuscleGroup.bicepsForearms => 'Biceps/Av.-Bras',
-      MuscleGroup.rhomboidsTraps => 'Rhomboïdes/Trap.',
-      MuscleGroup.latissimusDorsi => 'Grand Dorsal',
-      MuscleGroup.erectorSpinae => 'Érecteurs',
-      MuscleGroup.rectusAbdominis => 'Grand Droit',
+      MuscleGroup.bicepsForearms => 'Biceps & avant-bras',
+      MuscleGroup.rhomboidsTraps => 'Haut du dos',
+      MuscleGroup.latissimusDorsi => 'Grand dorsal',
+      MuscleGroup.erectorSpinae => 'Lombaires',
+      MuscleGroup.rectusAbdominis => 'Abdos',
       MuscleGroup.obliques => 'Obliques',
       MuscleGroup.glutes => 'Fessiers',
-      MuscleGroup.quadriceps => 'Quadriceps',
-      MuscleGroup.hamstrings => 'Ischios',
+      MuscleGroup.quadriceps => 'Cuisses',
+      MuscleGroup.hamstrings => 'Arrière des cuisses',
       MuscleGroup.calves => 'Mollets',
     };
   }
 
   // ===========================================================================
-  // MOTEUR CINÉMATIQUE EXHAUSTIF DES 25 MOUVEMENTS SANS MATÉRIEL (FM 7-22 / NSW)
+  // MOTEUR CINÉMATIQUE EXHAUSTIF DES 25 MOUVEMENTS SANS MATÉRIEL (60-120 FPS)
   // ===========================================================================
 
   _Pose3D _computePoseForExercise(double phase) {
@@ -1551,13 +1671,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
         wave: wave,
         inclineHeight: jointMode == JointFriendlyMode.kneeFriendly ? 0.44 : 0.34,
         fistLift: fistLift,
-        badge: 'INCLINE 45°',
+        badge: 'POMPE INCLINÉE',
       ),
       MannequinMotionKind.pushupStrict => _posePushup(
         wave: wave,
         inclineHeight: 0.0,
         fistLift: fistLift,
-        badge: 'PLANCHE STRICTE',
+        badge: 'GAINAGE ALIGNÉ',
       ),
       MannequinMotionKind.pushupPike => _posePikePushup(
         wave: wave,
@@ -1634,7 +1754,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
             ? _poseStepJacks(
                 wave: halfWave,
                 stepRight: sideRight,
-                badgeOverride: 'STEALTH STEP-JACK',
+                badgeOverride: 'PAS SANS IMPACT',
               )
             : _poseJumpingJacks(wave: wave),
       MannequinMotionKind.militaryBurpee => _poseMilitaryBurpee(
@@ -1778,7 +1898,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
           origin: _Vec3(0.56, shoulderY + 0.04, 0.0),
           tip: _Vec3(0.56, shoulderY + 0.28, 0.0),
           color: _primaryCoral,
-          tag: 'PUSH 45°',
+          tag: 'POUSSÉE FLUIDE',
         ),
       ],
     );
@@ -1814,13 +1934,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(-0.55, -0.75, 0),
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: 'PIKE TRIANGLE',
+      phaseBadge: 'ÉPAULES EN V',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: neck,
           tip: neck + const _Vec3(-0.10, 0.28, 0.0),
           color: _primaryCoral,
-          tag: 'DELTOÏDES',
+          tag: 'ÉPAULES',
         ),
       ],
     );
@@ -1865,13 +1985,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(0.4, -0.9, 0),
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: activeRight ? 'ARCHER DROITE' : 'ARCHER GAUCHE',
+      phaseBadge: activeRight ? 'APPUI DROIT' : 'APPUI GAUCHE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.55, shoulderY, shiftZ),
           tip: _Vec3(0.55, shoulderY + 0.26, shiftZ),
           color: _primaryCoral,
-          tag: '75% CHARGE',
+          tag: 'TRANSFERT LATÉRAL',
         ),
       ],
     );
@@ -1906,13 +2026,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(0.45, -0.85, 0),
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: '1-ARM STRICT • 0° VRILLE',
+      phaseBadge: 'GAINAGE ANTI-ROTATION',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.54, handY + 0.04, 0.02),
           tip: _Vec3(0.54, shoulderY + 0.24, 0.02),
           color: _primaryRed,
-          tag: '100% 1-BRAS',
+          tag: 'APPUI UNILATÉRAL',
         ),
       ],
     );
@@ -1945,7 +2065,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       contraction: wave,
       isHorizontal: true,
       lumbarSag: -0.04 * wave,
-      phaseBadge: 'COBRA • SCAP PINCH',
+      phaseBadge: 'OUVERTURE DU BUSTE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.34, chestLift, 0.0),
@@ -1981,7 +2101,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
         _Vec3(0.54, chestY + 0.14 * lift, -0.64),
       ),
       _ => (
-        'LETTRE W (PULL)',
+        'TIRAGE EN W',
         _Vec3(0.32, chestY + 0.10 * lift, -0.34),
         _Vec3(0.52, chestY + 0.14 * lift, -0.44),
       ),
@@ -2019,7 +2139,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
     );
   }
 
-  // --- 8. Supine Elbow Press (Floor Back Widow) ---
+  // --- 8. Supine Elbow Press ---
   _Pose3D _poseSupineElbowPress({required double wave}) {
     // Décubitus dorsal, genoux fléchis, poussée des coudes au sol qui décolle le buste
     final double thoraxLift = 0.09 + 0.24 * wave;
@@ -2047,7 +2167,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(-0.25, 0.95, 0), // Regard plafond
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: 'BACK WIDOW',
+      phaseBadge: 'POUSSÉE COUDES AU SOL',
       forces: <_ForceVector3D>[
         const _ForceVector3D(
           origin: _Vec3(0.36, 0.18, -0.32),
@@ -2058,7 +2178,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
           origin: _Vec3(0.32, thoraxLift, 0.0),
           tip: _Vec3(0.32, thoraxLift + 0.25, 0.0),
           color: _primaryCoral,
-          tag: 'DORSAUX',
+          tag: 'HAUT DU DOS',
         ),
       ],
     );
@@ -2091,13 +2211,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(0.5, -0.85, 0),
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: 'SLIDING PULL',
+      phaseBadge: 'TIRAGE GLISSÉ',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.18 + slideX, 0.22, 0.0),
           tip: _Vec3(0.46 + slideX, 0.22, 0.0),
           color: _primaryCoral,
-          tag: 'TRACTION SOL',
+          tag: 'TIRAGE AU SOL',
         ),
       ],
     );
@@ -2148,19 +2268,19 @@ class AnatomicalMannequinPainter extends CustomPainter {
       contraction: wave,
       isHorizontal: true,
       lumbarSag: 0.06 * wave,
-      phaseBadge: 'THORACIC BRIDGE',
+      phaseBadge: 'PONT D\'OUVERTURE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: pelvis,
           tip: pelvis + const _Vec3(0, 0.26, 0),
           color: _primaryCoral,
-          tag: 'EXTENSION T1-T12',
+          tag: 'OUVERTURE DU DOS',
         ),
       ],
     );
   }
 
-  // --- 11. Military Air Squat / Pause Squat ---
+  // --- 11. Air Squat / Pause Squat ---
   _Pose3D _poseAirSquat({required double wave, required double depthScale}) {
     final double d = wave * depthScale;
     final _Vec3 pelvis = _Vec3(-0.22 * d, 0.92 - 0.42 * d, 0.0);
@@ -2187,14 +2307,14 @@ class AnatomicalMannequinPainter extends CustomPainter {
       contraction: wave,
       isHorizontal: false,
       phaseBadge: jointMode == JointFriendlyMode.kneeFriendly
-          ? 'BOX SQUAT 80°'
-          : 'BELOW PARALLEL',
+          ? 'AMPLITUDE DOUCE'
+          : 'FLEXION COMPLÈTE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: pelvis,
           tip: pelvis + const _Vec3(0, 0.34, 0),
           color: _primaryCoral,
-          tag: 'QUADS + GLUTES',
+          tag: 'CUISSES & FESSIERS',
         ),
       ],
     );
@@ -2304,13 +2424,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(1.0, 0.0, 0),
       contraction: wave,
       isHorizontal: false,
-      phaseBadge: 'COSSACK LATÉRAL',
+      phaseBadge: 'FLEXION LATÉRALE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: pelvis,
           tip: pelvis + const _Vec3(0, 0.30, 0),
           color: _primaryCoral,
-          tag: 'ADDUCTEURS + QUADS',
+          tag: 'HANCHES & CUISSES',
         ),
       ],
     );
@@ -2344,13 +2464,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(1.0, 0.0, 0),
       contraction: wave,
       isHorizontal: false,
-      phaseBadge: 'PISTOL 1-JAMBE',
+      phaseBadge: 'SQUAT SUR 1 JAMBE',
       forces: <_ForceVector3D>[
         const _ForceVector3D(
           origin: _Vec3(0.0, 0.12, 0.12),
           tip: _Vec3(0.0, 0.48, 0.12),
           color: _primaryRed,
-          tag: '100% UNILATÉRAL',
+          tag: 'ÉQUILIBRE 1 PIED',
         ),
       ],
     );
@@ -2390,7 +2510,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       contraction: 0.45 + 0.55 * wave,
       isHorizontal: true,
       lumbarSag: -0.02, // Lombaires plaquées au sol
-      phaseBadge: 'DEAD BUG • L4-L5 SAFE',
+      phaseBadge: 'GAINAGE DOS PLAQUÉ',
       forces: <_ForceVector3D>[
         const _ForceVector3D(
           origin: _Vec3(0.18, 0.26, 0.0),
@@ -2402,7 +2522,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
     );
   }
 
-  // --- 16. RKC Plank (Traction isométrique coudes <-> orteils à 100 %) ---
+  // --- 16. Gainage Actif sur Coudes ---
   _Pose3D _poseRkcPlank({required double phase, required double wave}) {
     final double microTremor = 0.008 * math.sin(phase * 12.0 * math.pi);
     final _Vec3 pelvis = _Vec3(-0.16, 0.29 + microTremor, 0.0);
@@ -2417,7 +2537,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       shoulderShiftR: const _Vec3(0, 0, 0),
       elbowL: const _Vec3(0.50, 0.05, -0.20),
       elbowR: const _Vec3(0.50, 0.05, 0.20),
-      wristL: const _Vec3(0.68, 0.04, -0.06), // Poings joints RKC
+      wristL: const _Vec3(0.68, 0.04, -0.06),
       wristR: const _Vec3(0.68, 0.04, 0.06),
       kneeL: const _Vec3(-0.48, 0.19, -0.10),
       kneeR: const _Vec3(-0.48, 0.19, 0.10),
@@ -2429,13 +2549,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
       contraction: 0.65 + 0.35 * wave,
       isHorizontal: true,
       lumbarSag: 0.02,
-      phaseBadge: 'RKC ISO 100%',
+      phaseBadge: 'GAINAGE ACTIF',
       forces: <_ForceVector3D>[
         const _ForceVector3D(
           origin: _Vec3(0.46, 0.12, 0.0),
           tip: _Vec3(0.18, 0.12, 0.0),
           color: _primaryCoral,
-          tag: 'RKC TENSION',
+          tag: 'ABDOS SERRÉS',
         ),
         const _ForceVector3D(
           origin: _Vec3(-0.72, 0.12, 0.0),
@@ -2446,7 +2566,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
     );
   }
 
-  // --- 17. Hollow Body Hold (Banane gymnique, lombaires soudées) ---
+  // --- 17. Gainage Tonique Dos Plaqué ---
   _Pose3D _poseHollowBodyHold({required double wave}) {
     final double rock = 0.03 * wave;
     final _Vec3 pelvis = const _Vec3(-0.04, 0.07, 0.0);
@@ -2472,23 +2592,23 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(-0.45, 0.88, 0),
       contraction: 0.60 + 0.40 * wave,
       isHorizontal: true,
-      lumbarSag: -0.06, // Courbe Hollow concave lombaires au tapis
-      phaseBadge: 'HOLLOW BANANA',
+      lumbarSag: -0.06, // Courbe concave lombaires au tapis
+      phaseBadge: 'GAINAGE TONIQUE',
       forces: <_ForceVector3D>[
         const _ForceVector3D(
           origin: _Vec3(0.20, 0.26, 0.0),
           tip: _Vec3(0.20, 0.05, 0.0),
           color: _primaryCoral,
-          tag: 'GAINAGE CREUX',
+          tag: 'DOS PLAQUÉ',
         ),
       ],
     );
   }
 
-  // --- 18. Tactical V-Up (Fermeture symétrique en V sur les ischions) ---
+  // --- 18. Fermeture Abdominale en V ---
   _Pose3D _poseTacticalVUp({required double wave}) {
     final _Vec3 pelvis = const _Vec3(0.0, 0.08, 0.0);
-    final double angle = 0.32 + 0.78 * wave; // ~18° (Hollow) -> ~63° (V-Up)
+    final double angle = 0.32 + 0.78 * wave;
     final _Vec3 neck = _Vec3(
       0.54 * math.cos(angle),
       0.08 + 0.54 * math.sin(angle),
@@ -2526,19 +2646,19 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(-0.7, 0.7, 0),
       contraction: wave,
       isHorizontal: true,
-      phaseBadge: 'TACTICAL V-UP',
+      phaseBadge: 'FERMETURE EN V',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: const _Vec3(0.0, 0.18, 0.0),
           tip: _Vec3(0.0, 0.44 + 0.14 * wave, 0.0),
           color: _primaryCoral,
-          tag: 'COMPRESSION V',
+          tag: 'ABDOS PROFONDS',
         ),
       ],
     );
   }
 
-  // --- 19. Floor L-Sit Hold (Angle 90° strict, fessiers & talons décollés) ---
+  // --- 19. Équerre Tonique au Sol ---
   _Pose3D _poseFloorLSit({required double wave, required double fistLift}) {
     final double handY = 0.04 + fistLift;
     final double lift = 0.14 + 0.07 * wave;
@@ -2565,23 +2685,23 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(1.0, 0.0, 0),
       contraction: 0.70 + 0.30 * wave,
       isHorizontal: true,
-      phaseBadge: 'FLOOR L-SIT 90°',
+      phaseBadge: 'ÉQUERRE AU SOL',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: pelvis,
           tip: pelvis + const _Vec3(0, 0.26, 0),
           color: _primaryRed,
-          tag: 'LÉVITATION 90°',
+          tag: 'MAINTIEN HAUT',
         ),
       ],
     );
   }
 
-  // --- 20. Step-Jacks (Pas latéral dynamique 0 impact + arcs de bras hauts) ---
+  // --- 20. Pas Toniques Sans Impact ---
   _Pose3D _poseStepJacks({
     required double wave,
     required bool stepRight,
-    String badgeOverride = 'STEP-JACK 0 dB',
+    String badgeOverride = 'PAS TONIQUE SANS SAUT',
   }) {
     final double stepOut = 0.32 * wave;
     final double bodyShiftZ = (stepRight ? 0.10 : -0.10) * wave;
@@ -2623,13 +2743,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
           origin: _Vec3(0.02, neck.y + 0.06, bodyShiftZ),
           tip: _Vec3(0.02, neck.y + 0.32, bodyShiftZ),
           color: _primaryCoral,
-          tag: 'CARDIO 0 IMPACT',
+          tag: 'CARDIO SANS IMPACT',
         ),
       ],
     );
   }
 
-  // --- 21. Military Jumping Jacks (Side Straddle Hop 4-Count) ---
+  // --- 21. Sauts d'Écart Toniques ---
   _Pose3D _poseJumpingJacks({required double wave}) {
     final double airY = 0.11 * math.sin(wave * math.pi);
     final double spreadZ = 0.13 + 0.28 * wave;
@@ -2661,19 +2781,19 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(1.0, 0.04, 0),
       contraction: wave,
       isHorizontal: false,
-      phaseBadge: '4-COUNT STRADDLE HOP',
+      phaseBadge: 'SAUT TONIQUE FLUIDE',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.0, 0.12 + airY, 0.0),
           tip: _Vec3(0.0, 0.42 + airY, 0.0),
           color: _primaryRed,
-          tag: 'AVANT-PIED',
+          tag: 'APPUIS SOUPLES',
         ),
       ],
     );
   }
 
-  // --- 22. 6-Count Military Burpee (Séquence complète en 6 temps stricts) ---
+  // --- 22. Burpee Complet Contrôlé ---
   _Pose3D _poseMilitaryBurpee({
     required double phase,
     required double fistLift,
@@ -2683,7 +2803,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       final double crouchT = phase < 0.18
           ? (phase / 0.18)
           : (1.0 - (phase - 0.62) / 0.18);
-      return _poseBurpeeCrouch(crouchT, fistLift, 'BURPEE SQUAT');
+      return _poseBurpeeCrouch(crouchT, fistLift, 'FLEXION MAINS AU SOL');
     } else if (phase >= 0.18 && phase < 0.62) {
       final double pushPhase = (phase - 0.18) / 0.44;
       final double pushWave = 0.5 - 0.5 * math.cos(pushPhase * 2.0 * math.pi);
@@ -2691,7 +2811,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
         wave: pushWave,
         inclineHeight: 0.0,
         fistLift: fistLift,
-        badge: 'BURPEE POMPE (TEMPS 3-4)',
+        badge: 'POMPE CONTRÔLÉE',
       );
     } else {
       final double extT = (phase - 0.80) / 0.20;
@@ -2700,18 +2820,18 @@ class AnatomicalMannequinPainter extends CustomPainter {
       return _poseVerticalExtension(
         extWave: extWave,
         jumpY: jumpY,
-        badge: stealthMode ? 'EXTENSION POINTES (0 SAUT)' : '6-COUNT EXTENSION',
+        badge: stealthMode ? 'EXTENSION POINTES' : 'EXTENSION COMPLÈTE',
       );
     }
   }
 
-  // --- 23. 8-Count Navy SEAL Bodybuilder (Inclut le Plank Jack aux temps 5-6) ---
+  // --- 23. Enchaînement Complet Corps Entier ---
   _Pose3D _poseSealBodybuilder({
     required double phase,
     required double fistLift,
   }) {
     if (phase < 0.14) {
-      return _poseBurpeeCrouch(phase / 0.14, fistLift, '8-COUNT • 1 SQUAT');
+      return _poseBurpeeCrouch(phase / 0.14, fistLift, '1 • FLEXION');
     } else if (phase < 0.44) {
       final double p = (phase - 0.14) / 0.30;
       final double w = 0.5 - 0.5 * math.cos(p * 2.0 * math.pi);
@@ -2719,10 +2839,9 @@ class AnatomicalMannequinPainter extends CustomPainter {
         wave: w,
         inclineHeight: 0.0,
         fistLift: fistLift,
-        badge: '8-COUNT • 3-4 POMPE',
+        badge: '2 • POMPE',
       );
     } else if (phase < 0.70) {
-      // Temps 5-6 : Plank Jack (ouverture latérale des jambes en planche Coronado)
       final double jackT = (phase - 0.44) / 0.26;
       final double jackWave = math.sin(jackT * math.pi);
       final double handY = 0.04 + fistLift;
@@ -2748,14 +2867,14 @@ class AnatomicalMannequinPainter extends CustomPainter {
         contraction: 0.65 + 0.35 * jackWave,
         isHorizontal: true,
         phaseBadge: stealthMode
-            ? '8-COUNT • 5-6 STEP-OUT'
-            : '8-COUNT • 5-6 PLANK JACK',
+            ? '3 • PAS LATÉRAL'
+            : '3 • OUVERTURE PIEDS',
         forces: <_ForceVector3D>[
           _ForceVector3D(
             origin: const _Vec3(-0.78, 0.12, 0.0),
             tip: _Vec3(-0.78, 0.12, footZ + 0.08),
             color: _primaryCoral,
-            tag: 'PLANK JACK',
+            tag: 'GAINAGE DYNAMIQUE',
           ),
         ],
       );
@@ -2763,14 +2882,14 @@ class AnatomicalMannequinPainter extends CustomPainter {
       return _poseBurpeeCrouch(
         1.0 - (phase - 0.70) / 0.14,
         fistLift,
-        '8-COUNT • 7 SQUAT',
+        '4 • RETOUR PIEDS',
       );
     } else {
       final double extWave = math.sin(((phase - 0.84) / 0.16) * math.pi);
       return _poseVerticalExtension(
         extWave: extWave,
         jumpY: stealthMode ? 0.0 : 0.12 * extWave,
-        badge: '8-COUNT • 8 NSW STAND',
+        badge: '5 • REDRESSEMENT',
       );
     }
   }
@@ -2838,13 +2957,13 @@ class AnatomicalMannequinPainter extends CustomPainter {
           origin: pelvis,
           tip: pelvis + const _Vec3(0, 0.36, 0),
           color: _primaryCoral,
-          tag: stealthMode ? 'EXTENSION 0 dB' : 'EXPLOSION',
+          tag: stealthMode ? 'SANS SAUT' : 'EXTENSION HAUTE',
         ),
       ],
     );
   }
 
-  // --- 24. Protocole RAMP Mobility (World's Greatest Stretch + Ouverture Thoracique) ---
+  // --- 24. Réveil Articulaire & Ouverture du Buste ---
   _Pose3D _poseRampMobility({required double wave, required bool openRight}) {
     final _Vec3 pelvis = const _Vec3(-0.08, 0.42, 0.0);
     final _Vec3 neck = _Vec3(0.36, 0.62 + 0.06 * wave, 0.0);
@@ -2893,19 +3012,19 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: _Vec3(0.4, 0.7 * wave, openRight ? 0.5 : -0.5),
       contraction: 0.35 + 0.65 * wave,
       isHorizontal: true,
-      phaseBadge: 'RAMP • GREATEST STRETCH',
+      phaseBadge: 'MOBILITÉ HANCHES & DOS',
       forces: <_ForceVector3D>[
         _ForceVector3D(
           origin: _Vec3(0.36, neck.y, 0.0),
           tip: _Vec3(0.34, reachY, reachZ),
           color: const Color(0xFF10B981),
-          tag: 'ROTATION T-SPINE',
+          tag: 'OUVERTURE THORACIQUE',
         ),
       ],
     );
   }
 
-  // --- 25. Décompression H2F & Box Breathing Navy SEAL (4-4-4-4) ---
+  // --- 25. Retour au Calme & Respiration Guidée (4-4-4-4) ---
   _Pose3D _poseBoxBreathingH2f({required double phase}) {
     final int quad = (phase * 4.0).floor().clamp(0, 3);
     final double local = (phase * 4.0) - quad;
@@ -2916,7 +3035,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       _ => (0.0, 'VIDE 4S'),
     };
 
-    // Posture tailleur militaire droite & relâchée, mains posées sur les genoux
+    // Posture assise droite & relâchée, mains posées sur les genoux
     final _Vec3 pelvis = const _Vec3(0.0, 0.10, 0.0);
     final _Vec3 neck = _Vec3(0.02, 0.68 + 0.03 * breath, 0.0);
 
@@ -2940,7 +3059,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
       gazeDir: const _Vec3(1.0, 0.0, 0),
       contraction: 0.30 + 0.55 * breath,
       isHorizontal: true,
-      phaseBadge: 'H2F • $label',
+      phaseBadge: 'RESPIRATION • $label',
       breathingExpansion: breath,
       forces: const <_ForceVector3D>[],
     );
@@ -2949,7 +3068,7 @@ class AnatomicalMannequinPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant AnatomicalMannequinPainter oldDelegate) {
     return oldDelegate.exercise.id != exercise.id ||
-        (oldDelegate.animationPhase - animationPhase).abs() > 0.003 ||
+        (oldDelegate.animationPhase - animationPhase).abs() > 0.0005 ||
         oldDelegate.cameraAngle != cameraAngle ||
         oldDelegate.stealthMode != stealthMode ||
         oldDelegate.jointMode != jointMode;

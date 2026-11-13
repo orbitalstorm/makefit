@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/makefit_catalog.dart';
@@ -7,8 +8,7 @@ import '../painters/anatomical_mannequin_painter.dart';
 import '../painters/makefit_vector_assets.dart';
 import 'makefit_juicy_widgets.dart';
 
-/// Onglet 2 — `SKILL TREE 25` (Arbre de Compétences Biomécaniques 5 Familles × 5 Échelons
-/// & Codex Anatomique 60 FPS Sans Matériel).
+/// Onglet 2 — `EXERCICES` (`v1.1.0` — Guide Visuel Simple & Mannequin Animé en Continu).
 class SkillTreeAndCodexTab extends StatefulWidget {
   const SkillTreeAndCodexTab({
     super.key,
@@ -26,13 +26,45 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
   TacticalExercise _inspectedExercise = MakeFitCatalog.allExercises.first;
   MannequinCameraAngle _inspectorCameraAngle =
       MannequinCameraAngle.threeQuarterTactical;
-  double _inspectorAnimPhase = 0.35;
+  double _inspectorAnimPhase = 0.0;
+  Timer? _autoAnimTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _autoAnimTimer = Timer.periodic(
+      const Duration(milliseconds: 100),
+      (_) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _inspectorAnimPhase = (_inspectorAnimPhase + 0.035) % 1.0;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _autoAnimTimer?.cancel();
+    super.dispose();
+  }
+
+  String _zoneLabel(BiomechanicalFamily family) {
+    return switch (family) {
+      BiomechanicalFamily.upperPush => 'Buste & Bras',
+      BiomechanicalFamily.noBarPull => 'Dos & Posture',
+      BiomechanicalFamily.tacticalLegs => 'Jambes',
+      BiomechanicalFamily.ironCore => 'Abdos & Gainage',
+      BiomechanicalFamily.metCon => 'Cardio',
+    };
+  }
 
   void _selectExerciseNode(TacticalExercise exercise) {
     HapticFeedback.selectionClick();
     setState(() {
       _inspectedExercise = exercise;
-      _inspectorAnimPhase = (_inspectorAnimPhase + 0.28) % 1.0;
     });
   }
 
@@ -45,48 +77,65 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
     });
   }
 
-  void _launchSingleExerciseTestMission(TacticalExercise exercise) {
-    final SoldierProfileState profile = widget.engine.profile;
-    final TacticalMission testMission = TacticalMission(
-      id: 'codex_test_${exercise.id}',
-      code: 'CODEX • ${exercise.code}',
-      title: 'Test Biomécanique — ${exercise.name}',
+  void _launchSingleExerciseMission(TacticalExercise exercise) {
+    final TacticalMission singleMission = TacticalMission(
+      id: 'exercise_focus_${exercise.id}',
+      code: 'ATELIER • ${exercise.code}',
+      title: 'Séance Guidée — ${exercise.name}',
       subtitle:
-          '${exercise.family.label} • ${exercise.tier.shortTitle} • Tempo ${exercise.tempo}',
+          '${_zoneLabel(exercise.family)} • Mouvement guidé & Retour au calme',
       format: WorkoutFormatType.flashPt5Min,
-      durationMinutes: 5,
+      durationMinutes: 6,
       recommendedTier: exercise.tier,
       targetRpe: 3,
       steps: <WorkoutStationStep>[
         WorkoutStationStep(
           stage: WorkoutStepStage.mainWork,
-          title: 'Atelier Technique — ${exercise.name}',
-          subtitle: exercise.masteryStandardLabel,
+          title: 'Série 1/2 — ${exercise.name}',
+          subtitle: 'Suis le rythme de l\'animation à l\'écran',
           exercise: exercise,
-          durationSeconds:
-              exercise.isIsometric ? exercise.defaultHoldSeconds : 60,
+          durationSeconds: 40,
           targetReps: exercise.defaultTargetReps,
-          isTimedWork: exercise.isIsometric,
+          isTimedWork: true,
           roundIndex: 1,
-          totalRounds: 1,
+          totalRounds: 2,
+        ),
+        const WorkoutStationStep(
+          stage: WorkoutStepStage.restRecovery,
+          title: 'Récupération Active (20s)',
+          subtitle: 'Respire profondément et relâche les épaules',
+          exercise: MakeFitCatalog.h2fBoxBreathingExercise,
+          durationSeconds: 20,
+          targetReps: 2,
+          isTimedWork: true,
+          roundIndex: 1,
+          totalRounds: 2,
+        ),
+        WorkoutStationStep(
+          stage: WorkoutStepStage.mainWork,
+          title: 'Série 2/2 — ${exercise.name}',
+          subtitle: 'Garde une posture propre jusqu\'au bip',
+          exercise: exercise,
+          durationSeconds: 40,
+          targetReps: exercise.defaultTargetReps,
+          isTimedWork: true,
+          roundIndex: 2,
+          totalRounds: 2,
         ),
         const WorkoutStationStep(
           stage: WorkoutStepStage.h2fCooldown,
-          title: 'Décompression H2F & Box Breathing (4-4-4-4)',
-          subtitle: 'Retour au calme parasympathique',
+          title: 'Retour au calme & Respiration',
+          subtitle: 'Récupération respiratoire guidée',
           exercise: MakeFitCatalog.h2fBoxBreathingExercise,
-          durationSeconds: 120,
-          targetReps: 8,
+          durationSeconds: 60,
+          targetReps: 4,
           isTimedWork: true,
           roundIndex: 1,
           totalRounds: 1,
         ),
       ],
     );
-    if (profile.stealthApartmentMode) {
-      // Déjà pris en compte par engine.startMission
-    }
-    widget.engine.startMission(testMission);
+    widget.engine.startMission(singleMission);
   }
 
   @override
@@ -102,20 +151,20 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
         children: <Widget>[
-          _buildHeaderAndFamilyFilters(),
+          _buildHeaderAndZoneFilters(),
           const SizedBox(height: 14),
-          _buildExerciseInspectorCard(profile, _inspectedExercise),
+          _buildAnimatedExerciseCoachCard(profile, _inspectedExercise),
           const SizedBox(height: 16),
           ...displayedFamilies.map(
             (BiomechanicalFamily family) =>
-                _buildFamilySkillBranch(profile, family),
+                _buildZoneExercisesSection(profile, family),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeaderAndFamilyFilters() {
+  Widget _buildHeaderAndZoneFilters() {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -127,17 +176,17 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Text(
-            'SKILL TREE BIOMÉCANIQUE — 25 NŒUDS SANS MATÉRIEL',
+            'GUIDE VISUEL DES EXERCICES SANS MATÉRIEL',
             style: TextStyle(
               color: MakeFitTheme.amberTactical,
               fontWeight: FontWeight.w900,
-              fontSize: 12,
-              letterSpacing: 0.8,
+              fontSize: 12.5,
+              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 4),
           const Text(
-            '5 Familles × 5 Échelons (Recrue T1 à SpecOps T5) • 0 Barre de traction requise',
+            'Sélectionne un exercice pour voir la démonstration animée en continu.',
             style: TextStyle(
               color: MakeFitTheme.textSecondary,
               fontSize: 11.5,
@@ -149,7 +198,7 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
             runSpacing: 8,
             children: <Widget>[
               _buildFilterChip(
-                label: 'TOUTES (25)',
+                label: 'Tous',
                 selected: _selectedFamilyFilter == null,
                 accentColor: MakeFitTheme.amberTactical,
                 onTap: () {
@@ -160,7 +209,7 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
               ...BiomechanicalFamily.values.map((BiomechanicalFamily fam) {
                 final bool selected = _selectedFamilyFilter == fam;
                 return _buildFilterChip(
-                  label: fam.shortLabel,
+                  label: _zoneLabel(fam),
                   selected: selected,
                   accentColor: fam.accentColor,
                   onTap: () {
@@ -205,22 +254,20 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
           label,
           style: TextStyle(
             color: selected ? accentColor : MakeFitTheme.textPrimary,
-            fontWeight: FontWeight.w900,
-            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            fontSize: 11.5,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildExerciseInspectorCard(
+  Widget _buildAnimatedExerciseCoachCard(
     SoldierProfileState profile,
     TacticalExercise ex,
   ) {
     final String primaryMusclesText =
         ex.primaryMuscles.map((MuscleGroup m) => m.label).join(' • ');
-    final String secondaryMusclesText =
-        ex.secondaryMuscles.map((MuscleGroup m) => m.label).join(' • ');
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -241,14 +288,14 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'FICHE D\'INSPECTION • ${ex.code} (${ex.tier.shortTitle})',
+                      '${_zoneLabel(ex.family).toUpperCase()} • NIVEAU ${ex.tier.level}/5',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: ex.family.accentColor,
                         fontWeight: FontWeight.w900,
                         fontSize: 11,
-                        letterSpacing: 0.6,
+                        letterSpacing: 0.5,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -276,7 +323,7 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                 cameraAngle: _inspectorCameraAngle,
                 stealthMode: profile.stealthApartmentMode,
                 jointMode: profile.jointFriendlyMode,
-                height: 168,
+                height: 176,
               ),
               Positioned(
                 top: 8,
@@ -293,13 +340,24 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: ex.family.accentColor),
                     ),
-                    child: Text(
-                      'Angle : ${_inspectorCameraAngle.label}',
-                      style: const TextStyle(
-                        color: MakeFitTheme.textPrimary,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 10.5,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.cameraswitch_rounded,
+                          color: ex.family.accentColor,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Vue : ${_inspectorCameraAngle.label}',
+                          style: const TextStyle(
+                            color: MakeFitTheme.textPrimary,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 10.5,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -307,129 +365,98 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
             ],
           ),
           const SizedBox(height: 10),
+          const Text(
+            '3 CONSEILS CLÉS POUR UNE BONNE POSTURE :',
+            style: TextStyle(
+              color: MakeFitTheme.textSecondary,
+              fontWeight: FontWeight.w900,
+              fontSize: 10.5,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 6),
           Wrap(
             spacing: 6,
             runSpacing: 6,
-            children: <Widget>[
-              _buildMetaBadge('TEMPO ${ex.tempo}', MakeFitTheme.amberTactical),
-              _buildMetaBadge(
-                'STANDARD : ${ex.masteryStandardLabel}',
-                MakeFitTheme.emeraldH2f,
-              ),
-              ...ex.hudCues.map(
-                (String c) => _buildMetaBadge(c, ex.family.accentColor),
-              ),
-            ],
+            children: ex.hudCues.map((String cue) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: ex.family.accentColor.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: ex.family.accentColor.withValues(alpha: 0.55),
+                  ),
+                ),
+                child: Text(
+                  cue,
+                  style: TextStyle(
+                    color: ex.family.accentColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 11,
+                  ),
+                ),
+              );
+            }).toList(growable: false),
           ),
           const SizedBox(height: 10),
-          _buildDetailBlock(
-            title: 'MUSCLES PRIMAIRES & SECONDAIRES',
-            body:
-                'Agonistes : $primaryMusclesText\nSynergistes : $secondaryMusclesText',
-            accent: ex.family.accentColor,
-          ),
-          const SizedBox(height: 8),
-          _buildDetailBlock(
-            title: 'ERREUR FRÉQUENTE À ÉVITER',
-            body: ex.commonMistake,
-            accent: MakeFitTheme.coralAlert,
-          ),
-          const SizedBox(height: 8),
-          _buildDetailBlock(
-            title:
-                'VARIANTE MODE SILENCIEUX APPARTEMENT : ${ex.stealthVariantName}',
-            body: ex.stealthVariantDescription,
-            accent: MakeFitTheme.cyanRadar,
-          ),
-          const SizedBox(height: 8),
-          _buildDetailBlock(
-            title:
-                'VARIANTE WRIST/KNEE-FRIENDLY : ${ex.wristKneeVariantName}',
-            body: ex.wristKneeVariantDescription,
-            accent: MakeFitTheme.emeraldH2f,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: MakeFitTheme.slateSurface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: MakeFitTheme.slateBorder),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Zones travaillées : $primaryMusclesText',
+                  style: const TextStyle(
+                    color: MakeFitTheme.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Option douce articulations : ${ex.wristKneeVariantName}',
+                  style: const TextStyle(
+                    color: MakeFitTheme.emeraldH2f,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           JuicyTactical3DButton(
-            label: 'TESTER CET EXERCICE',
+            label: 'Lancer cet exercice',
             subtitle:
-                'Déployer ${ex.code} dans le HUD 2m (${ex.defaultTargetReps} reps)',
-            icon: Icons.bolt_rounded,
+                'Démarrer un atelier guidé sur ${ex.name} avec chrono auto',
+            icon: Icons.play_arrow_rounded,
             height: 52,
             backgroundColor: ex.family.accentColor,
             bottomLipColor: MakeFitTheme.slateBorder,
             foregroundColor: MakeFitTheme.oledBlack,
-            onPressed: () => _launchSingleExerciseTestMission(ex),
+            onPressed: () => _launchSingleExerciseMission(ex),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMetaBadge(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.55)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w900,
-          fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailBlock({
-    required String title,
-    required String body,
-    required Color accent,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: MakeFitTheme.slateSurface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: accent.withValues(alpha: 0.45)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              color: accent,
-              fontWeight: FontWeight.w900,
-              fontSize: 10.5,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            body,
-            style: const TextStyle(
-              color: MakeFitTheme.textPrimary,
-              fontSize: 11.5,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFamilySkillBranch(
+  Widget _buildZoneExercisesSection(
     SoldierProfileState profile,
     BiomechanicalFamily family,
   ) {
     final List<TacticalExercise> exercises =
         MakeFitCatalog.exercisesByFamily(family);
-    final DifficultyTier unlockedTier =
-        profile.familyTiers[family] ?? DifficultyTier.tier2Soldier;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -448,30 +475,18 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                BiomechanicalFamilyBadge(family: family, size: 34),
+                BiomechanicalFamilyBadge(family: family, size: 32),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${family.shortLabel} — ${family.label.toUpperCase()}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: family.accentColor,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        'Échelon actif : ${unlockedTier.shortTitle} • Quota ${profile.familyRepQuotas[family] ?? 15} reps',
-                        style: const TextStyle(
-                          color: MakeFitTheme.textSecondary,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    '${_zoneLabel(family)} — ${family.label}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: family.accentColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13.5,
+                    ),
                   ),
                 ),
               ],
@@ -479,7 +494,6 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
             const SizedBox(height: 10),
             ...exercises.map((TacticalExercise ex) {
               final bool isSelected = ex.id == _inspectedExercise.id;
-              final bool isUnlocked = ex.tier.level <= unlockedTier.level;
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -497,37 +511,27 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                       border: Border.all(
                         color: isSelected
                             ? family.accentColor
-                            : (isUnlocked
-                                  ? family.accentColor.withValues(alpha: 0.45)
-                                  : MakeFitTheme.slateBorder),
+                            : MakeFitTheme.slateBorder,
                         width: isSelected ? 2.0 : 1.0,
                       ),
                     ),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          width: 36,
-                          height: 36,
+                          width: 34,
+                          height: 34,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isUnlocked
-                                ? family.accentColor.withValues(alpha: 0.22)
-                                : MakeFitTheme.oledBlack,
+                            color: family.accentColor.withValues(alpha: 0.22),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isUnlocked
-                                  ? family.accentColor
-                                  : MakeFitTheme.slateBorder,
-                            ),
+                            border: Border.all(color: family.accentColor),
                           ),
                           child: Text(
-                            ex.tier.code,
+                            'N${ex.tier.level}',
                             style: TextStyle(
-                              color: isUnlocked
-                                  ? family.accentColor
-                                  : MakeFitTheme.textSecondary,
+                              color: family.accentColor,
                               fontWeight: FontWeight.w900,
-                              fontSize: 12,
+                              fontSize: 11.5,
                             ),
                           ),
                         ),
@@ -548,7 +552,7 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${ex.code} • ${ex.masteryStandardLabel} • Tempo ${ex.tempo}',
+                                ex.hudCues.join(' • '),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -561,13 +565,13 @@ class _SkillTreeAndCodexTabState extends State<SkillTreeAndCodexTab> {
                         ),
                         const SizedBox(width: 8),
                         Icon(
-                          isUnlocked
-                              ? Icons.verified_rounded
-                              : Icons.lock_outline_rounded,
-                          color: isUnlocked
+                          isSelected
+                              ? Icons.play_circle_fill_rounded
+                              : Icons.visibility_outlined,
+                          color: isSelected
                               ? family.accentColor
                               : MakeFitTheme.textSecondary,
-                          size: 18,
+                          size: 20,
                         ),
                       ],
                     ),

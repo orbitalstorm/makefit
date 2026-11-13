@@ -4,21 +4,52 @@ import 'package:flutter/services.dart';
 import '../data/makefit_catalog.dart';
 import '../models/makefit_models.dart';
 
-/// Moteur mathématique, biomécanique et comportemental MakeFit (`v1.0.0`).
+/// Moteur d'entraînement guidé, d'auto-régulation et de motivation MakeFit 40+ (`v1.1.0`).
 /// Implémente :
-/// - Le Test PT Initial de 6 min (IAO sur 100 & attribution d'échelons Tier 1..5),
-/// - L'Algorithme d'Auto-Régulation RPE (1 à 5), la progression/régression d'échelons
-///   et l'Index Postural Push/Pull (`[0.85, 1.15]`) avec injection corrective anti-cyphose,
-/// - Le Calculateur déterministe de TXP, l'XP Banking & les 12 Grades Militaires (`E-1` à `SF-2`),
-/// - La Machine à états 60 Hz de séance résiliente aux dérives d'horloge (`Stopwatch` monotone
-///   + synchronisation `DateTime.now()`), le filtre Sans Contact anti-rebond `650 ms`
-///   et l'Audio Ducking (`-12 dB`) respectant Spotify/Apple Music.
+/// - Démarrage 100 % vierge sans aucune donnée d'exemple (`Jour 1`, `0 séance`, `0 min`, `0 XP`),
+/// - Séances quotidiennes de **10 minutes maximum** (`6`, `8` ou `10` min) adaptées au profil 40+,
+/// - Enchaînement **100 % automatique** après l'appui sur `GO` : Échauffement -> Séries ->
+///   Récupérations actives -> Retour au calme, avec progression automatique des répétitions
+///   synchronisée à l'animation 60 FPS sans jamais obliger à toucher l'écran,
+/// - Motivation quotidienne bienveillante (`dailyMotivationQuote`) et équilibrage postural du dos.
 class MakeFitEngine extends ChangeNotifier {
   MakeFitEngine({SoldierProfileState? initialProfile})
     : _profile = initialProfile ?? createDefaultSoldierProfile();
 
-  /// Fenêtre biomécanique minimale anti-rebond entre deux répétitions sans contact.
+  /// Fenêtre minimale anti-rebond (`650 ms`) entre deux validations manuelles.
   static const int contactlessDebounceMs = 650;
+
+  /// Citations quotidiennes motivantes, adultes et bienveillantes (28 jours).
+  static const List<String> _dailyMotivationQuotes = <String>[
+    'Le plus important, c\'est de commencer : 10 minutes aujourd\'hui lancent ta nouvelle dynamique.',
+    'La régularité bat toujours l\'intensité : chaque séance renforce ton dos, ton souffle et ton énergie.',
+    'Trois jours d\'élan : tes articulations se dérouillent et ton corps retrouve son tonus naturel.',
+    'Prendre soin de sa mobilité à 40 ans, c\'est investir dans vingt ans de vitalité.',
+    'Dix minutes bien guidées valent mieux qu\'une heure remise à demain. Bravo d\'être là !',
+    'Un gainage solide, c\'est un dos protégé du matin au soir. Continue à ton rythme.',
+    'Une première semaine qui prend forme : l\'habitude s\'installe séance après séance.',
+    'Chaque répétition fluide redresse ta posture et chasse la fatigue du quotidien.',
+    'Écoute ton corps, respire profondément et laisse le chronomètre te guider sans pression.',
+    'À 40 ans, la vraie force est durable : souplesse, tonicité et régularité.',
+    'Même les jours chargés, 6 à 10 minutes suffisent pour garder la flamme allumée.',
+    'Ton souffle est plus calme, tes épaules plus ouvertes : tes efforts portent déjà leurs fruits.',
+    'Pas besoin de matériel ni de salle : ton meilleur allié, c\'est ta constance d\'aujourd\'hui.',
+    'Deux semaines de cap ! Ton niveau d\'énergie au réveil fait toute la différence.',
+    'Un mouvement propre et maîtrisé protège tes articulations tout en sculptant tes muscles.',
+    'Tu construis un corps fiable, mobile et tonique pour tout ce qui compte dans ta vie.',
+    'Relâche les épaules, engage les abdos : la qualité du geste prime toujours.',
+    'La récupération active fait partie intégrante du progrès. Respire et savoure l\'instant.',
+    'Séance après séance, ta sangle abdominale se renforce et ton dos te remercie.',
+    'Vingt jours d\'engagement personnel : la discipline douce devient une seconde nature.',
+    'Trois semaines au compteur ! Tu prouves qu\'un format court et régulier change tout.',
+    'Garde ce rythme fluide : ni précipitation, ni tension inutile, juste du bon mouvement.',
+    'Ton endurance progresse en silence : ce qui semblait exigeant au Jour 1 devient naturel.',
+    'Dix minutes pour toi, zéro distraction : le meilleur moment de la journée pour recharger les batteries.',
+    'La mobilité des hanches et des épaules est le secret d\'un corps jeune et sans raideur.',
+    'Dernière ligne droite du cycle : sois fier de chaque séance accomplie depuis le premier jour.',
+    'Demain marque le bilan de tes 4 semaines : garde de l\'aisance et profite du mouvement.',
+    'Jour 28 : quatre semaines de constance ! Tu as bâti une vraie routine de forme durable.',
+  ];
 
   SoldierProfileState _profile;
   SoldierProfileState get profile => _profile;
@@ -34,89 +65,182 @@ class MakeFitEngine extends ChangeNotifier {
   DateTime? _lastContactlessRepTimestamp;
   DateTime? _lastWallClockTickAt;
 
+  /// Crée un profil 100 % vierge au démarrage (zéro donnée d'exemple : Jour 1, 0 séance, 0 min, 0 XP).
   static SoldierProfileState createDefaultSoldierProfile() {
     return const SoldierProfileState(
-      callsign: 'ALPHA-01',
-      rank: MilitaryRank.e2Private,
-      totalTxp: 1650,
-      currentStreakDays: 8,
-      bestStreakDays: 14,
-      tacticalLeavePasses: 2,
-      sessionsTowardsNextPass: 1,
-      completedSessionsCount: 8,
+      callsign: '',
+      rank: MilitaryRank.e1Recruit,
+      totalTxp: 0,
+      currentStreakDays: 0,
+      bestStreakDays: 0,
+      tacticalLeavePasses: 1,
+      sessionsTowardsNextPass: 0,
+      completedSessionsCount: 0,
       stealthApartmentMode: false,
       jointFriendlyMode: JointFriendlyMode.standard,
       familyTiers: <BiomechanicalFamily, DifficultyTier>{
-        BiomechanicalFamily.upperPush: DifficultyTier.tier2Soldier,
-        BiomechanicalFamily.noBarPull: DifficultyTier.tier2Soldier,
-        BiomechanicalFamily.tacticalLegs: DifficultyTier.tier2Soldier,
-        BiomechanicalFamily.ironCore: DifficultyTier.tier2Soldier,
-        BiomechanicalFamily.metCon: DifficultyTier.tier2Soldier,
+        BiomechanicalFamily.upperPush: DifficultyTier.tier1Recruit,
+        BiomechanicalFamily.noBarPull: DifficultyTier.tier1Recruit,
+        BiomechanicalFamily.tacticalLegs: DifficultyTier.tier1Recruit,
+        BiomechanicalFamily.ironCore: DifficultyTier.tier1Recruit,
+        BiomechanicalFamily.metCon: DifficultyTier.tier1Recruit,
       },
       familyRepQuotas: <BiomechanicalFamily, int>{
-        BiomechanicalFamily.upperPush: 15,
-        BiomechanicalFamily.noBarPull: 16,
-        BiomechanicalFamily.tacticalLegs: 20,
-        BiomechanicalFamily.ironCore: 20,
-        BiomechanicalFamily.metCon: 25,
+        BiomechanicalFamily.upperPush: 10,
+        BiomechanicalFamily.noBarPull: 10,
+        BiomechanicalFamily.tacticalLegs: 14,
+        BiomechanicalFamily.ironCore: 12,
+        BiomechanicalFamily.metCon: 18,
       },
-      completedMissionIds: <String>{
-        'op-01_d1',
-        'op-01_d2',
-        'op-01_d3',
-        'op-01_d4',
-        'op-01_d5',
-        'op-01_d6',
-        'op-01_d7',
-        'op-01_d8',
-      },
+      completedMissionIds: <String>{},
       passedTrialRanks: <MilitaryRank>{},
       weeklyFamilyVolumes: <BiomechanicalFamily, int>{
-        BiomechanicalFamily.upperPush: 180,
-        BiomechanicalFamily.noBarPull: 185,
-        BiomechanicalFamily.tacticalLegs: 240,
-        BiomechanicalFamily.ironCore: 210,
-        BiomechanicalFamily.metCon: 195,
+        BiomechanicalFamily.upperPush: 0,
+        BiomechanicalFamily.noBarPull: 0,
+        BiomechanicalFamily.tacticalLegs: 0,
+        BiomechanicalFamily.ironCore: 0,
+        BiomechanicalFamily.metCon: 0,
       },
       lastRpeScore: 3,
-      iaoCalibrationScore: 44,
+      iaoCalibrationScore: 0,
       medicalDisclaimerAccepted: true,
       activeCampaignId: OperationalCampaignId.op1BasicBootcamp,
-      currentCampaignDay: 9,
+      currentCampaignDay: 1,
       activityHeatmap28Days: <int>[
-        2, 3, 2, 1, 3, 2, 1,
-        3, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
       ],
+      isProfileCreated: false,
+      ageYears: 40,
+      fitnessGoal: FitnessGoal40Plus.vitalityAndEnergy,
+      fitnessLevel: FitnessInitialLevel.gentleRestart,
+      preferredSessionMinutes: 10,
+      totalMinutesTrained: 0,
     );
+  }
+
+  /// Phrase de motivation quotidienne percutante et bienveillante adaptée au jour courant.
+  String get dailyMotivationQuote {
+    final int idx = (_profile.currentCampaignDay - 1).clamp(
+      0,
+      _dailyMotivationQuotes.length - 1,
+    );
+    return _dailyMotivationQuotes[idx];
+  }
+
+  /// Crée ou met à jour le profil utilisateur à partir de l'écran de Création de Profil.
+  /// Démarre au Jour 1 avec 0 séance et 0 donnée de démonstration lors de la création initiale.
+  void completeProfileCreation({
+    required String firstName,
+    int ageYears = 40,
+    FitnessGoal40Plus goal = FitnessGoal40Plus.vitalityAndEnergy,
+    FitnessInitialLevel level = FitnessInitialLevel.gentleRestart,
+    int preferredSessionMinutes = 10,
+    bool jointProtection = false,
+    bool silentNoJump = false,
+  }) {
+    final String cleanName = firstName.trim().isEmpty
+        ? 'Athlète'
+        : firstName.trim();
+    final int clampedAge = ageYears.clamp(18, 85);
+    final int normalizedMinutes = MakeFitCatalog.normalizeSessionMinutes(
+      preferredSessionMinutes,
+    );
+    final DifficultyTier startTier = level.recommendedTier;
+
+    final Map<BiomechanicalFamily, DifficultyTier> startTiers =
+        <BiomechanicalFamily, DifficultyTier>{
+          for (final BiomechanicalFamily fam in BiomechanicalFamily.values)
+            fam: startTier,
+        };
+    final Map<BiomechanicalFamily, int> startQuotas =
+        <BiomechanicalFamily, int>{
+          for (final BiomechanicalFamily fam in BiomechanicalFamily.values)
+            fam: MakeFitCatalog.exerciseFor(fam, startTier).defaultTargetReps,
+        };
+
+    final OperationalCampaignId recommendedCampaign = switch (goal) {
+      FitnessGoal40Plus.vitalityAndEnergy =>
+        silentNoJump
+            ? OperationalCampaignId.op2SilentRecon
+            : OperationalCampaignId.op1BasicBootcamp,
+      FitnessGoal40Plus.coreAndBackHealth =>
+        OperationalCampaignId.op2SilentRecon,
+      FitnessGoal40Plus.strengthAndPosture =>
+        level == FitnessInitialLevel.dynamicFit
+            ? OperationalCampaignId.op3AirborneConditioning
+            : OperationalCampaignId.op1BasicBootcamp,
+    };
+
+    _profile = _profile.copyWith(
+      callsign: cleanName,
+      ageYears: clampedAge,
+      fitnessGoal: goal,
+      fitnessLevel: level,
+      preferredSessionMinutes: normalizedMinutes,
+      stealthApartmentMode: silentNoJump,
+      jointFriendlyMode: jointProtection
+          ? JointFriendlyMode.wristFriendly
+          : JointFriendlyMode.standard,
+      familyTiers: startTiers,
+      familyRepQuotas: startQuotas,
+      activeCampaignId: recommendedCampaign,
+      isProfileCreated: true,
+    );
+    HapticFeedback.mediumImpact();
+    notifyListeners();
+  }
+
+  /// Modifie la durée quotidienne souhaitée (`6`, `8` ou `10` minutes max).
+  void setPreferredSessionMinutes(int minutes) {
+    final int normalized = MakeFitCatalog.normalizeSessionMinutes(minutes);
+    _profile = _profile.copyWith(preferredSessionMinutes: normalized);
+    HapticFeedback.selectionClick();
+    notifyListeners();
+  }
+
+  /// Rouvre l'écran de configuration du profil.
+  void reopenProfileEditor() {
+    _profile = _profile.copyWith(isProfileCreated: false);
+    HapticFeedback.selectionClick();
+    notifyListeners();
+  }
+
+  /// Réinitialise intégralement le profil à zéro (Jour 1, 0 séance, 0 min, 0 XP).
+  void resetProfileToZero() {
+    _profile = createDefaultSoldierProfile();
+    liveWorkoutNotifier.value = null;
+    HapticFeedback.mediumImpact();
+    notifyListeners();
   }
 
   /// Ratio d'équilibre postural Push / Pull sur 7 jours (cible optimale : `0.85` à `1.15`).
   double get posturalBalanceRatio => _profile.posturalBalanceRatio;
 
-  /// Indique si le volume de tirage au sol est déficitaire par rapport à la poussée (`< 0.85`).
+  /// Indique si le volume de tirage dorsal est inférieur à la poussée (`< 0.85`).
   bool get hasPosturalPullDeficit => _profile.posturalBalanceRatio < 0.85;
 
-  /// Indique si l'équilibre scapulaire hebdomadaire est dans la fenêtre optimale `[0.85, 1.15]`.
+  /// Indique si l'équilibre buste / dos hebdomadaire est dans la fenêtre optimale `[0.85, 1.15]`.
   bool get isPosturalBalanceOptimal {
     final double r = _profile.posturalBalanceRatio;
     return r >= 0.85 && r <= 1.15;
   }
 
-  /// Diagnostic lisible de l'équilibre postural Push / Pull.
+  /// Diagnostic lisible de l'équilibre postural Buste / Dos.
   String get posturalDiagnosticLabel {
     final double r = _profile.posturalBalanceRatio;
     if (r < 0.85) {
-      return 'DÉFICIT TIRAGE (${r.toStringAsFixed(2)}) • +1 SÉRIE SCAPULA AUTO-INJECTÉE';
+      return 'RENFORCEMENT DOS ACTIVÉ (${r.toStringAsFixed(2)}) • +1 SÉRIE POSTURE AJOUTÉE';
     }
     if (r > 1.15) {
-      return 'DOMINANTE CHAÎNE POSTÉRIEURE (${r.toStringAsFixed(2)}) • ÉPAULES PROTÉGÉES';
+      return 'DOS SOLIDE & ÉPAULES PROTÉGÉES (${r.toStringAsFixed(2)})';
     }
-    return 'ÉQUILIBRE SCAPULAIRE OPTIMAL (${r.toStringAsFixed(2)} • CIBLE 1:1)';
+    return 'ÉQUILIBRE BUSTE / DOS OPTIMAL (${r.toStringAsFixed(2)})';
   }
 
-  /// Indique si le capteur Sans Contact est prêt à accepter une nouvelle répétition (`≥ 650 ms`).
+  /// Indique si le filtre anti-rebond (`650 ms`) autorise une validation manuelle.
   bool get isContactlessReady {
     if (_contactlessDebounceWatch.isRunning &&
         _contactlessDebounceWatch.elapsedMilliseconds < contactlessDebounceMs) {
@@ -132,17 +256,21 @@ class MakeFitEngine extends ChangeNotifier {
     return true;
   }
 
-  /// Mission quotidienne recommandée (1-Clic depuis le Command Center), personnalisée
-  /// selon les quotas RPE, les échelons par famille et le ratio postural Push/Pull.
+  /// Séance quotidienne recommandée (1 clic avec le bouton `GO`), calibrée sur
+  /// `profile.preferredSessionMinutes` (`6`, `8` ou `10` min max) et `profile.fitnessLevel`.
   TacticalMission get todayRecommendedMission {
-    final int restBuffer = _profile.lastRpeScore >= 5
-        ? 15
-        : (_profile.lastRpeScore == 4 ? 5 : 0);
+    final int targetMinutes = MakeFitCatalog.normalizeSessionMinutes(
+      _profile.preferredSessionMinutes,
+    );
+    final int restBuffer = _profile.lastRpeScore >= 4 ? 5 : 0;
     final List<TacticalMission> missions = MakeFitCatalog.missionsForCampaign(
       _profile.activeCampaignId,
       _profile.familyRepQuotas,
+      familyTiers: _profile.familyTiers,
       posturalBalanceRatio: _profile.posturalBalanceRatio,
       extraRestSeconds: restBuffer,
+      preferredSessionMinutes: targetMinutes,
+      fitnessLevel: _profile.fitnessLevel,
     );
     final int idx = (_profile.currentCampaignDay - 1).clamp(
       0,
@@ -151,11 +279,11 @@ class MakeFitEngine extends ChangeNotifier {
     return missions[idx];
   }
 
-  /// Catalogue des 5 formats rapides "Zero-Friction" personnalisés à l'état actuel du soldat.
+  /// Catalogue des 5 formats rapides guidés (`6`, `8` ou `10` min max) adaptés au profil.
   List<TacticalMission> get personalizedQuickMissions =>
       MakeFitCatalog.buildQuickFormatMissions(_profile);
 
-  /// Génère à la demande une séance personnalisée (durée, format, focus biomécanique).
+  /// Génère à la demande une séance personnalisée (`6`, `8` ou `10` min max).
   TacticalMission generatePersonalizedMission({
     required WorkoutFormatType format,
     int? durationMinutes,
@@ -169,7 +297,7 @@ class MakeFitEngine extends ChangeNotifier {
     );
   }
 
-  /// Bascule instantanée du Mode Silencieux Appartement (0 saut, < 35 dB).
+  /// Bascule instantanée du Mode Sans Saut / Silencieux.
   void toggleStealthApartmentMode([bool? enabled]) {
     final bool next = enabled ?? !_profile.stealthApartmentMode;
     _profile = _profile.copyWith(stealthApartmentMode: next);
@@ -190,8 +318,8 @@ class MakeFitEngine extends ChangeNotifier {
         cameraAngle: snap.cameraAngle,
         audioDuckingActive: snap.audioDuckingActive,
         lastAudioCueBanner: next
-            ? 'STEALTH MODE ACTIF (0 SAUT • <35dB)'
-            : 'MODE STANDARD OPÉRATIONNEL',
+            ? 'Mode Sans Saut activé • Douceur articulaire'
+            : 'Mode Standard activé',
         selectedRpe: snap.selectedRpe,
         txpBreakdown: snap.txpBreakdown,
       );
@@ -200,7 +328,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Bascule l'adaptation articulaire (Poignets / Genoux — Guideline 1.4.1).
+  /// Bascule l'adaptation articulaire (Poignets / Genoux).
   void setJointFriendlyMode(JointFriendlyMode mode) {
     _profile = _profile.copyWith(jointFriendlyMode: mode);
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
@@ -219,7 +347,7 @@ class MakeFitEngine extends ChangeNotifier {
         jointFriendlyMode: mode,
         cameraAngle: snap.cameraAngle,
         audioDuckingActive: snap.audioDuckingActive,
-        lastAudioCueBanner: 'ADAPTATION : ${mode.label.toUpperCase()}',
+        lastAudioCueBanner: 'Adaptation active : ${mode.label}',
         selectedRpe: snap.selectedRpe,
         txpBreakdown: snap.txpBreakdown,
       );
@@ -228,7 +356,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Sélectionne la Campagne Opérationnelle de 28 Jours active.
+  /// Sélectionne le Programme de 28 Jours actif.
   void selectOperationalCampaign(OperationalCampaignId campaign) {
     _profile = _profile.copyWith(
       activeCampaignId: campaign,
@@ -239,13 +367,13 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Accepte le Health & Safety Medical Disclaimer (Store Guideline 1.4.1).
+  /// Accepte l'avertissement de santé et de prévention.
   void acceptMedicalDisclaimer() {
     _profile = _profile.copyWith(medicalDisclaimerAccepted: true);
     notifyListeners();
   }
 
-  /// Utilise un Jeton de Permission Tactique (Dog Tag) pour protéger le Streak en cas d'imprévu.
+  /// Utilise un jeton de souplesse pour préserver la série de jours consécutifs en cas d'imprévu.
   bool consumeTacticalLeavePass() {
     if (_profile.tacticalLeavePasses <= 0) {
       return false;
@@ -258,7 +386,7 @@ class MakeFitEngine extends ChangeNotifier {
     return true;
   }
 
-  /// Calcule l'Indice d'Aptitude Opérationnelle (IAO sur 100) du Test PT 6 min (@Spartan).
+  /// Calcule le score d'évaluation initial sur 100 (Test 6 min).
   static BaselinePtCalibrationResult evaluateBaselinePtTest({
     required int pushupsIn2Min,
     required int squatsIn2Min,
@@ -269,8 +397,7 @@ class MakeFitEngine extends ChangeNotifier {
     final int safeSquats = math.max(0, squatsIn2Min);
     final int safePlank = math.max(0, plankSeconds);
 
-    final double effectivePush =
-        safePush * (assistedPushups ? 0.55 : 1.0);
+    final double effectivePush = safePush * (assistedPushups ? 0.55 : 1.0);
     final int sPush = math.min(
       100,
       (100.0 * math.pow((effectivePush / 60.0).clamp(0.0, 2.0), 0.85)).round(),
@@ -320,7 +447,7 @@ class MakeFitEngine extends ChangeNotifier {
     );
   }
 
-  /// Applique le résultat de la calibration PT au profil soldat (échelons & quotas adaptés).
+  /// Applique le résultat de l'évaluation initiale au profil utilisateur.
   void applyBaselineCalibration({
     required int pushupsIn2Min,
     required int squatsIn2Min,
@@ -359,7 +486,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Ouvre le Briefing pré-séance (inspection des exercices et réglages Stealth/Joint).
+  /// Ouvre l'aperçu pré-séance avant le lancement.
   void openMissionBriefing(TacticalMission mission) {
     if (mission.steps.isEmpty) {
       return;
@@ -388,13 +515,14 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: _profile.jointFriendlyMode,
       cameraAngle: MannequinCameraAngle.threeQuarterTactical,
       audioDuckingActive: false,
-      lastAudioCueBanner: 'BRIEFING OPÉRATIONNEL PRÊT • VÉRIFIEZ ZONE 2M×2M',
+      lastAudioCueBanner:
+          'Séance prête (${mission.durationMinutes} min) • Appuie sur GO pour démarrer',
       selectedRpe: 3,
     );
     notifyListeners();
   }
 
-  /// Démarre une séance active dans le WorkoutPlayerModal.
+  /// Démarre immédiatement la séance guidée 100 % automatique (`GO`).
   void startMission(TacticalMission mission) {
     if (mission.steps.isEmpty) {
       return;
@@ -423,14 +551,15 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: _profile.jointFriendlyMode,
       cameraAngle: MannequinCameraAngle.threeQuarterTactical,
       audioDuckingActive: true,
-      lastAudioCueBanner: 'AUDIO DUCKING -12dB • 3-2-1 GO !',
+      lastAudioCueBanner:
+          'C\'est parti ! Suis l\'animation, tout s\'enchaîne automatiquement',
       selectedRpe: 3,
     );
     HapticFeedback.heavyImpact();
     notifyListeners();
   }
 
-  /// Met la séance en pause sans perdre l'état ni dériver l'horloge monotone.
+  /// Met la séance en pause sans perdre la progression en cours.
   void pauseWorkout() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null || snap.phase != WorkoutExecutionPhase.activeStep) {
@@ -452,7 +581,7 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: snap.jointFriendlyMode,
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: false,
-      lastAudioCueBanner: 'PAUSE TACTIQUE • SPOTIFY 100%',
+      lastAudioCueBanner: 'Séance en pause • Reprends dès que tu es prêt',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
@@ -460,7 +589,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Reprend une séance mise en pause (ou la lance depuis l'écran de briefing).
+  /// Reprend une séance mise en pause (ou la lance depuis l'aperçu).
   void resumeWorkout() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
@@ -486,7 +615,7 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: snap.jointFriendlyMode,
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: true,
-      lastAudioCueBanner: 'REPRISE OPÉRATIONNELLE • GO !',
+      lastAudioCueBanner: 'Reprise de la séance • Garde un rythme fluide !',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
@@ -509,7 +638,7 @@ class MakeFitEngine extends ChangeNotifier {
   }
 
   /// Synchronise la séance avec l'horloge murale (`DateTime.now()`) après un retour
-  /// de mise en arrière-plan OS, en protégeant contre tout recul NTP négatif.
+  /// de mise en arrière-plan OS.
   void syncWithWallClock({DateTime? now}) {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null || snap.phase != WorkoutExecutionPhase.activeStep) {
@@ -525,13 +654,12 @@ class MakeFitEngine extends ChangeNotifier {
     if (elapsedSec > 0) {
       tickWorkout(
         deltaSeconds: math.min(elapsedSec, 600),
-        deltaAnimPhase: (elapsedSec * 0.25) % 1.0,
+        deltaAnimPhase: (elapsedSec * 0.35) % 1.0,
       );
     }
   }
 
-  /// Bouton d'urgence "ADAPTER L'EXERCICE / TROP DUR" en pleine séance :
-  /// bascule immédiatement vers l'échelon biomécanique inférieur (`Tier k - 1`) sans pénalité.
+  /// Adapte immédiatement l'exercice en cours vers une variante plus douce (`Tier k - 1`) sans pénalité.
   void adaptCurrentExerciseDown() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null || snap.phase != WorkoutExecutionPhase.activeStep) {
@@ -548,12 +676,12 @@ class MakeFitEngine extends ChangeNotifier {
     );
     updatedSteps[snap.currentStepIndex] = WorkoutStationStep(
       stage: cur.stage,
-      title: '${cur.title} [ADAPTÉ]',
-      subtitle: 'Régression protectrice -> ${regressed.name}',
+      title: '${cur.title} (Plus doux)',
+      subtitle: 'Variante confort -> ${regressed.name}',
       exercise: regressed,
       durationSeconds: cur.durationSeconds,
       targetReps: adaptedTarget,
-      isTimedWork: cur.isTimedWork,
+      isTimedWork: true,
       roundIndex: cur.roundIndex,
       totalRounds: cur.totalRounds,
     );
@@ -590,7 +718,7 @@ class MakeFitEngine extends ChangeNotifier {
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: true,
       lastAudioCueBanner:
-          'PROTECTION TENDINEUSE : ${regressed.code} ($adaptedTarget REPS)',
+          'Variante plus douce activée : ${regressed.name} (~$adaptedTarget reps)',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
@@ -598,10 +726,13 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Avance l'horloge et l'animation 60 FPS de la séance en cours.
-  /// Supporte à la fois les ticks d'animation pure (`deltaSeconds = 0`) et les ticks temporels (`≥ 1s`).
+  /// Avance automatiquement l'horloge, l'animation 60 FPS et le compteur de répétitions.
+  /// - Si `deltaSeconds == 0` : met à jour uniquement la phase d'animation fluide.
+  /// - Si `deltaSeconds >= 1` : décrémente le chronomètre, fait progresser automatiquement
+  ///   `completedRepsInStep` et `totalValidatedReps` pendant `WorkoutStepStage.mainWork`,
+  ///   et enchaîne automatiquement l'étape suivante dès que `nextRemaining <= 0`.
   void tickWorkout({int deltaSeconds = 1, double deltaAnimPhase = 0.08}) {
-    final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
+    WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null || snap.phase != WorkoutExecutionPhase.activeStep) {
       return;
     }
@@ -634,88 +765,127 @@ class MakeFitEngine extends ChangeNotifier {
 
     _lastWallClockTickAt = DateTime.now();
 
-    final WorkoutStationStep curStep = snap.currentStep;
-    final int nextRemaining = snap.stepRemainingSeconds - safeDelta;
-    final int nextStepElapsed = snap.stepElapsedSeconds + safeDelta;
-    final int nextTotalElapsed = snap.totalElapsedSeconds + safeDelta;
+    int remainingToProcess = safeDelta;
+    bool animApplied = false;
+    int safetyTransitions = 0;
+    final int maxTransitions = snap.mission.steps.length + 2;
 
-    if (nextRemaining <= 0 && curStep.isTimedWork) {
-      // Conservation du temps écoulé réel avant transition vers l'étape suivante
+    while (remainingToProcess > 0 && safetyTransitions <= maxTransitions) {
+      snap = liveWorkoutNotifier.value;
+      if (snap == null || snap.phase != WorkoutExecutionPhase.activeStep) {
+        break;
+      }
+
+      final WorkoutStationStep curStep = snap.currentStep;
+      final int stepRemBefore = math.max(1, snap.stepRemainingSeconds);
+      final int consumed = math.min(remainingToProcess, stepRemBefore);
+      remainingToProcess -= consumed;
+
+      final int nextRemaining = snap.stepRemainingSeconds - consumed;
+      final int nextStepElapsed = snap.stepElapsedSeconds + consumed;
+      final int nextTotalElapsed = snap.totalElapsedSeconds + consumed;
+      final double stepAnim = animApplied
+          ? ((snap.animationCyclePhase + (consumed * 0.35)) % 1.0 + 1.0) % 1.0
+          : nextAnim;
+      animApplied = true;
+
+      // Progression 100 % automatique des répétitions pendant une série d'effort
+      int nextRepsInStep = snap.completedRepsInStep;
+      int nextTotalValidatedReps = snap.totalValidatedReps;
+      if (curStep.stage == WorkoutStepStage.mainWork && curStep.targetReps > 0) {
+        final int stepDur = math.max(1, curStep.durationSeconds);
+        final int effectiveElapsed = nextRemaining <= 0
+            ? stepDur
+            : nextStepElapsed.clamp(0, stepDur);
+        final int autoRepsNow = ((effectiveElapsed * curStep.targetReps) / stepDur)
+            .floor()
+            .clamp(0, curStep.targetReps);
+        if (autoRepsNow > nextRepsInStep) {
+          final int deltaReps = autoRepsNow - nextRepsInStep;
+          nextRepsInStep = autoRepsNow;
+          nextTotalValidatedReps += deltaReps;
+        }
+      }
+
+      // Enchaînement 100 % automatique vers l'étape suivante quelle que soit sa nature
+      if (nextRemaining <= 0) {
+        liveWorkoutNotifier.value = WorkoutLiveSnapshot(
+          mission: snap.mission,
+          phase: snap.phase,
+          currentStepIndex: snap.currentStepIndex,
+          stepRemainingSeconds: 0,
+          stepElapsedSeconds: nextStepElapsed,
+          totalElapsedSeconds: nextTotalElapsed,
+          completedRepsInStep: nextRepsInStep,
+          totalValidatedReps: nextTotalValidatedReps,
+          animationCyclePhase: stepAnim,
+          stealthModeActive: snap.stealthModeActive,
+          jointFriendlyMode: snap.jointFriendlyMode,
+          cameraAngle: snap.cameraAngle,
+          audioDuckingActive: snap.audioDuckingActive,
+          lastAudioCueBanner: snap.lastAudioCueBanner,
+          selectedRpe: snap.selectedRpe,
+          txpBreakdown: snap.txpBreakdown,
+        );
+        safetyTransitions++;
+        advanceToNextWorkoutStep();
+        continue;
+      }
+
+      final bool isCountdown = nextRemaining > 0 && nextRemaining <= 3;
+      final int halfDuration = curStep.durationSeconds ~/ 2;
+      final bool isHalfwaySwitch =
+          halfDuration >= 10 &&
+          snap.stepElapsedSeconds < halfDuration &&
+          nextStepElapsed >= halfDuration &&
+          _isUnilateralMotion(curStep.exercise.motionKind);
+      final bool isBoxBreathingTransition =
+          curStep.stage == WorkoutStepStage.h2fCooldown &&
+          (nextStepElapsed ~/ 4) != (snap.stepElapsedSeconds ~/ 4);
+
+      String nextBanner = snap.lastAudioCueBanner;
+      bool ducking = false;
+      if (isCountdown) {
+        ducking = true;
+        nextBanner = 'Changement d\'étape dans ${nextRemaining}s…';
+        HapticFeedback.lightImpact();
+      } else if (isHalfwaySwitch) {
+        ducking = true;
+        nextBanner = 'Mi-série : change de côté en douceur !';
+        HapticFeedback.mediumImpact();
+      } else if (isBoxBreathingTransition) {
+        ducking = true;
+        final int cycleSec = nextStepElapsed % 16;
+        final BoxBreathingPhase bPhase = cycleSec < 4
+            ? BoxBreathingPhase.inhale
+            : cycleSec < 8
+            ? BoxBreathingPhase.holdFull
+            : cycleSec < 12
+            ? BoxBreathingPhase.exhale
+            : BoxBreathingPhase.holdEmpty;
+        nextBanner = 'Respiration guidée • ${bPhase.instruction}';
+        HapticFeedback.selectionClick();
+      }
+
       liveWorkoutNotifier.value = WorkoutLiveSnapshot(
         mission: snap.mission,
         phase: snap.phase,
         currentStepIndex: snap.currentStepIndex,
-        stepRemainingSeconds: 0,
+        stepRemainingSeconds: math.max(0, nextRemaining),
         stepElapsedSeconds: nextStepElapsed,
         totalElapsedSeconds: nextTotalElapsed,
-        completedRepsInStep: snap.completedRepsInStep,
-        totalValidatedReps: snap.totalValidatedReps,
-        animationCyclePhase: nextAnim,
+        completedRepsInStep: nextRepsInStep,
+        totalValidatedReps: nextTotalValidatedReps,
+        animationCyclePhase: stepAnim,
         stealthModeActive: snap.stealthModeActive,
         jointFriendlyMode: snap.jointFriendlyMode,
         cameraAngle: snap.cameraAngle,
-        audioDuckingActive: snap.audioDuckingActive,
-        lastAudioCueBanner: snap.lastAudioCueBanner,
+        audioDuckingActive: ducking,
+        lastAudioCueBanner: nextBanner,
         selectedRpe: snap.selectedRpe,
         txpBreakdown: snap.txpBreakdown,
       );
-      advanceToNextWorkoutStep();
-      return;
     }
-
-    final bool isCountdown = nextRemaining > 0 && nextRemaining <= 3;
-    final int halfDuration = curStep.durationSeconds ~/ 2;
-    final bool isHalfwaySwitch =
-        halfDuration >= 10 &&
-        snap.stepElapsedSeconds < halfDuration &&
-        nextStepElapsed >= halfDuration &&
-        _isUnilateralMotion(curStep.exercise.motionKind);
-    final bool isBoxBreathingTransition =
-        curStep.stage == WorkoutStepStage.h2fCooldown &&
-        (nextStepElapsed ~/ 4) != (snap.stepElapsedSeconds ~/ 4);
-
-    String nextBanner = snap.lastAudioCueBanner;
-    bool ducking = false;
-    if (isCountdown) {
-      ducking = true;
-      nextBanner = 'AUDIO DUCKING -12dB • BIP ${nextRemaining}S';
-      HapticFeedback.lightImpact();
-    } else if (isHalfwaySwitch) {
-      ducking = true;
-      nextBanner = 'AUDIO DUCKING -12dB • MI-TEMPS : CHANGEZ DE CÔTÉ !';
-      HapticFeedback.mediumImpact();
-    } else if (isBoxBreathingTransition) {
-      ducking = true;
-      final int cycleSec = nextStepElapsed % 16;
-      final BoxBreathingPhase bPhase = cycleSec < 4
-          ? BoxBreathingPhase.inhale
-          : cycleSec < 8
-          ? BoxBreathingPhase.holdFull
-          : cycleSec < 12
-          ? BoxBreathingPhase.exhale
-          : BoxBreathingPhase.holdEmpty;
-      nextBanner = 'H2F BOX BREATHING • ${bPhase.instruction}';
-      HapticFeedback.selectionClick();
-    }
-
-    liveWorkoutNotifier.value = WorkoutLiveSnapshot(
-      mission: snap.mission,
-      phase: snap.phase,
-      currentStepIndex: snap.currentStepIndex,
-      stepRemainingSeconds: math.max(0, nextRemaining),
-      stepElapsedSeconds: nextStepElapsed,
-      totalElapsedSeconds: nextTotalElapsed,
-      completedRepsInStep: snap.completedRepsInStep,
-      totalValidatedReps: snap.totalValidatedReps,
-      animationCyclePhase: nextAnim,
-      stealthModeActive: snap.stealthModeActive,
-      jointFriendlyMode: snap.jointFriendlyMode,
-      cameraAngle: snap.cameraAngle,
-      audioDuckingActive: ducking,
-      lastAudioCueBanner: nextBanner,
-      selectedRpe: snap.selectedRpe,
-      txpBreakdown: snap.txpBreakdown,
-    );
   }
 
   bool _isUnilateralMotion(MannequinMotionKind kind) {
@@ -727,8 +897,7 @@ class MakeFitEngine extends ChangeNotifier {
         kind == MannequinMotionKind.pistolSquat;
   }
 
-  /// Enregistre une répétition via la Zone Sans Contact (Nez/Menton/Proximité)
-  /// avec double filtre anti-rebond `650 ms` (horloge monotone `Stopwatch` + `DateTime.now()`).
+  /// Comptabilise manuellement une répétition supplémentaire avec filtre anti-rebond `650 ms`.
   bool registerContactlessRep({
     bool bypassDebounceForTest = false,
     DateTime? timestampOverride,
@@ -740,7 +909,6 @@ class MakeFitEngine extends ChangeNotifier {
 
     final DateTime now = timestampOverride ?? DateTime.now();
     if (!bypassDebounceForTest) {
-      // 1. Priorité au test d'horodatage explicite ou à l'horloge monotone matérielle
       if (timestampOverride != null && _lastContactlessRepTimestamp != null) {
         final int overrideDeltaMs =
             now.difference(_lastContactlessRepTimestamp!).inMilliseconds;
@@ -750,11 +918,10 @@ class MakeFitEngine extends ChangeNotifier {
       } else if (_contactlessDebounceWatch.isRunning &&
           _contactlessDebounceWatch.elapsedMilliseconds <
               contactlessDebounceMs) {
-        return false; // Filtre anti-rebond biomécanique monotone 650 ms (@Athena)
+        return false;
       } else if (_lastContactlessRepTimestamp != null) {
         final int elapsedMs =
             now.difference(_lastContactlessRepTimestamp!).inMilliseconds;
-        // Protection contre un saut NTP négatif : si elapsedMs < 0, on ne bloque pas indéfiniment
         if (elapsedMs >= 0 && elapsedMs < contactlessDebounceMs) {
           return false;
         }
@@ -785,7 +952,7 @@ class MakeFitEngine extends ChangeNotifier {
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: true,
       lastAudioCueBanner:
-          'REP $nextReps/${snap.currentStep.targetReps} VALIDÉE (DEBOUNCE 650MS OK)',
+          'Répétition $nextReps/${snap.currentStep.targetReps} comptabilisée',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
@@ -797,16 +964,15 @@ class MakeFitEngine extends ChangeNotifier {
     return true;
   }
 
-  /// Valide en 1-Tap toute la série courante (Batch Validation Fallback).
+  /// Passe immédiatement à l'étape suivante en validant l'étape courante.
   void completeCurrentStepBatch() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
       return;
     }
-    final int remainingReps = math.max(
-      0,
-      snap.currentStep.targetReps - snap.completedRepsInStep,
-    );
+    final int remainingReps = snap.currentStep.stage == WorkoutStepStage.mainWork
+        ? math.max(0, snap.currentStep.targetReps - snap.completedRepsInStep)
+        : 0;
     liveWorkoutNotifier.value = WorkoutLiveSnapshot(
       mission: snap.mission,
       phase: snap.phase,
@@ -821,14 +987,14 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: snap.jointFriendlyMode,
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: true,
-      lastAudioCueBanner: 'SÉRIE COMPLÉTÉE • TRANSITION AUDIO DUCKING -12dB',
+      lastAudioCueBanner: 'Étape validée • Passage à la suite',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
     advanceToNextWorkoutStep();
   }
 
-  /// Passe à l'étape suivante ou ouvre la modale de victoire/debriefing.
+  /// Passe automatiquement à l'étape suivante ou ouvre l'écran de félicitations de fin de séance.
   void advanceToNextWorkoutStep() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
@@ -863,7 +1029,7 @@ class MakeFitEngine extends ChangeNotifier {
         jointFriendlyMode: snap.jointFriendlyMode,
         cameraAngle: snap.cameraAngle,
         audioDuckingActive: true,
-        lastAudioCueBanner: 'MISSION ACCOMPLIE • FANFARE TACTIQUE',
+        lastAudioCueBanner: 'Bravo ! Séance terminée avec succès !',
         selectedRpe: snap.selectedRpe,
         txpBreakdown: breakdown,
       );
@@ -888,13 +1054,13 @@ class MakeFitEngine extends ChangeNotifier {
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: true,
       lastAudioCueBanner:
-          'ÉTAPE ${nextIndex + 1}/${snap.mission.steps.length} • ${nextStep.stage.bannerLabel}',
+          'Étape ${nextIndex + 1}/${snap.mission.steps.length} • ${nextStep.stage.bannerLabel}',
       selectedRpe: snap.selectedRpe,
     );
     HapticFeedback.lightImpact();
   }
 
-  /// Change l'angle d'inspection du mannequin anatomique (3/4, Profil, Face).
+  /// Change l'angle de vue du coach animé 3D/2.5D (3/4, Profil, Face).
   void cycleMannequinCameraAngle() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
@@ -917,13 +1083,13 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: snap.jointFriendlyMode,
       cameraAngle: nextAngle,
       audioDuckingActive: snap.audioDuckingActive,
-      lastAudioCueBanner: 'CAMÉRA MANNEQUIN : ${nextAngle.label.toUpperCase()}',
+      lastAudioCueBanner: 'Angle de vue : ${nextAngle.label}',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
   }
 
-  /// Ajoute +15 secondes de repos tactique si l'utilisateur est essoufflé.
+  /// Ajoute +15 secondes de récupération si l'utilisateur souhaite souffler un peu plus.
   void addRestSeconds(int extraSeconds) {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
@@ -944,13 +1110,13 @@ class MakeFitEngine extends ChangeNotifier {
       jointFriendlyMode: snap.jointFriendlyMode,
       cameraAngle: snap.cameraAngle,
       audioDuckingActive: snap.audioDuckingActive,
-      lastAudioCueBanner: '+${safeExtra}S REPOS TACTIQUE ACCORDÉ',
+      lastAudioCueBanner: '+${safeExtra}s de récupération ajoutées',
       selectedRpe: snap.selectedRpe,
       txpBreakdown: snap.txpBreakdown,
     );
   }
 
-  /// Met à jour le score RPE (1 à 5) sur l'écran de Debriefing et recalcule les TXP.
+  /// Met à jour le ressenti d'effort (1 à 5) en fin de séance et recalcule les points gagnés.
   void selectDebriefRpe(int rpeScore) {
     final int clamped = rpeScore.clamp(1, 5);
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
@@ -984,7 +1150,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Formule mathématique exacte des TXP (@Athena ORB-83).
+  /// Calcule les points d'expérience et de motivation gagnés en fin de séance.
   TxpBreakdown computeTxpBreakdown({
     required TacticalMission mission,
     required int totalValidatedReps,
@@ -994,13 +1160,13 @@ class MakeFitEngine extends ChangeNotifier {
     final int baseTxp =
         (mission.isRecoveryDay ||
             mission.format == WorkoutFormatType.flashPt5Min)
-        ? 60
+        ? 80
         : 100;
     final double tierCoeff = mission.recommendedTier.txpCoefficient;
     final int volumeTxp = (math.max(0, totalValidatedReps) * 2 * tierCoeff)
         .round();
-    final int durationTxp = math.max(1, mission.durationMinutes) * 10;
-    const int rampH2fBonusTxp = 100; // 35 RAMP + 35 H2F + 30 Combo Santé
+    final int durationTxp = math.max(6, mission.durationMinutes) * 10;
+    const int rampH2fBonusTxp = 100; // Échauffement + Retour au calme complets
 
     final int nextStreak = _profile.currentStreakDays + 1;
     final double streakMultiplier = nextStreak >= 28
@@ -1031,14 +1197,15 @@ class MakeFitEngine extends ChangeNotifier {
 
     final String adjustmentNote = switch (clampedRpe) {
       1 =>
-        'RPE 1 (Recon) : Volume J+1 +15% (+2 reps/série) & échelon supérieur prêt',
-      2 => 'RPE 2 (Patrouille) : Volume J+1 +10% (+1 rep/série)',
+        'Séance très facile : +2 répétitions par série prévues demain pour progresser en douceur.',
+      2 =>
+        'Bon confort : +1 répétition par série demain pour continuer sur cette belle lancée.',
       3 =>
-        'RPE 3 (Standard Opérationnel) : Progression nominale H2F (+5% / +1 rep)',
+        'Rythme idéal : progression régulière et équilibrée maintenue pour demain.',
       4 =>
-        'RPE 4 (Combat Intense) : Consolidation tendineuse (volume maintenu, +5s repos)',
+        'Belle séance soutenue : on consolide ce niveau demain avec un repos confortable.',
       _ =>
-        'RPE 5 (Surchauffe) : Tactical Deload automatique (-20% volume J+1 & Mobilité H2F)',
+        'Séance intense : demain, séance plus douce (-20 %) pour ménager tes articulations.',
     };
 
     final int projectedTotalTxp = _profile.totalTxp + totalTxp;
@@ -1069,7 +1236,7 @@ class MakeFitEngine extends ChangeNotifier {
     );
   }
 
-  /// Résout le grade militaire atteint selon les TXP cumulés et les Examens PT validés (XP Banking inclus).
+  /// Résout le niveau atteint selon les XP cumulés et les défis validés.
   static MilitaryRank resolveRankForTxp({
     required int totalTxp,
     required Set<MilitaryRank> passedTrials,
@@ -1080,7 +1247,7 @@ class MakeFitEngine extends ChangeNotifier {
         break;
       }
       if (candidate.requiresTrial && !passedTrials.contains(candidate)) {
-        break; // XP Banking : les TXP continuent de s'accumuler sans perte
+        break;
       }
       current = candidate;
     }
@@ -1097,8 +1264,8 @@ class MakeFitEngine extends ChangeNotifier {
     };
   }
 
-  /// Valide définitivement le Debriefing de séance, applique l'auto-régulation RPE,
-  /// met à jour l'équilibre postural Push/Pull réel et gère le Streak Résilient.
+  /// Valide la séance terminée, ajuste en douceur la séance du lendemain selon le ressenti,
+  /// met à jour le temps total d'entraînement, la série de jours et le calendrier 28 jours.
   void confirmMissionDebriefAndClaimLoot() {
     final WorkoutLiveSnapshot? snap = liveWorkoutNotifier.value;
     if (snap == null) {
@@ -1113,7 +1280,6 @@ class MakeFitEngine extends ChangeNotifier {
           rpeScore: rpe,
         );
 
-    // 1. Adaptation automatique des quotas & échelons par l'algorithme RPE (@Spartan §4.2)
     final double gamma = switch (rpe) {
       1 => 0.15,
       2 => 0.10,
@@ -1136,10 +1302,9 @@ class MakeFitEngine extends ChangeNotifier {
 
     _profile.familyRepQuotas.forEach((BiomechanicalFamily fam, int currentRep) {
       final DifficultyTier curTier =
-          updatedTiers[fam] ?? DifficultyTier.tier2Soldier;
+          updatedTiers[fam] ?? DifficultyTier.tier1Recruit;
       int adapted = (currentRep * (1.0 + gamma) + delta).round().clamp(5, 40);
 
-      // Promotion automatique d'échelon si standard de maîtrise atteint à RPE <= 3
       final int masteryCeiling = _masteryRepThresholdForTier(curTier);
       if (!snap.mission.isRecoveryDay &&
           curTier.index < DifficultyTier.values.length - 1 &&
@@ -1150,7 +1315,6 @@ class MakeFitEngine extends ChangeNotifier {
       } else if (rpe == 5 &&
           _profile.lastRpeScore == 5 &&
           curTier.index > 0) {
-        // Régression protectrice en cas de double surchauffe consécutive (RPE 5 × 2)
         final DifficultyTier prevTier = DifficultyTier.values[curTier.index - 1];
         updatedTiers[fam] = prevTier;
         adapted = (_masteryRepThresholdForTier(prevTier) * 0.75)
@@ -1161,14 +1325,12 @@ class MakeFitEngine extends ChangeNotifier {
       updatedQuotas[fam] = adapted;
     });
 
-    // Conservation stricte d'un plancher de tirage scapulaire face à la poussée
-    final int nextPushQuota = updatedQuotas[BiomechanicalFamily.upperPush] ?? 15;
-    final int nextPullQuota = updatedQuotas[BiomechanicalFamily.noBarPull] ?? 15;
+    final int nextPushQuota = updatedQuotas[BiomechanicalFamily.upperPush] ?? 12;
+    final int nextPullQuota = updatedQuotas[BiomechanicalFamily.noBarPull] ?? 12;
     if (_profile.posturalBalanceRatio < 0.85 && nextPullQuota < nextPushQuota) {
       updatedQuotas[BiomechanicalFamily.noBarPull] = nextPushQuota;
     }
 
-    // 2. Comptabilisation réelle des volumes hebdomadaires par famille biomécanique
     final Map<BiomechanicalFamily, int> sessionVolumes =
         <BiomechanicalFamily, int>{
           for (final BiomechanicalFamily f in BiomechanicalFamily.values) f: 0,
@@ -1185,10 +1347,9 @@ class MakeFitEngine extends ChangeNotifier {
     for (final BiomechanicalFamily fam in BiomechanicalFamily.values) {
       final int gained = sessionVolumes[fam] ?? 0;
       updatedVolumes[fam] =
-          (updatedVolumes[fam] ?? 0) + (gained > 0 ? gained : 12);
+          (updatedVolumes[fam] ?? 0) + (gained > 0 ? gained : 10);
     }
 
-    // 3. Streak Résilient & Jetons de Permission Tactique (1 Dog Tag / 7 séances, max 2)
     final int nextCompletedSessions = _profile.completedSessionsCount + 1;
     final int nextStreak = _profile.currentStreakDays + 1;
     final int nextBestStreak = math.max(_profile.bestStreakDays, nextStreak);
@@ -1199,7 +1360,7 @@ class MakeFitEngine extends ChangeNotifier {
       if (nextPasses < 2) {
         nextPasses += 1;
       } else {
-        extraConstancyTxp = 250; // Surplus converti en +250 TXP (@Athena)
+        extraConstancyTxp = 250;
       }
     }
 
@@ -1244,6 +1405,8 @@ class MakeFitEngine extends ChangeNotifier {
       lastRpeScore: rpe,
       currentCampaignDay: (_profile.currentCampaignDay % 28) + 1,
       activityHeatmap28Days: nextHeatmap,
+      totalMinutesTrained:
+          _profile.totalMinutesTrained + snap.mission.durationMinutes,
     );
 
     _monotonicSessionWatch
@@ -1260,7 +1423,7 @@ class MakeFitEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Ferme la modale d'entraînement sans perdre la progression existante.
+  /// Ferme le lecteur de séance sans modifier l'historique existant.
   void closeWorkoutModal() {
     _monotonicSessionWatch
       ..stop()

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/makefit_models.dart';
 
-/// Palette Tactique OLED MakeFit (`v1.0.0` — Skill `mobile-game-ui v1.2.0`).
+/// Palette Visuelle MakeFit 40+ (`v1.1.0` — Skill `mobile-game-ui v1.2.0`).
+/// Contraste élevé, lisibilité immédiate et ergonomie tactile confortable.
 class MakeFitTheme {
   const MakeFitTheme._();
 
@@ -23,7 +24,7 @@ class MakeFitTheme {
   static const Color textSecondary = Color(0xFF94A3B8);
 }
 
-/// Bouton 3D Tactique à Squash & Stretch immédiat (`scale: 0.94` sur `Listener.onPointerDown`,
+/// Bouton 3D Tactile à Squash & Stretch immédiat (`scale: 0.94` sur `Listener.onPointerDown`,
 /// rebond `Curves.elasticOut`, bordure 3D inférieure `5dp`, `HapticFeedback`).
 class JuicyTactical3DButton extends StatefulWidget {
   const JuicyTactical3DButton({
@@ -119,10 +120,10 @@ class _JuicyTactical3DButtonState extends State<JuicyTactical3DButton> {
               duration: const Duration(milliseconds: 75),
               curve: Curves.easeOutCubic,
               transform: Matrix4.translationValues(0, translateY, 0),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: bg,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.18),
                   width: 1.0,
@@ -141,37 +142,41 @@ class _JuicyTactical3DButtonState extends State<JuicyTactical3DButton> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   if (widget.icon != null) ...<Widget>[
-                    Icon(widget.icon, color: fg, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(widget.icon, color: fg, size: 18),
+                    const SizedBox(width: 6),
                   ],
                   Flexible(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          widget.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: fg,
-                            fontWeight: FontWeight.w900,
-                            fontSize: widget.fontSize,
-                            letterSpacing: 0.6,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            widget.label,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: fg,
+                              fontWeight: FontWeight.w900,
+                              fontSize: widget.fontSize,
+                              letterSpacing: 0.3,
+                            ),
                           ),
                         ),
                         if (widget.subtitle != null) ...<Widget>[
                           const SizedBox(height: 2),
-                          Text(
-                            widget.subtitle!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: fg.withValues(alpha: 0.82),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 10.5,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              widget.subtitle!,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: fg.withValues(alpha: 0.84),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10.5,
+                              ),
                             ),
                           ),
                         ],
@@ -193,14 +198,14 @@ class _JuicyTactical3DButtonState extends State<JuicyTactical3DButton> {
   }
 }
 
-/// Compteur de TXP interpolé via `TweenAnimationBuilder<double>` (`Curves.easeOutCubic`)
+/// Compteur de points d'expérience interpolé via `TweenAnimationBuilder<double>` (`Curves.easeOutCubic`)
 /// isolé dans un `RepaintBoundary` pour préserver le 60/120 FPS sans rebuild global.
 class InterpolatedTxpCounter extends StatelessWidget {
   const InterpolatedTxpCounter({
     super.key,
     required this.txpValue,
     this.prefix = '',
-    this.suffix = ' TXP',
+    this.suffix = ' XP',
     this.style,
     this.duration = const Duration(milliseconds: 650),
   });
@@ -223,7 +228,10 @@ class InterpolatedTxpCounter extends StatelessWidget {
 
     return RepaintBoundary(
       child: TweenAnimationBuilder<double>(
-        tween: Tween<double>(begin: txpValue.toDouble(), end: txpValue.toDouble()),
+        tween: Tween<double>(
+          begin: txpValue.toDouble(),
+          end: txpValue.toDouble(),
+        ),
         duration: duration,
         curve: Curves.easeOutCubic,
         builder: (BuildContext context, double animatedValue, Widget? _) {
@@ -238,14 +246,14 @@ class InterpolatedTxpCounter extends StatelessWidget {
   }
 }
 
-/// Anneau lumineux animé `4s Inspire • 4s Plein • 4s Expire • 4s Vide`
-/// pour la phase `WorkoutStepStage.h2fCooldown` (Box Breathing Navy SEAL).
+/// Anneau lumineux animé `4s Inspire • 4s Garde • 4s Expire • 4s Relâche`
+/// pour la phase de retour au calme (`WorkoutStepStage.h2fCooldown`).
 class BoxBreathingRing extends StatelessWidget {
   const BoxBreathingRing({
     super.key,
     required this.phase,
     required this.stepElapsedSeconds,
-    this.size = 148,
+    this.size = 136,
   });
 
   final BoxBreathingPhase phase;
@@ -256,10 +264,10 @@ class BoxBreathingRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final int secondInPhase = (stepElapsedSeconds % 4) + 1;
     final double targetScale = switch (phase) {
-      BoxBreathingPhase.inhale => 0.82 + (secondInPhase / 4.0) * 0.22,
+      BoxBreathingPhase.inhale => 0.84 + (secondInPhase / 4.0) * 0.20,
       BoxBreathingPhase.holdFull => 1.04,
-      BoxBreathingPhase.exhale => 1.04 - (secondInPhase / 4.0) * 0.22,
-      BoxBreathingPhase.holdEmpty => 0.82,
+      BoxBreathingPhase.exhale => 1.04 - (secondInPhase / 4.0) * 0.20,
+      BoxBreathingPhase.holdEmpty => 0.84,
     };
 
     return RepaintBoundary(
@@ -283,20 +291,20 @@ class BoxBreathingRing extends StatelessWidget {
                 const SizedBox(width: 6),
                 const Flexible(
                   child: Text(
-                    'BOX BREATHING NAVY SEAL (4-4-4-4)',
+                    'RESPIRATION GUIDÉE DE RÉCUPÉRATION (4-4-4-4)',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: MakeFitTheme.textPrimary,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                      letterSpacing: 0.8,
+                      fontSize: 11.5,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             SizedBox(
               width: size,
               height: size,
@@ -318,13 +326,13 @@ class BoxBreathingRing extends StatelessWidget {
                         ),
                         border: Border.all(
                           color: phase.color,
-                          width: 4,
+                          width: 3.5,
                         ),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                            color: phase.color.withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            spreadRadius: 2,
+                            color: phase.color.withValues(alpha: 0.30),
+                            blurRadius: 14,
+                            spreadRadius: 1,
                           ),
                         ],
                       ),
@@ -337,11 +345,11 @@ class BoxBreathingRing extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      '${secondInPhase}S / 4S',
+                      '${secondInPhase}s / 4s',
                       style: TextStyle(
                         color: phase.color,
                         fontWeight: FontWeight.w900,
-                        fontSize: 24,
+                        fontSize: 22,
                         fontFeatures: const <FontFeature>[
                           FontFeature.tabularFigures(),
                         ],
@@ -358,7 +366,7 @@ class BoxBreathingRing extends StatelessWidget {
                         style: const TextStyle(
                           color: MakeFitTheme.textPrimary,
                           fontWeight: FontWeight.w800,
-                          fontSize: 10.5,
+                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -366,9 +374,9 @@ class BoxBreathingRing extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             const Text(
-              '4s Inspire • 4s Plein • 4s Expire • 4s Vide',
+              '4s Inspire • 4s Garde • 4s Expire • 4s Relâche',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: MakeFitTheme.textSecondary,
@@ -383,8 +391,8 @@ class BoxBreathingRing extends StatelessWidget {
   }
 }
 
-/// Sélecteur 1-Tap des 5 niveaux RPE (`1 Recon` à `5 Surchauffe`) avec code couleur
-/// sémantique et bonus d'honnêteté `+15 / +25 TXP`.
+/// Sélecteur simple 1-Tap du ressenti de séance (1 à 5) pour ajuster en douceur
+/// les prochaines séances.
 class RpeSelectorBar extends StatelessWidget {
   const RpeSelectorBar({
     super.key,
@@ -398,37 +406,32 @@ class RpeSelectorBar extends StatelessWidget {
   static const List<_RpeOptionSpec> _options = <_RpeOptionSpec>[
     _RpeOptionSpec(
       score: 1,
-      shortTitle: '1 Recon',
-      detail: 'Très facile (≥5 RIR)',
-      bonusLabel: '+15 TXP',
+      shortTitle: 'Très facile',
+      detail: 'En pleine forme',
       color: MakeFitTheme.emeraldH2f,
     ),
     _RpeOptionSpec(
       score: 2,
-      shortTitle: '2 Patrouille',
-      detail: 'Fluide (3-4 RIR)',
-      bonusLabel: '+15 TXP',
+      shortTitle: 'Facile',
+      detail: 'Agréable',
       color: MakeFitTheme.cyanRadar,
     ),
     _RpeOptionSpec(
       score: 3,
-      shortTitle: '3 Standard',
-      detail: 'Optimal H2F (2 RIR)',
-      bonusLabel: '+25 TXP',
+      shortTitle: 'Idéal',
+      detail: 'Bon rythme',
       color: MakeFitTheme.amberTactical,
     ),
     _RpeOptionSpec(
       score: 4,
-      shortTitle: '4 Combat',
-      detail: 'Intense (0-1 RIR)',
-      bonusLabel: '+25 TXP',
+      shortTitle: 'Intense',
+      detail: 'Solide effort',
       color: Color(0xFFF97316),
     ),
     _RpeOptionSpec(
       score: 5,
-      shortTitle: '5 Surchauffe',
-      detail: 'Deload J+1 (-20%)',
-      bonusLabel: '+25 TXP',
+      shortTitle: 'Très dur',
+      detail: 'Adapter demain',
       color: MakeFitTheme.coralAlert,
     ),
   ];
@@ -439,15 +442,23 @@ class RpeSelectorBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'CALIBRATION AUTO-RÉGULATION RPE (1-TAP)',
+          'COMMENT T\'ES-TU SENTI PENDANT CETTE SÉANCE ?',
           style: TextStyle(
             color: MakeFitTheme.textPrimary,
             fontWeight: FontWeight.w900,
             fontSize: 12.5,
-            letterSpacing: 0.7,
+            letterSpacing: 0.4,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
+        const Text(
+          'Ton ressenti adapte automatiquement le rythme de ta séance de demain.',
+          style: TextStyle(
+            color: MakeFitTheme.textSecondary,
+            fontSize: 11.5,
+          ),
+        ),
+        const SizedBox(height: 10),
         Row(
           children: _options.map((_RpeOptionSpec opt) {
             final bool isSelected = opt.score == selectedRpe;
@@ -466,7 +477,7 @@ class RpeSelectorBar extends StatelessWidget {
                     curve: Curves.easeOutBack,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
-                      constraints: const BoxConstraints(minHeight: 74),
+                      constraints: const BoxConstraints(minHeight: 72),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,
                         vertical: 8,
@@ -475,7 +486,7 @@ class RpeSelectorBar extends StatelessWidget {
                         color: isSelected
                             ? opt.color.withValues(alpha: 0.24)
                             : MakeFitTheme.slateSurface,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
                               ? opt.color
@@ -487,14 +498,14 @@ class RpeSelectorBar extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            'RPE ${opt.score}',
+                            '${opt.score}/5',
                             style: TextStyle(
                               color: opt.color,
                               fontWeight: FontWeight.w900,
-                              fontSize: 12,
+                              fontSize: 13,
                             ),
                           ),
-                          const SizedBox(height: 3),
+                          const SizedBox(height: 4),
                           Text(
                             opt.shortTitle,
                             maxLines: 1,
@@ -506,23 +517,16 @@ class RpeSelectorBar extends StatelessWidget {
                               fontSize: 10,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: opt.color.withValues(alpha: 0.20),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              opt.bonusLabel,
-                              style: TextStyle(
-                                color: opt.color,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 9,
-                              ),
+                          const SizedBox(height: 2),
+                          Text(
+                            opt.detail,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: MakeFitTheme.textSecondary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 9,
                             ),
                           ),
                         ],
@@ -544,13 +548,11 @@ class _RpeOptionSpec {
     required this.score,
     required this.shortTitle,
     required this.detail,
-    required this.bonusLabel,
     required this.color,
   });
 
   final int score;
   final String shortTitle;
   final String detail;
-  final String bonusLabel;
   final Color color;
 }

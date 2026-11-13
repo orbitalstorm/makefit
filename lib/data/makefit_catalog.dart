@@ -1,18 +1,21 @@
 import 'dart:math' as math;
 import '../models/makefit_models.dart';
 
-/// Catalogue scientifique complet MakeFit (25 Exercices 100 % Sans Matériel,
-/// Protocoles RAMP/H2F, 4 Campagnes de 28 Jours, 5 Formats Rapides & 4 Examens PT).
+/// Catalogue complet MakeFit 40+ (`v1.1.0`) :
+/// - 25 exercices au poids du corps 100 % sans matériel (5 familles × 5 niveaux),
+/// - Séances quotidiennes guidées de **10 minutes maximum** (`6 min`, `8 min` ou `10 min`),
+/// - Enchaînement 100 % automatique Chronomètre + Séries + Récupérations Actives (`isTimedWork: true`),
+/// - Langage clair, adulte, bienveillant et motivant pensé pour la remise en forme à 40 ans+.
 class MakeFitCatalog {
   const MakeFitCatalog._();
 
-  /// Les 25 exercices fondamentaux (5 Familles × 5 Échelons).
+  /// Les 25 exercices fondamentaux sans matériel (5 Familles × 5 Échelons).
   static const List<TacticalExercise> allExercises = <TacticalExercise>[
-    // 1. UPPER PUSH (T1 -> T5)
+    // 1. BUSTE, ÉPAULES & BRAS (UPPER PUSH : T1 -> T5)
     TacticalExercise(
       id: 'ex_push_t1',
       code: 'EX_PUSH_T1',
-      name: 'Incline / Knee Tactical Push-up',
+      name: 'Pompes Inclinées Douces',
       family: BiomechanicalFamily.upperPush,
       tier: DifficultyTier.tier1Recruit,
       motionKind: MannequinMotionKind.pushupIncline,
@@ -24,28 +27,32 @@ class MakeFitCatalog {
         MuscleGroup.anteriorDeltoid,
         MuscleGroup.rectusAbdominis,
       ],
-      tempo: '3-1-1-0',
-      defaultTargetReps: 12,
+      tempo: 'Fluide 3-1-1',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['COUDES À 45°', 'BASSIN VERROUILLÉ', 'POITRINE AU SUPPORT'],
-      biomechanicalInstructions: <String>[
-        'Placer les mains largeur d\'épaules sur rebord stable ou genoux au sol avec bassin en rétroversion.',
-        'Visser les paumes pour abaisser les épaules loin des oreilles.',
-        'Descendre en 3s coudes à 45° puis repousser avec protraction scapulaire.',
+      hudCues: <String>[
+        'COUDES À 45°',
+        'CORPS BIEN GAINÉ',
+        'EXPIRE EN POUSSANT',
       ],
-      commonMistake: 'Cambrure lombaire ou coudes ouverts à 90° en T.',
-      stealthVariantName: 'Incline Tactical Push-up (0 dB)',
-      stealthVariantDescription: 'Mouvement intrinsèquement silencieux au tempo 3-1-1-0.',
-      wristKneeVariantName: 'Wall / Knuckle Incline Push-up',
-      wristKneeVariantDescription: 'Mains contre un mur debout ou sur les poings neutres.',
-      masteryStandardLabel: '3 × 15 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Pose les mains largeur d\'épaules sur un support stable (rebord, table basse) ou genoux au sol.',
+        'Garde les épaules basses loin des oreilles et les abdos engagés.',
+        'Descends en contrôle puis repousse avec fluidité en expirant.',
+      ],
+      commonMistake: 'Creuser le bas du dos ou écarter les coudes à 90°.',
+      stealthVariantName: 'Pompes Inclinées Silencieuses',
+      stealthVariantDescription: 'Mouvement fluide et silencieux sans aucun impact.',
+      wristKneeVariantName: 'Pompes au Mur / Poings Neutres',
+      wristKneeVariantDescription: 'Appui debout contre un mur ou sur les poings pour ménager les poignets.',
+      masteryStandardLabel: '3 séries de 12 répétitions fluides',
     ),
     TacticalExercise(
       id: 'ex_push_t2',
       code: 'EX_PUSH_T2',
-      name: 'Military Strict Push-up (FM 7-22)',
+      name: 'Pompes Classiques Toniques',
       family: BiomechanicalFamily.upperPush,
       tier: DifficultyTier.tier2Soldier,
       motionKind: MannequinMotionKind.pushupStrict,
@@ -58,28 +65,32 @@ class MakeFitCatalog {
         MuscleGroup.rectusAbdominis,
         MuscleGroup.glutes,
       ],
-      tempo: '2-1-1-0',
-      defaultTargetReps: 15,
+      tempo: 'Tonique 2-1-1',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['CORPS EN PLANCHE', 'COUDES À 45°', 'EXTENSION COMPLÈTE'],
-      biomechanicalInstructions: <String>[
-        'Planche haute stricte, pieds joints ou largeur de hanches, fessiers et quadriceps contractés.',
-        'Fléchir les coudes à 45° jusqu\'à 2 cm du sol, regard à 50 cm devant les mains.',
-        'Repousser explosivement jusqu\'au verrouillage complet des coudes.',
+      hudCues: <String>[
+        'DOS BIEN DROIT',
+        'COUDES À 45°',
+        'POUSSÉE COMPLÈTE',
       ],
-      commonMistake: 'Ondulation lombaire (worming) ou tête qui plonge vers le sol.',
-      stealthVariantName: 'Military Strict Push-up (0 dB)',
-      stealthVariantDescription: 'Exécution contrôlée zéro impact sonore.',
-      wristKneeVariantName: 'Neutral Knuckle Military Push-up',
-      wristKneeVariantDescription: 'Sur les poings fermés (poignets droits alignés avec le radius).',
-      masteryStandardLabel: '3 × 20 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'En planche haute, pieds largeur de hanches, fessiers et abdos serrés.',
+        'Fléchis les coudes à 45° en gardant la nuque alignée avec le dos.',
+        'Repousse le sol avec énergie jusqu\'à tendre les bras sans brusquer les coudes.',
+      ],
+      commonMistake: 'Laisser le bassin descendre avant la poitrine.',
+      stealthVariantName: 'Pompes Classiques Contrôlées',
+      stealthVariantDescription: 'Exécution régulière sans bruit d\'impact.',
+      wristKneeVariantName: 'Pompes sur les Poings (Poignets Droits)',
+      wristKneeVariantDescription: 'Appui sur les poings fermés pour garder les poignets dans l\'axe.',
+      masteryStandardLabel: '3 séries de 15 répétitions propres',
     ),
     TacticalExercise(
       id: 'ex_push_t3',
       code: 'EX_PUSH_T3',
-      name: 'Diamond & Pike Push-up',
+      name: 'Pompes Épaules & Triceps (Pike)',
       family: BiomechanicalFamily.upperPush,
       tier: DifficultyTier.tier3Nco,
       motionKind: MannequinMotionKind.pushupPike,
@@ -92,28 +103,32 @@ class MakeFitCatalog {
         MuscleGroup.pectorals,
         MuscleGroup.rhomboidsTraps,
       ],
-      tempo: '2-1-1-1',
-      defaultTargetReps: 12,
+      tempo: 'Contrôlé 2-1-1',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['TRIANGLE TÊTE-MAINS', 'COUDES SERRÉS', 'POUSSÉE VERTICALE'],
-      biomechanicalInstructions: <String>[
-        'En Pike : bassin fléchi en V inversé (~90°), talons hauts.',
-        'Descendre le sommet du crâne en avant des mains pour former un triangle équilatéral.',
-        'Repousser dans l\'axe vertical avec élévation scapulaire active en haut.',
+      hudCues: <String>[
+        'BASSIN HAUT EN V',
+        'COUDES PRÈS DU CORPS',
+        'CONTRÔLE LA DESCENTE',
       ],
-      commonMistake: 'Descendre la tête entre les mains au lieu de devant les mains.',
-      stealthVariantName: 'Strict Tempo Pike Push-up',
-      stealthVariantDescription: 'Contrôle excentrique 3s sans rebond.',
-      wristKneeVariantName: 'Close-Grip Neutral Fist Push-up',
-      wristKneeVariantDescription: 'Largeur bi-acromiale sur les poings pour supprimer la déviation ulnaire.',
-      masteryStandardLabel: '3 × 15 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Monte les hanches en V inversé, talons légèrement décollés.',
+        'Descends le haut de la tête légèrement en avant des mains en gardant les coudes serrés.',
+        'Repousse dans l\'axe des épaules en soufflant.',
+      ],
+      commonMistake: 'Descendre la tête entre les mains en écartant trop les coudes.',
+      stealthVariantName: 'Pompes Épaules Tempo Doux',
+      stealthVariantDescription: 'Descente retenue sur 3 secondes sans à-coup.',
+      wristKneeVariantName: 'Pompes Prise Serrée Poings Neutres',
+      wristKneeVariantDescription: 'Mains largeur d\'épaules sur les poings pour protéger les poignets.',
+      masteryStandardLabel: '3 séries de 12 répétitions',
     ),
     TacticalExercise(
       id: 'ex_push_t4',
       code: 'EX_PUSH_T4',
-      name: 'Archer & Pseudo-Planche Push-up',
+      name: 'Pompes Latérales Alternées',
       family: BiomechanicalFamily.upperPush,
       tier: DifficultyTier.tier4Officer,
       motionKind: MannequinMotionKind.pushupArcher,
@@ -126,28 +141,32 @@ class MakeFitCatalog {
         MuscleGroup.bicepsForearms,
         MuscleGroup.obliques,
       ],
-      tempo: '3-1-1-1',
+      tempo: 'Précis 3-1-1',
       defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['BRAS D\'APPUI 75%', 'BRAS GUIDE TENDU', 'ÉPAULES EN AVANT'],
-      biomechanicalInstructions: <String>[
-        'Mains écartées à 1.5× la largeur d\'épaules, doigts orientés à 45°.',
-        'Fléchir un bras en portant 75 % de la masse corporelle dessus, l\'autre bras tendu en stabilisateur.',
-        'Alterner droite et gauche en maintenant le bassin parfaitement parallèle au sol.',
+      hudCues: <String>[
+        'APPUI D\'UN CÔTÉ',
+        'BRAS GUIDE TENDU',
+        'BASSIN BIEN STABLE',
       ],
-      commonMistake: 'Rotation du bassin vers le bras tendu.',
-      stealthVariantName: 'Archer Tempo Push-up (3-2-1-0)',
-      stealthVariantDescription: 'Remplace toute pompe claquée pliométrique par une tension mécanique pure.',
-      wristKneeVariantName: 'Externally Rotated Pseudo-Planche (90°)',
-      wristKneeVariantDescription: 'Doigts tournés sur les côtés pour supprimer le pincement dorsal du carpe.',
-      masteryStandardLabel: '3 × 12 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Écarte les mains à 1,5 fois la largeur d\'épaules, doigts légèrement ouverts.',
+        'Fléchis un bras en portant le buste vers lui tandis que l\'autre bras reste tendu en appui.',
+        'Alterne droite et gauche en gardant les hanches parallèles au sol.',
+      ],
+      commonMistake: 'Tourner le bassin vers le bras tendu.',
+      stealthVariantName: 'Pompes Latérales Tempo Lent',
+      stealthVariantDescription: 'Renforcement intense de la poitrine sans saut ni impact.',
+      wristKneeVariantName: 'Pompes Larges Mains Ouvertes 45°',
+      wristKneeVariantDescription: 'Orientation confortable des mains réduisant la tension des poignets.',
+      masteryStandardLabel: '3 séries de 10 répétitions alternées',
     ),
     TacticalExercise(
       id: 'ex_push_t5',
       code: 'EX_PUSH_T5',
-      name: 'Strict One-Arm / Wall HSPU',
+      name: 'Pompes Unilatérales Gainées',
       family: BiomechanicalFamily.upperPush,
       tier: DifficultyTier.tier5SpecOps,
       motionKind: MannequinMotionKind.pushupOneArm,
@@ -160,30 +179,34 @@ class MakeFitCatalog {
         MuscleGroup.obliques,
         MuscleGroup.glutes,
       ],
-      tempo: '3-1-1-0',
+      tempo: 'Maîtrisé 3-1-1',
       defaultTargetReps: 6,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['ÉPAULES PARALLÈLES', 'GAINAGE MAXIMAL', 'VERROUILLAGE HAUT'],
-      biomechanicalInstructions: <String>[
-        'Pieds écartés à 1.2× largeur d\'épaules, main d\'appui sous le sternum, main libre dans le bas du dos.',
-        'Maintenir les deux épaules strictement parallèles au sol (0° de vrille thoracique).',
-        'Descendre poitrine au sol en 3s puis repousser jusqu\'au verrouillage complet.',
+      hudCues: <String>[
+        'PIEDS BIEN ÉCARTÉS',
+        'ÉPAULES PARALLÈLES',
+        'GAINAGE MAXIMAL',
       ],
-      commonMistake: 'Vriller le buste à 45° et ouvrir le coude à 90°.',
-      stealthVariantName: 'Silent One-Arm Push-up / Wall Walk HSPU',
-      stealthVariantDescription: 'Montée et descente contrôlées sans impact contre le mur ou le sol.',
-      wristKneeVariantName: 'Neutral Fist One-Arm / Pause Archer (3s)',
-      wristKneeVariantDescription: 'Sur le poing neutre pour protéger le complexe fibro-cartilagineux (TFCC).',
-      masteryStandardLabel: '3 × 6 reps/côté (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Écarte les pieds pour stabiliser le bassin, main d\'appui sous la poitrine, main libre au bas du dos.',
+        'Garde les deux épaules parallèles au sol pendant toute la descente.',
+        'Remonte avec puissance en verrouillant les abdos et les fessiers.',
+      ],
+      commonMistake: 'Vriller le buste sur le côté en remontant.',
+      stealthVariantName: 'Pompes Unilatérales Silencieuses',
+      stealthVariantDescription: 'Force pure et contrôle complet sans bruit.',
+      wristKneeVariantName: 'Pompes Assistées 1 Bras sur Poing',
+      wristKneeVariantDescription: 'Poignet aligné sur le poing neutre pour protéger l\'articulation.',
+      masteryStandardLabel: '3 séries de 6 répétitions par côté',
     ),
 
-    // 2. NO-BAR PULL & SCAPULA (T1 -> T5)
+    // 2. DOS, OMOPLATES & POSTURE (NO-BAR PULL : T1 -> T5)
     TacticalExercise(
       id: 'ex_pull_t1',
       code: 'EX_PULL_T1',
-      name: 'Prone Cobra Hold & Scapular Pinch',
+      name: 'Extension Dorsale Douce (Cobra)',
       family: BiomechanicalFamily.noBarPull,
       tier: DifficultyTier.tier1Recruit,
       motionKind: MannequinMotionKind.proneCobra,
@@ -195,28 +218,32 @@ class MakeFitCatalog {
         MuscleGroup.erectorSpinae,
         MuscleGroup.glutes,
       ],
-      tempo: '1-0-1-3',
-      defaultTargetReps: 12,
-      defaultHoldSeconds: 30,
+      tempo: 'Maintien 3s',
+      defaultTargetReps: 10,
+      defaultHoldSeconds: 35,
       isIsometric: true,
       isPlyometric: false,
-      hudCues: <String>['POUCES AU PLAFOND', 'OMOPLATES SERRÉES', 'NUQUE LONGUE'],
-      biomechanicalInstructions: <String>[
-        'Allongé sur le ventre, front à 3 cm du sol, menton rentré, fessiers contractés.',
-        'Décoller les bras le long du corps, tourner les pouces vers le plafond (rotation externe humérale).',
-        'Serrer les omoplates vers l\'arrière et vers le bas pendant 3s à chaque répétition.',
+      hudCues: <String>[
+        'POUCES VERS LE HAUT',
+        'SERRE LES OMOPLATES',
+        'NUQUE ALLONGÉE',
       ],
-      commonMistake: 'Hausser les épaules vers les oreilles ou casser la nuque.',
-      stealthVariantName: 'Prone Cobra Hold (0 dB)',
-      stealthVariantDescription: 'Isométrie posturale 100 % silencieuse.',
-      wristKneeVariantName: 'Standing Wall Angels / Thoracic Cobra',
-      wristKneeVariantDescription: 'Zéro appui sur les poignets ni flexion des genoux.',
-      masteryStandardLabel: '3 × 30s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Allongé sur le ventre, regarde le tapis pour garder la nuque bien longue.',
+        'Décolle légèrement le buste et les bras le long du corps, pouces tournés vers le plafond.',
+        'Rapproche les omoplates en abaissant les épaules pendant 2 à 3 secondes.',
+      ],
+      commonMistake: 'Hausser les épaules vers les oreilles ou lever le menton.',
+      stealthVariantName: 'Cobra Postural Silencieux',
+      stealthVariantDescription: 'Posture idéale contre le dos voûté du bureau, zéro bruit.',
+      wristKneeVariantName: 'Ouverture d\'Épaules Debout au Mur',
+      wristKneeVariantDescription: 'Aucun appui sur les poignets ni sur les genoux.',
+      masteryStandardLabel: '3 maintiens toniques de 35s',
     ),
     TacticalExercise(
       id: 'ex_pull_t2',
       code: 'EX_PULL_T2',
-      name: 'Prone I-Y-T-W Scapular Raises',
+      name: 'Ouverture Posturale I-Y-T-W au Sol',
       family: BiomechanicalFamily.noBarPull,
       tier: DifficultyTier.tier2Soldier,
       motionKind: MannequinMotionKind.proneIytw,
@@ -229,28 +256,32 @@ class MakeFitCatalog {
         MuscleGroup.erectorSpinae,
         MuscleGroup.glutes,
       ],
-      tempo: '2-0-1-2',
-      defaultTargetReps: 16,
+      tempo: 'Fluide 2-1-2',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['SÉQUENCE I-Y-T-W', 'COUDES AUX CÔTES', 'ZÉRO ÉLAN'],
-      biomechanicalInstructions: <String>[
-        'Face au sol, fessiers verrouillés, former successivement les lettres I, Y, T et W sans reposer les mains.',
-        'En W (Superman Pull) : tirer puissamment les coudes vers les côtes en serrant les dorsaux.',
-        'Maintenir 2s de contraction isométrique à chaque position.',
+      hudCues: <String>[
+        'MOUVEMENT SANS ÉLAN',
+        'COUDES VERS LES CÔTES',
+        'ÉPAULES BASSES',
       ],
-      commonMistake: 'Utiliser l\'élan lombaire au lieu du glissement scapulaire.',
-      stealthVariantName: 'Prone I-Y-T-W Raises (0 dB)',
-      stealthVariantDescription: 'Contrôle scapulaire pur sans impact.',
-      wristKneeVariantName: 'Prone I-Y-T-W (0 charge carpe/genou)',
-      wristKneeVariantDescription: 'Aucune pression sur les poignets ou les genoux.',
-      masteryStandardLabel: '3 × 16 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Allongé sur le ventre, dessine lentement les lettres I, Y, T puis W avec les bras.',
+        'En position W, tire les coudes vers les côtes pour bien engager tout le milieu du dos.',
+        'Respire régulièrement sans cambrer excessivement le bas du dos.',
+      ],
+      commonMistake: 'Donner des à-coups avec le bas du dos.',
+      stealthVariantName: 'Ouverture I-Y-T-W Sans Impact',
+      stealthVariantDescription: 'Renforcement postural profond 100 % silencieux.',
+      wristKneeVariantName: 'I-Y-T-W Douceur Articulaire',
+      wristKneeVariantDescription: 'Zéro charge sur les poignets et les genoux.',
+      masteryStandardLabel: '3 séries de 12 répétitions complètes',
     ),
     TacticalExercise(
       id: 'ex_pull_t3',
       code: 'EX_PULL_T3',
-      name: 'Supine Elbow Press (Floor Back Widow)',
+      name: 'Poussée des Coudes au Sol (Haut du Dos)',
       family: BiomechanicalFamily.noBarPull,
       tier: DifficultyTier.tier3Nco,
       motionKind: MannequinMotionKind.supineElbowPress,
@@ -263,28 +294,32 @@ class MakeFitCatalog {
         MuscleGroup.erectorSpinae,
         MuscleGroup.bicepsForearms,
       ],
-      tempo: '2-0-1-2',
-      defaultTargetReps: 15,
+      tempo: 'Tonique 2-1-2',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['POUSSE DANS LES COUDES', 'DÉCOLLE LES OMOPLATES', 'POITRINE HAUTE'],
-      biomechanicalInstructions: <String>[
-        'Allongé sur le dos, genoux fléchis, coudes au sol à 45° des côtes, poings vers le plafond.',
-        'Pousser verticalement les coudes dans le sol pour décoller tout le haut du dos et les omoplates.',
-        'Maintenir la contraction maximale du dos en haut pendant 2s puis redescendre en contrôle.',
+      hudCues: <String>[
+        'APPUI SUR LES COUDES',
+        'OUVRE LA POITRINE',
+        'SERRE LE HAUT DU DOS',
       ],
-      commonMistake: 'Pousser avec l\'arrière du crâne au lieu des coudes.',
-      stealthVariantName: 'Supine Elbow Press (0 dB)',
-      stealthVariantDescription: 'Traction verticale inversée au sol 100 % silencieuse.',
-      wristKneeVariantName: 'Padded Supine Elbow Press (Poignets Neutres)',
-      wristKneeVariantDescription: 'Zéro contrainte sur le poignet (appui exclusif sur l\'olécrane/humérus).',
-      masteryStandardLabel: '3 × 15 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Allongé sur le dos, genoux fléchis, place les coudes à 45° des côtes, poings vers le plafond.',
+        'Presse les coudes dans le tapis pour décoller le haut du dos et ouvrir la cage thoracique.',
+        'Maintiens 1 à 2 secondes en haut puis redescends en douceur.',
+      ],
+      commonMistake: 'Pousser avec la tête au lieu d\'utiliser les coudes et le dos.',
+      stealthVariantName: 'Renforcement Haut du Dos Silencieux',
+      stealthVariantDescription: 'Alternative redoutable aux tractions, sans barre et sans bruit.',
+      wristKneeVariantName: 'Poussée des Coudes sur Tapis Confort',
+      wristKneeVariantDescription: 'Aucune flexion du poignet ni contrainte sur les genoux.',
+      masteryStandardLabel: '3 séries de 14 répétitions',
     ),
     TacticalExercise(
       id: 'ex_pull_t4',
       code: 'EX_PULL_T4',
-      name: 'Prone Forearm Sliding Floor Pull-up',
+      name: 'Tirage Glissé au Sol sur Avant-Bras',
       family: BiomechanicalFamily.noBarPull,
       tier: DifficultyTier.tier4Officer,
       motionKind: MannequinMotionKind.slidingFloorPull,
@@ -297,28 +332,32 @@ class MakeFitCatalog {
         MuscleGroup.posteriorDeltoid,
         MuscleGroup.rectusAbdominis,
       ],
-      tempo: '3-1-2-1',
-      defaultTargetReps: 12,
+      tempo: 'Contrôlé 3-1-2',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['ÉCRASE LE SOL', 'TIRE AVEC LES DORSAUX', 'ÉPAULES BASSES'],
-      biomechanicalInstructions: <String>[
-        'Allongé sur le ventre sur sol lisse (ou serviette sous le bassin), avant-bras posés loin devant.',
-        'Presser fortement les avant-bras dans le sol et tracter le corps vers l\'avant par l\'adduction des dorsaux.',
-        'Replacer les bras devant en contrôle excentrique de 3s.',
+      hudCues: <String>[
+        'AVANT-BRAS ANCRÉS',
+        'TIRE AVEC LE DOS',
+        'ÉPAULES LOIN DES OREILLES',
       ],
-      commonMistake: 'Pousser avec les orteils au lieu de tracter avec les grands dorsaux.',
-      stealthVariantName: 'Sliding Floor Pull-up (< 25 dB)',
-      stealthVariantDescription: 'Glissement fluide et silencieux au sol.',
-      wristKneeVariantName: 'Forearm Sliding Pull (Poignet à plat)',
-      wristKneeVariantDescription: 'Appui réparti sur tout l\'avant-bras sans extension du poignet.',
-      masteryStandardLabel: '3 × 12 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Sur le ventre (serviette sous le bassin sur sol lisse), pose les avant-bras devant toi.',
+        'Presse les avant-bras au sol et tire le buste vers l\'avant en activant les dorsaux.',
+        'Reviens lentement à la position de départ en gardant les abdos serrés.',
+      ],
+      commonMistake: 'S\'aider avec les pieds au lieu de tracter avec le dos.',
+      stealthVariantName: 'Tirage Glissé Silencieux',
+      stealthVariantDescription: 'Glissement fluide au sol sans aucun impact.',
+      wristKneeVariantName: 'Tirage sur Avant-Bras (Poignets Neutres)',
+      wristKneeVariantDescription: 'Appui réparti sur tout l\'avant-bras sans plier le poignet.',
+      masteryStandardLabel: '3 séries de 10 répétitions',
     ),
     TacticalExercise(
       id: 'ex_pull_t5',
       code: 'EX_PULL_T5',
-      name: 'Single-Arm Sliding Pull & Thoracic Bridge',
+      name: 'Pont Thoracique & Tirage Unilatéral',
       family: BiomechanicalFamily.noBarPull,
       tier: DifficultyTier.tier5SpecOps,
       motionKind: MannequinMotionKind.thoracicBridge,
@@ -332,30 +371,34 @@ class MakeFitCatalog {
         MuscleGroup.glutes,
         MuscleGroup.erectorSpinae,
       ],
-      tempo: '3-1-2-1',
+      tempo: 'Ample 3-1-2',
       defaultTargetReps: 8,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['TRACTION 1 BRAS', 'ANTI-ROTATION STRICTE', 'OUVERTURE THORACIQUE'],
-      biomechanicalInstructions: <String>[
-        'Une main verrouillée dans le bas du dos, l\'autre bras tendu devant au sol.',
-        'Tracter l\'ensemble du poids du corps avec un seul grand dorsal sans rotation d\'épaules.',
-        'Enchaîner avec le pont thoracique unilatéral pour ouvrir la chaîne antérieure.',
+      hudCues: <String>[
+        'MONTE LE BASSIN',
+        'BASSIN BIEN STABLE',
+        'GRANDE OUVERTURE BUSTE',
       ],
-      commonMistake: 'Hyperextension lombaire compensatoire.',
-      stealthVariantName: '1-Arm Sliding Floor Pull (0 dB)',
-      stealthVariantDescription: 'Force maximale de tirage sans barre ni impact.',
-      wristKneeVariantName: '1-Arm Forearm Pull & Unilateral Elbow Press',
-      wristKneeVariantDescription: 'Exécution sur avant-bras et coude unique pour zéro charge carpienne.',
-      masteryStandardLabel: '3 × 8 reps/côté (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Pieds et une main posés au sol, monte les hanches en ouvrant grand la poitrine vers le haut.',
+        'Allonge le bras libre au-dessus de toi en respirant profondément.',
+        'Redescends avec contrôle puis alterne de côté.',
+      ],
+      commonMistake: 'Forcer sur les lombaires au lieu d\'ouvrir le haut du buste.',
+      stealthVariantName: 'Pont Thoracique Fluide Sans Bruit',
+      stealthVariantDescription: 'Mobilité et force postérieure sans aucun saut.',
+      wristKneeVariantName: 'Ouverture Thoracique sur Avant-Bras',
+      wristKneeVariantDescription: 'Variante sur avant-bras pour supprimer l\'appui poignet.',
+      masteryStandardLabel: '3 séries de 8 ouvertures par côté',
     ),
 
-    // 3. TACTICAL LEGS (T1 -> T5)
+    // 3. JAMBES, CUISSES & FESSIERS (TACTICAL LEGS : T1 -> T5)
     TacticalExercise(
       id: 'ex_legs_t1',
       code: 'EX_LEGS_T1',
-      name: 'Assisted Tempo Squat & Glute Bridge',
+      name: 'Squats Contrôlés & Pont Fessier',
       family: BiomechanicalFamily.tacticalLegs,
       tier: DifficultyTier.tier1Recruit,
       motionKind: MannequinMotionKind.airSquat,
@@ -367,28 +410,32 @@ class MakeFitCatalog {
         MuscleGroup.hamstrings,
         MuscleGroup.calves,
       ],
-      tempo: '3-1-1-1',
-      defaultTargetReps: 16,
+      tempo: 'Doux 3-1-1',
+      defaultTargetReps: 14,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['GENOUX DANS L\'AXE', 'TALONS ANCRÉS', 'BUSTE FIER'],
-      biomechanicalInstructions: <String>[
-        'Pieds largeur d\'épaules, pointes ouvertes à 20°, trépied plantaire ancré au sol.',
-        'Descendre en 3s hanches vers l\'arrière jusqu\'à la parallèle puis remonter en serrant les fessiers.',
-        'Compléter par le Glute Bridge au sol avec pause de 2s en rétroversion pelvienne.',
+      hudCues: <String>[
+        'TALONS ANCRÉS AU SOL',
+        'GENOUX DANS L\'AXE',
+        'BUSTE DROIT & FIER',
       ],
-      commonMistake: 'Valgus dynamique des genoux (genoux qui rentrent vers l\'intérieur).',
-      stealthVariantName: 'Tempo Squat & Glute Bridge (0 dB)',
-      stealthVariantDescription: 'Pieds ancrés en permanence au sol.',
-      wristKneeVariantName: 'Box Squat Parallèle & Isometric Glute Bridge',
-      wristKneeVariantDescription: 'Amplitude limitée à 80° de flexion patellaire + chaîne postérieure dominante.',
-      masteryStandardLabel: '3 × 20 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Pieds largeur d\'épaules, pointes légèrement ouvertes, regard droit devant.',
+        'Recule les hanches comme pour t\'asseoir en gardant tout le pied bien à plat.',
+        'Remonte en poussant dans les talons et en contractant les fessiers.',
+      ],
+      commonMistake: 'Laisser les genoux rentrer vers l\'intérieur ou décoller les talons.',
+      stealthVariantName: 'Squats Contrôlés Silencieux',
+      stealthVariantDescription: 'Pieds ancrés en permanence au sol, zéro impact.',
+      wristKneeVariantName: 'Demi-Squat Confort (Chaise) & Pont Fessier',
+      wristKneeVariantDescription: 'Amplitude douce ménageant les rotules et les genoux.',
+      masteryStandardLabel: '3 séries de 16 répétitions',
     ),
     TacticalExercise(
       id: 'ex_legs_t2',
       code: 'EX_LEGS_T2',
-      name: 'Military Air Squat & Reverse Lunge',
+      name: 'Squats & Fentes Arrière Douces',
       family: BiomechanicalFamily.tacticalLegs,
       tier: DifficultyTier.tier2Soldier,
       motionKind: MannequinMotionKind.reverseLunge,
@@ -400,28 +447,32 @@ class MakeFitCatalog {
         MuscleGroup.hamstrings,
         MuscleGroup.calves,
       ],
-      tempo: '2-1-1-0',
-      defaultTargetReps: 20,
+      tempo: 'Fluide 2-1-1',
+      defaultTargetReps: 14,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['SOUS LA PARALLÈLE', 'GENOU ARRIÈRE 2CM', 'POUSSÉE TALON AVANT'],
-      biomechanicalInstructions: <String>[
-        'Alterner Air Squat complet sous la parallèle et fente arrière contrôlée (Reverse Lunge).',
-        'En fente arrière : garder le tibia avant vertical pour protéger le tendon rotulien.',
-        'Repousser puissamment par le talon et le grand fessier de la jambe avant.',
+      hudCues: <String>[
+        'RECULE EN CONTRÔLE',
+        'TIBIA AVANT VERTICAL',
+        'POUSSE DANS LE TALON',
       ],
-      commonMistake: 'Frapper le genou arrière contre le sol.',
-      stealthVariantName: 'Silent Reverse Lunge & Prisoner Squat',
-      stealthVariantDescription: 'Contrôle décélérateur à 2 cm du sol sans contact bruyant.',
-      wristKneeVariantName: 'Short-Range Reverse Lunge & Hip Hinge',
-      wristKneeVariantDescription: 'Recul long privilégiant la hanche et le grand fessier plutôt que le genou.',
-      masteryStandardLabel: '3 × 25 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Fais un grand pas en arrière en gardant le buste droit et les abdos serrés.',
+        'Le tibia avant reste vertical, ce qui protège naturellement l\'articulation du genou.',
+        'Remonte en poussant dans le talon avant puis change de jambe.',
+      ],
+      commonMistake: 'Poser brusquement le genou arrière contre le sol.',
+      stealthVariantName: 'Fentes Arrière Silencieuses',
+      stealthVariantDescription: 'Transition fluide à 2 cm du sol sans aucun choc.',
+      wristKneeVariantName: 'Fentes Courtes Confort Genoux',
+      wristKneeVariantDescription: 'Amplitude modérée privilégiant les fessiers sans flexion profonde.',
+      masteryStandardLabel: '3 séries de 16 fentes alternées',
     ),
     TacticalExercise(
       id: 'ex_legs_t3',
       code: 'EX_LEGS_T3',
-      name: 'Pause Squat (3-2-1) & Single-Leg Bridge',
+      name: 'Squats Pause Tonique (2s en bas)',
       family: BiomechanicalFamily.tacticalLegs,
       tier: DifficultyTier.tier3Nco,
       motionKind: MannequinMotionKind.airSquat,
@@ -434,28 +485,32 @@ class MakeFitCatalog {
         MuscleGroup.calves,
         MuscleGroup.erectorSpinae,
       ],
-      tempo: '3-2-1-0',
-      defaultTargetReps: 15,
+      tempo: 'Pause 3-2-1',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['PAUSE 2S EN BAS', 'ZÉRO REBOND', 'EXTENSION HANCHE 1-JAMBE'],
-      biomechanicalInstructions: <String>[
-        'Descendre en 3 secondes sous la parallèle et figer la position basse pendant 2 secondes complètes.',
-        'Remonter explosivement sans rebond élastique.',
-        'Enchaîner avec le pont fessier unilatéral (Single-Leg Glute Bridge) bassin verrouillé.',
+      hudCues: <String>[
+        'PAUSE 2S EN BAS',
+        'ZÉRO REBOND',
+        'SERRE LES FESSIERS',
       ],
-      commonMistake: 'Relâcher la tension lombaire pendant la pause basse.',
-      stealthVariantName: 'Pause Squat 3-2-1 (Remplace Jump Lunges)',
-      stealthVariantDescription: 'Supprime tout impact de saut par une pause isométrique profonde.',
-      wristKneeVariantName: 'Single-Leg Glute Bridge & Wall Sit (90°)',
-      wristKneeVariantDescription: 'Isométrie à 90° et travail unilatéral de hanche sans cisaillement patellaire.',
-      masteryStandardLabel: '3 × 15 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Descends en 3 secondes et marque un arrêt complet de 2 secondes en bas du mouvement.',
+        'Garde le dos droit et la poitrine ouverte pendant la pause.',
+        'Remonte avec dynamisme sans rebondir sur les articulations.',
+      ],
+      commonMistake: 'Relâcher le gainage du dos en bas du squat.',
+      stealthVariantName: 'Squats Pause Sans Saut',
+      stealthVariantDescription: 'Remplace tout saut par un travail musculaire profond et silencieux.',
+      wristKneeVariantName: 'Chaise au Mur 90° & Pont Fessier 1 Jambe',
+      wristKneeVariantDescription: 'Renforcement intense des cuisses sans mouvement de cisaillement.',
+      masteryStandardLabel: '3 séries de 12 répétitions',
     ),
     TacticalExercise(
       id: 'ex_legs_t4',
       code: 'EX_LEGS_T4',
-      name: 'Cossack Squat & Hamstring Walkout',
+      name: 'Fentes Latérales & Souplesse Hanches',
       family: BiomechanicalFamily.tacticalLegs,
       tier: DifficultyTier.tier4Officer,
       motionKind: MannequinMotionKind.cossackSquat,
@@ -468,28 +523,32 @@ class MakeFitCatalog {
         MuscleGroup.calves,
         MuscleGroup.obliques,
       ],
-      tempo: '3-1-1-1',
-      defaultTargetReps: 14,
+      tempo: 'Ample 3-1-1',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['JAMBE LIBRE TENDUE', 'TALON D\'APPUI AU SOL', 'ISCHIOS SOUS TENSION'],
-      biomechanicalInstructions: <String>[
-        'En Cossack Squat : écart large, descendre latéralement sur une jambe tandis que l\'autre reste tendue sur le talon.',
-        'En Hamstring Walkout : depuis le pont fessier, avancer les talons à petits pas jusqu\'à l\'extension quasi complète.',
-        'Revenir sous tension maximale des ischio-jambiers.',
+      hudCues: <String>[
+        'PIED D\'APPUI À PLAT',
+        'JAMBE OPPOSÉE TENDUE',
+        'DOS BIEN PLAT',
       ],
-      commonMistake: 'Décoller le talon de la jambe porteuse en Cossack Squat.',
-      stealthVariantName: 'Cossack Squat & Hamstring Walkout (0 dB)',
-      stealthVariantDescription: 'Force frontale et chaîne postérieure 100 % silencieuse.',
-      wristKneeVariantName: 'Hamstring Walkout & High Cossack',
-      wristKneeVariantDescription: 'Priorité aux ischio-jambiers qui stabilisent le ligament croisé antérieur (LCA).',
-      masteryStandardLabel: '3 × 15 reps/côté (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Pieds largement écartés, fléchis une jambe sur le côté en reculant les hanches.',
+        'L\'autre jambe reste tendue, talon posé au sol pour assouplir les hanches.',
+        'Remonte au centre et alterne de l\'autre côté.',
+      ],
+      commonMistake: 'Décoller le talon du pied porteur ou arrondir le dos.',
+      stealthVariantName: 'Fentes Latérales Fluides',
+      stealthVariantDescription: 'Force et mobilité des hanches 100 % silencieuse.',
+      wristKneeVariantName: 'Fentes Latérales Amplitude Modérée',
+      wristKneeVariantDescription: 'Descente confortable à mi-hauteur pour ménager les genoux.',
+      masteryStandardLabel: '3 séries de 12 répétitions alternées',
     ),
     TacticalExercise(
       id: 'ex_legs_t5',
       code: 'EX_LEGS_T5',
-      name: 'Strict Pistol Squat & Shrimp Squat',
+      name: 'Flexion Équilibre sur 1 Jambe',
       family: BiomechanicalFamily.tacticalLegs,
       tier: DifficultyTier.tier5SpecOps,
       motionKind: MannequinMotionKind.pistolSquat,
@@ -502,30 +561,34 @@ class MakeFitCatalog {
         MuscleGroup.calves,
         MuscleGroup.rectusAbdominis,
       ],
-      tempo: '3-1-1-1',
+      tempo: 'Maîtrisé 3-1-1',
       defaultTargetReps: 8,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['JAMBE AVANT HORIZONTALE', 'CONTRÔLE 3S DESCENTE', 'STABILITÉ CHEVILLE'],
-      biomechanicalInstructions: <String>[
-        'En équilibre sur un pied, tendre la jambe libre devant soi parallèlement au sol.',
-        'Descendre en 3s en gardant le talon ancré et le genou aligné sur le 2e orteil.',
-        'Marquer 1s en bas puis remonter à la force pure d\'une seule jambe.',
+      hudCues: <String>[
+        'DESCENTE LENTE 3S',
+        'GENOU BIEN ALIGNÉ',
+        'REGARD FIXE DEVANT',
       ],
-      commonMistake: 'S\'effondrer en bas de course avec rebond sur le ménisque.',
-      stealthVariantName: 'Strict Tempo Pistol Squat (0 dB)',
-      stealthVariantDescription: 'Maîtrise unilatérale absolue sans aucun bruit d\'impact.',
-      wristKneeVariantName: 'Slow Tempo Split Squat (4-2-1) & Hamstring Bridge',
-      wristKneeVariantDescription: 'Répartit la contrainte patellaire tout en maintenant une intensité SpecOps.',
-      masteryStandardLabel: '3 × 8 reps/jambe (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'En équilibre sur un pied, tends l\'autre jambe devant toi et les bras pour l\'équilibre.',
+        'Descends à ton amplitude de confort (ou vers une chaise) en gardant le talon ancré.',
+        'Remonte à la force de la cuisse et du fessier.',
+      ],
+      commonMistake: 'Se laisser tomber rapidement en bas du mouvement.',
+      stealthVariantName: 'Flexion 1 Jambe Contrôlée',
+      stealthVariantDescription: 'Équilibre et force unilatérale sans impact.',
+      wristKneeVariantName: 'Squat Bulgare Tempo Lent (4s)',
+      wristKneeVariantDescription: 'Répartit la charge avec douceur sur le genou.',
+      masteryStandardLabel: '3 séries de 8 répétitions par jambe',
     ),
 
-    // 4. IRON CORE (T1 -> T5)
+    // 4. GAINAGE, ABDOS PROFONDS & PROTECTION DU DOS (IRON CORE : T1 -> T5)
     TacticalExercise(
       id: 'ex_core_t1',
       code: 'EX_CORE_T1',
-      name: 'Dead Bug Strict & McGill Curl-up',
+      name: 'Gainage Lombaire Doux (Dead Bug)',
       family: BiomechanicalFamily.ironCore,
       tier: DifficultyTier.tier1Recruit,
       motionKind: MannequinMotionKind.deadBug,
@@ -536,28 +599,32 @@ class MakeFitCatalog {
       secondaryMuscles: <MuscleGroup>[
         MuscleGroup.glutes,
       ],
-      tempo: '3-2-1-0',
-      defaultTargetReps: 14,
+      tempo: 'Lent 3-1-2',
+      defaultTargetReps: 12,
       defaultHoldSeconds: 40,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['LOMBAIRES PLAQUÉES', 'BRAS/JAMBE OPPOSÉS', 'EXPIRATION LONGUE'],
-      biomechanicalInstructions: <String>[
-        'Sur le dos, écraser fermement le creux lombaire contre le tapis (rétroversion pelvienne).',
-        'Tendre lentement le bras droit et la jambe gauche à 5 cm du sol sans jamais perdre le contact lombaire.',
-        'Expirer profondément en ramenant au centre puis alterner.',
+      hudCues: <String>[
+        'BAS DU DOS PLAQUÉ',
+        'BRAS & JAMBE OPPOSÉS',
+        'EXPIRE LONGUEMENT',
       ],
-      commonMistake: 'Laisser le bas du dos se cambrer lorsque la jambe descend.',
-      stealthVariantName: 'Dead Bug Strict (0 dB)',
-      stealthVariantDescription: 'Gainage anti-extension 100 % silencieux.',
-      wristKneeVariantName: 'Dead Bug (0 charge poignets/genoux/disques)',
-      wristKneeVariantDescription: 'Protocole de référence du Pr. Stuart McGill pour protéger les disques lombaires.',
-      masteryStandardLabel: '3 × 40s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Allongé sur le dos, plaque fermement le bas du dos contre le tapis.',
+        'Allonge lentement le bras droit et la jambe gauche sans jamais décoller les lombaires.',
+        'Ramène au centre en expirant profondément puis change de côté.',
+      ],
+      commonMistake: 'Laisser le bas du dos se creuser quand la jambe descend.',
+      stealthVariantName: 'Dead Bug Gainage Profond',
+      stealthVariantDescription: 'L\'exercice numéro 1 pour renforcer les abdos tout en protégeant le dos.',
+      wristKneeVariantName: 'Dead Bug (Zéro Pression Articulaire)',
+      wristKneeVariantDescription: 'Aucune charge sur les poignets, les genoux ni les lombaires.',
+      masteryStandardLabel: '3 séries de 40s fluides',
     ),
     TacticalExercise(
       id: 'ex_core_t2',
       code: 'EX_CORE_T2',
-      name: 'RKC Plank & 4-Count Flutter Kicks',
+      name: 'Planche Active sur Avant-Bras',
       family: BiomechanicalFamily.ironCore,
       tier: DifficultyTier.tier2Soldier,
       motionKind: MannequinMotionKind.rkcPlank,
@@ -569,28 +636,32 @@ class MakeFitCatalog {
         MuscleGroup.glutes,
         MuscleGroup.latissimusDorsi,
       ],
-      tempo: 'ISO-MAX',
-      defaultTargetReps: 20,
-      defaultHoldSeconds: 45,
+      tempo: 'Gainage Tonique',
+      defaultTargetReps: 12,
+      defaultHoldSeconds: 40,
       isIsometric: true,
       isPlyometric: false,
-      hudCues: <String>['TIRE COUDES VERS ORTEILS', 'FESSIERS ACIER', 'BATTEMENTS COURTS'],
-      biomechanicalInstructions: <String>[
-        'En RKC Plank sur avant-bras : tirer isométriquement les coudes vers les pointes de pieds et contracter les fessiers à 100 %.',
-        'En 4-Count Flutter Kicks : sur le dos, mains sous le sacrum, omoplates décollées, battements alternés à 15 cm du sol.',
-        'Compter 1-2-3 = 1 répétition militaire.',
+      hudCues: <String>[
+        'AVANT-BRAS SOLIDES',
+        'ABDOS & FESSIERS SERRÉS',
+        'RESPIRATION CALME',
       ],
-      commonMistake: 'Cambrer les lombaires ou bloquer sa respiration.',
-      stealthVariantName: 'RKC Plank & Flutter Kicks (0 dB)',
-      stealthVariantDescription: 'Classique militaire USMC/SEAL totalement silencieux.',
-      wristKneeVariantName: 'Forearm RKC Plank (Sur avant-bras)',
-      wristKneeVariantDescription: 'Supprime toute extension du poignet.',
-      masteryStandardLabel: '3 × 45s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'En appui sur les avant-bras, aligne tête, épaules, bassin et talons.',
+        'Engage activement les abdos et les fessiers comme si tu tirais les coudes vers les pieds.',
+        'Garde une respiration fluide sans jamais bloquer le souffle.',
+      ],
+      commonMistake: 'Creuser le bas du dos ou retenir sa respiration.',
+      stealthVariantName: 'Planche Active Silencieuse',
+      stealthVariantDescription: 'Ventre plat et sangle abdominale solide en silence.',
+      wristKneeVariantName: 'Planche sur Avant-Bras (Poignets Libres)',
+      wristKneeVariantDescription: 'Aucun appui sur les poignets.',
+      masteryStandardLabel: '3 maintiens de 45s propres',
     ),
     TacticalExercise(
       id: 'ex_core_t3',
       code: 'EX_CORE_T3',
-      name: 'Hollow Body Hold & Plank Shoulder Taps',
+      name: 'Gainage Creux & Touches d\'Épaules',
       family: BiomechanicalFamily.ironCore,
       tier: DifficultyTier.tier3Nco,
       motionKind: MannequinMotionKind.hollowBodyHold,
@@ -602,28 +673,32 @@ class MakeFitCatalog {
         MuscleGroup.quadriceps,
         MuscleGroup.anteriorDeltoid,
       ],
-      tempo: 'ISO / 2-1-2',
-      defaultTargetReps: 16,
-      defaultHoldSeconds: 50,
+      tempo: 'Stable 2-1-2',
+      defaultTargetReps: 12,
+      defaultHoldSeconds: 40,
       isIsometric: true,
       isPlyometric: false,
-      hudCues: <String>['BAS DU DOS SOUDÉ', 'CÔTES ABAISSÉES', 'ZÉRO ROULIS BASSIN'],
-      biomechanicalInstructions: <String>[
-        'En Hollow Body : lombaires soudées au sol, jambes tendues à 30° et bras tendus derrière les oreilles.',
-        'En Shoulder Taps : toucher l\'épaule opposée en 2s sans aucun mouvement latéral des hanches.',
-        'Imaginer un verre d\'eau posé sur le sacrum.',
+      hudCues: <String>[
+        'BAS DU DOS MAINTENU',
+        'CÔTES RENTREES',
+        'BASSIN SANS BASCULE',
       ],
-      commonMistake: 'Dandiner les hanches de gauche à droite.',
-      stealthVariantName: 'Hollow Body Hold & Slow Shoulder Taps',
-      stealthVariantDescription: 'Contrôle anti-rotation silencieux.',
-      wristKneeVariantName: 'Hollow Body Hold & Forearm Side Plank',
-      wristKneeVariantDescription: 'Remplace l\'appui mains tendues par le gainage latéral sur avant-bras.',
-      masteryStandardLabel: '3 × 50s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Sur le dos, lombaires soudées au tapis, décolle légèrement les épaules et les jambes.',
+        'Si besoin, plie légèrement les genoux pour garder le bas du dos parfaitement plaqué.',
+        'Respire calmement en rentrant le nombril.',
+      ],
+      commonMistake: 'Tirer sur la nuque ou laisser les lombaires décoller du sol.',
+      stealthVariantName: 'Gainage Creux Silencieux',
+      stealthVariantDescription: 'Travail profond du transverse pour un ventre ferme.',
+      wristKneeVariantName: 'Gainage Creux & Planche Latérale Avant-Bras',
+      wristKneeVariantDescription: 'Zéro contrainte sur les poignets et les genoux.',
+      masteryStandardLabel: '3 maintiens de 45s',
     ),
     TacticalExercise(
       id: 'ex_core_t4',
       code: 'EX_CORE_T4',
-      name: 'Hollow Body Rocks & Tactical V-Ups',
+      name: 'Fermeture Abdominale Contrôlée',
       family: BiomechanicalFamily.ironCore,
       tier: DifficultyTier.tier4Officer,
       motionKind: MannequinMotionKind.tacticalVUp,
@@ -634,28 +709,32 @@ class MakeFitCatalog {
       secondaryMuscles: <MuscleGroup>[
         MuscleGroup.quadriceps,
       ],
-      tempo: '2-1-1-0',
-      defaultTargetReps: 18,
+      tempo: 'Fluide 2-1-2',
+      defaultTargetReps: 14,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['PLIURE SYMÉTRIQUE EN V', 'JAMBES TENDUES', 'CONTRÔLE DESCENTE'],
-      biomechanicalInstructions: <String>[
-        'Depuis la position Hollow Body, monter simultanément le buste et les jambes tendues pour toucher les tibias.',
-        'Redescendre en 2s sans laisser les talons ni les omoplates frapper le sol.',
-        'Enchaîner avec les bascules rigides en banane (Hollow Rocks).',
+      hudCues: <String>[
+        'MONTÉE FLUIDE',
+        'SANS TIRER LA NUQUE',
+        'RETENUE À LA DESCENTE',
       ],
-      commonMistake: 'Fléchir les genoux ou tirer sur la nuque.',
-      stealthVariantName: 'Controlled Tempo V-Ups (0 dB)',
-      stealthVariantDescription: 'Décélération excentrique à 2 cm du sol sans bruit.',
-      wristKneeVariantName: 'Tuck V-Ups & Copenhagen Adductor Plank',
-      wristKneeVariantDescription: 'Bras de levier ajusté et zéro appui sur les poignets.',
-      masteryStandardLabel: '3 × 20 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Allongé sur le dos, remonte simultanément le buste et les jambes (tendues ou semi-fléchies).',
+        'Expire pendant la montée en rapprochant les mains des tibias.',
+        'Redescends en 2 secondes avec contrôle sans laisser retomber les pieds.',
+      ],
+      commonMistake: 'Donner un coup de reins brusque au départ.',
+      stealthVariantName: 'Fermeture Abdominale Sans Bruit',
+      stealthVariantDescription: 'Descente retenue sans impact au sol.',
+      wristKneeVariantName: 'Fermeture Genoux Fléchis Confort',
+      wristKneeVariantDescription: 'Bras de levier raccourci doux pour le dos et sans appui poignets.',
+      masteryStandardLabel: '3 séries de 15 répétitions',
     ),
     TacticalExercise(
       id: 'ex_core_t5',
       code: 'EX_CORE_T5',
-      name: 'Floor L-Sit Hold & Floor Dragon Flag',
+      name: 'Équerre Assise & Gainage Complet',
       family: BiomechanicalFamily.ironCore,
       tier: DifficultyTier.tier5SpecOps,
       motionKind: MannequinMotionKind.floorLSit,
@@ -668,30 +747,34 @@ class MakeFitCatalog {
         MuscleGroup.latissimusDorsi,
         MuscleGroup.glutes,
       ],
-      tempo: 'ISO / 4-1-2',
+      tempo: 'Maintien Tonique',
       defaultTargetReps: 8,
-      defaultHoldSeconds: 20,
+      defaultHoldSeconds: 25,
       isIsometric: true,
       isPlyometric: false,
-      hudCues: <String>['DÉPRESSION SCAPULAIRE', 'JAMBES À 90°', 'CORPS EN LIGNE DROITE'],
-      biomechanicalInstructions: <String>[
-        'En Floor L-Sit : assis jambes tendues, mains à plat à côté des cuisses, pousser les épaules vers le bas pour décoller fessiers et talons.',
-        'En Floor Dragon Flag : ancrage sur le haut des épaules, descendre le corps verrouillé en 4s sans casser les hanches.',
-        'Remonter en bloc rigide.',
+      hudCues: <String>[
+        'ÉPAULES ABAISSÉES',
+        'BUSTE BIEN GRAND',
+        'RESPIRATION MAÎTRISÉE',
       ],
-      commonMistake: 'Casser l\'angle des hanches à la descente du Dragon Flag.',
-      stealthVariantName: 'Floor L-Sit & Dragon Flag (0 dB)',
-      stealthVariantDescription: 'Force gymnique et militaire d\'élite 100 % silencieuse.',
-      wristKneeVariantName: 'Knuckle Floor L-Sit Tuck & Dragon Flag',
-      wristKneeVariantDescription: 'Appui sur les poings neutres en L-Sit.',
-      masteryStandardLabel: '3 × 20s / 8 reps (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Assis jambes devant toi, mains posées à côté des hanches, repousse le sol en abaissant les épaules.',
+        'Allège ou décolle les hanches et les pieds (jambes groupées ou tendues selon ta souplesse).',
+        'Tiens la posture par petites séries toniques en respirant.',
+      ],
+      commonMistake: 'Arrondir le haut du dos et monter les épaules aux oreilles.',
+      stealthVariantName: 'Équerre Assise Silencieuse',
+      stealthVariantDescription: 'Force abdominale avancée 100 % silencieuse.',
+      wristKneeVariantName: 'Équerre Groupée sur les Poings',
+      wristKneeVariantDescription: 'Appui sur les poings fermés pour garder les poignets alignés.',
+      masteryStandardLabel: '3 maintiens de 20s',
     ),
 
-    // 5. METCON ENGINE (T1 -> T5)
+    // 5. CARDIO, SOUFFLE & BRÛLE-GRAISSE (METCON : T1 -> T5)
     TacticalExercise(
       id: 'ex_metcon_t1',
       code: 'EX_METCON_T1',
-      name: 'Step-Jacks & Squat-to-Reach',
+      name: 'Pas Latéraux Dynamiques Sans Saut',
       family: BiomechanicalFamily.metCon,
       tier: DifficultyTier.tier1Recruit,
       motionKind: MannequinMotionKind.stepJacks,
@@ -704,28 +787,32 @@ class MakeFitCatalog {
         MuscleGroup.glutes,
         MuscleGroup.rectusAbdominis,
       ],
-      tempo: 'CADENCE HAUTE',
-      defaultTargetReps: 25,
-      defaultHoldSeconds: 45,
+      tempo: 'Rythme Tonique',
+      defaultTargetReps: 20,
+      defaultHoldSeconds: 40,
       isIsometric: false,
       isPlyometric: false,
-      hudCues: <String>['CADENCE RAPIDE', 'BRAS GRANDS OUVERTS', 'ZÉRO IMPACT AU SOL'],
-      biomechanicalInstructions: <String>[
-        'Pas chassés latéraux dynamiques sans saut accompagnés d\'une ouverture complète des bras au-dessus de la tête.',
-        'Enchaîner avec Squat-to-Reach : flexion fluide suivie d\'une extension haute sur demi-pointes.',
-        'Respiration rythmée nasale/buccale.',
+      hudCues: <String>[
+        'RYTHME DYNAMIQUE',
+        'GRANDS BRAS OUVERTS',
+        'ZÉRO IMPACT AU SOL',
       ],
-      commonMistake: 'Amplitude de bras incomplète qui réduit la dépense énergétique.',
-      stealthVariantName: 'Speed Step-Jacks & Squat-to-Reach (0 dB)',
-      stealthVariantDescription: '100 % silencieux dès la version standard.',
-      wristKneeVariantName: 'Low-Impact Step-Jacks & Shadow Boxing',
-      wristKneeVariantDescription: 'Aucune contrainte sur les poignets ni sur les rotules.',
-      masteryStandardLabel: '3 × 45s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Déplace un pied sur le côté puis l\'autre à bon rythme tout en ouvrant grand les bras au-dessus de la tête.',
+        'Fléchis légèrement les genoux pour engager les cuisses tout en protégeant tes articulations.',
+        'Garde un souffle ample et régulier.',
+      ],
+      commonMistake: 'Faire de tout petits mouvements de bras sans amplitude.',
+      stealthVariantName: 'Pas Latéraux Cardio Silencieux',
+      stealthVariantDescription: 'Active le cœur et brûle des calories sans aucun saut.',
+      wristKneeVariantName: 'Pas Latéraux Doux & Boxe Tonique',
+      wristKneeVariantDescription: 'Zéro impact sur les genoux ni appui sur les poignets.',
+      masteryStandardLabel: '3 séries de 40s dynamiques',
     ),
     TacticalExercise(
       id: 'ex_metcon_t2',
       code: 'EX_METCON_T2',
-      name: 'Military Jumping Jacks & Mountain Climbers',
+      name: 'Jumping Jacks Souples & Montées de Genoux',
       family: BiomechanicalFamily.metCon,
       tier: DifficultyTier.tier2Soldier,
       motionKind: MannequinMotionKind.jumpingJacks,
@@ -738,28 +825,32 @@ class MakeFitCatalog {
         MuscleGroup.anteriorDeltoid,
         MuscleGroup.pectorals,
       ],
-      tempo: 'CADENCE 120 BPM',
-      defaultTargetReps: 30,
-      defaultHoldSeconds: 60,
+      tempo: 'Cardio Fluide',
+      defaultTargetReps: 22,
+      defaultHoldSeconds: 40,
       isIsometric: false,
       isPlyometric: true,
-      hudCues: <String>['ATTERRISSAGE AVANT-PIED', 'ÉPAULES AU-DESSUS DES MAINS', 'BASSIN BAS'],
-      biomechanicalInstructions: <String>[
-        '4-Count Military Jumping Jacks (Side Straddle Hop FM 7-22) sur la plante des pieds.',
-        'Enchaîner au sol en Mountain Climbers : épaules verrouillées au-dessus des poignets, montée rapide des genoux vers la poitrine.',
-        'Garder le dos parfaitement plat.',
+      hudCues: <String>[
+        'APPUIS SOUPLES',
+        'GAINAGE ENGAGÉ',
+        'SOUFFLE RÉGULIER',
       ],
-      commonMistake: 'Monter les fesses en pyramide pendant les Mountain Climbers.',
-      stealthVariantName: 'Speed Step-Jacks & Slow Cross-Body Climbers',
-      stealthVariantDescription: 'Remplace tous les sauts par des montées de genoux croisées silencieuses au sol.',
-      wristKneeVariantName: 'Forearm Plank March & Standing High-Cadence Punch',
-      wristKneeVariantDescription: 'Sur avant-bras ou debout en Shadow Boxing haute intensité.',
-      masteryStandardLabel: '3 × 60s (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Enchaîne des Jumping Jacks souples sur l\'avant du pied en amortissant chaque appui.',
+        'Garde les épaules détendues et les abdos engagés.',
+        'À tout moment, passe en pas latéraux sans saut si tu préfères zéro impact.',
+      ],
+      commonMistake: 'Retomber jambes raides sur les talons.',
+      stealthVariantName: 'Pas Rapides Sans Saut & Genoux Croisés',
+      stealthVariantDescription: 'Cardio tonique 100 % sans saut, idéal en appartement et doux pour les genoux.',
+      wristKneeVariantName: 'Marche Rapide Tonique & Directs Bras',
+      wristKneeVariantDescription: 'Cardio debout dynamique ménageant genoux et poignets.',
+      masteryStandardLabel: '3 séries de 40s régulières',
     ),
     TacticalExercise(
       id: 'ex_metcon_t3',
       code: 'EX_METCON_T3',
-      name: '6-Count Military Burpee & Bear Crawl',
+      name: 'Burpee Décomposé & Gainage Dynamique',
       family: BiomechanicalFamily.metCon,
       tier: DifficultyTier.tier3Nco,
       motionKind: MannequinMotionKind.militaryBurpee,
@@ -773,28 +864,32 @@ class MakeFitCatalog {
         MuscleGroup.triceps,
         MuscleGroup.glutes,
       ],
-      tempo: '6-COUNT STRICT',
-      defaultTargetReps: 12,
+      tempo: '6 Temps Propres',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: true,
-      hudCues: <String>['1 SQUAT • 2 PLANCHE', '3-4 POMPE STRICTE', '5 SQUAT • 6 EXTENSION'],
-      biomechanicalInstructions: <String>[
-        'Décomposer en 6 temps militaires stricts : (1) Squat mains au sol, (2) Jeté de pieds en planche.',
-        '(3) Descente pompe poitrine au sol, (4) Poussée en planche.',
-        '(5) Retour des pieds à plat largeur d\'épaules, (6) Extension complète.',
+      hudCues: <String>[
+        'POSE LES MAINS PROPREMENT',
+        'PLANCHE BIEN DROITE',
+        'REDRESSE-TOI GRAND',
       ],
-      commonMistake: 'Cambrer le bas du dos lors du jeté de jambes en planche.',
-      stealthVariantName: 'No-Jump Step-Back 6-Count Burpee & Bear Crawl',
-      stealthVariantDescription: 'Recul et retour un pied après l\'autre + extension sur pointes sans aucun saut (< 30 dB).',
-      wristKneeVariantName: 'Knuckle Step-Back Burpee / Walkout Push-up',
-      wristKneeVariantDescription: 'Sur les poings neutres avec recul contrôlé sans choc articulaire.',
-      masteryStandardLabel: '15 reps / min (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Fléchis les jambes pour poser les mains au sol, passe en planche solide et fais une pompe maîtrisée.',
+        'Ramène les pieds à plat largeur d\'épaules puis redresse-toi complètement en ouvrant le buste.',
+        'Privilégie toujours la fluidité du geste plutôt que la précipitation.',
+      ],
+      commonMistake: 'Laisser tomber le bassin en arrivant en planche.',
+      stealthVariantName: 'Burpee Sans Saut (Un Pied Après l\'Autre)',
+      stealthVariantDescription: 'Recul et retour d\'un pied après l\'autre sans saut ni impact.',
+      wristKneeVariantName: 'Descente en Planche Marchée sur Poings',
+      wristKneeVariantDescription: 'Mouvement progressif sur poings neutres, très sûr pour les articulations.',
+      masteryStandardLabel: '10 répétitions fluides en 40s',
     ),
     TacticalExercise(
       id: 'ex_metcon_t4',
       code: 'EX_METCON_T4',
-      name: '8-Count Navy SEAL Bodybuilder',
+      name: 'Circuit Complet Pompe & Planche Dynamique',
       family: BiomechanicalFamily.metCon,
       tier: DifficultyTier.tier4Officer,
       motionKind: MannequinMotionKind.sealBodybuilder,
@@ -809,28 +904,32 @@ class MakeFitCatalog {
         MuscleGroup.triceps,
         MuscleGroup.obliques,
       ],
-      tempo: '8-COUNT NSW',
-      defaultTargetReps: 15,
+      tempo: 'Complet 8 Temps',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: true,
-      hudCues: <String>['POMPE + PLANK JACK', 'GAINAGE CORONADO', 'CADENCE ININTERROMPUE'],
-      biomechanicalInstructions: <String>[
-        'Standard Navy SEAL Coronado en 8 temps : (1) Squat mains au sol, (2) Planche, (3) Descente pompe, (4) Remontée pompe.',
-        '(5) Écartement des pieds en Plank Jack, (6) Fermeture des pieds joints.',
-        '(7) Retour en squat pieds à plat, (8) Redressement au garde-à-vous.',
+      hudCues: <String>[
+        'POMPE + OUVERTURE PIEDS',
+        'BASSIN BIEN ALIGNÉ',
+        'RESPIRATION AMPLE',
       ],
-      commonMistake: 'Laisser tomber les hanches aux temps 5 et 6 du Plank Jack.',
-      stealthVariantName: 'Stealth 8-Count SEAL Bodybuilder (Step-Out)',
-      stealthVariantDescription: 'Ouverture latérale alternée des pieds sans saut + extension rapide sans décoller.',
-      wristKneeVariantName: 'Fist 8-Count Step Bodybuilder',
-      wristKneeVariantDescription: 'Appui sur les poings fermés et transitions glissées sans impact.',
-      masteryStandardLabel: '15 reps / min (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Descends en planche, effectue une pompe propre, puis écarte et resserre les pieds en gainage.',
+        'Ramène les pieds vers les mains et redresse-toi en soufflant.',
+        'Un mouvement complet qui sollicite tout le corps en un minimum de temps.',
+      ],
+      commonMistake: 'Cambrer les lombaires lors de l\'ouverture des pieds.',
+      stealthVariantName: 'Circuit Complet Sans Saut (Pas Alternés)',
+      stealthVariantDescription: 'Ouverture d\'un pied après l\'autre et redressement sans sauter.',
+      wristKneeVariantName: 'Circuit Sans Saut sur Poings Neutres',
+      wristKneeVariantDescription: 'Poignets droits et transitions douces sans choc.',
+      masteryStandardLabel: '10 répétitions complètes en 45s',
     ),
     TacticalExercise(
       id: 'ex_metcon_t5',
       code: 'EX_METCON_T5',
-      name: 'Devil Burpee (Double Push-up) & Speed Crawl',
+      name: 'Burpee Double Pompe Haute Énergie',
       family: BiomechanicalFamily.metCon,
       tier: DifficultyTier.tier5SpecOps,
       motionKind: MannequinMotionKind.sealBodybuilder,
@@ -845,31 +944,35 @@ class MakeFitCatalog {
         MuscleGroup.anteriorDeltoid,
         MuscleGroup.calves,
       ],
-      tempo: 'EXPLOSIF SPECOPS',
-      defaultTargetReps: 16,
+      tempo: 'Dynamique Soutenu',
+      defaultTargetReps: 10,
       defaultHoldSeconds: 0,
       isIsometric: false,
       isPlyometric: true,
-      hudCues: <String>['DOUBLE POMPE STRICTE', 'PUISSANCE MAXIMALE', 'RELANCE IMMÉDIATE'],
-      biomechanicalInstructions: <String>[
-        'Enchaîner deux pompes militaires complètes poitrine au sol à chaque passage en planche.',
-        'Remonter explosivement et enchaîner 4 pas de Bear Crawl avant/arrière genoux à 3 cm du sol.',
-        'Maintenir une fréquence cardiaque de zone 4–5 sous contrôle respiratoire.',
+      hudCues: <String>[
+        'DEUX POMPES PROPRES',
+        'GAINAGE ACTIF',
+        'RELANCE FLUIDE',
       ],
-      commonMistake: 'Sacrifier l\'amplitude de la seconde pompe sous la fatigue.',
-      stealthVariantName: 'Stealth Double-Push-up Burpee & Bear Crawl',
-      stealthVariantDescription: 'Double pompe + marche de l\'ours ultra-rapide 100 % sans saut.',
-      wristKneeVariantName: 'Knuckle Double-Push-up Walkout',
-      wristKneeVariantDescription: 'Sur poings neutres, zéro saut vertical.',
-      masteryStandardLabel: '18 reps / min (RPE ≤ 3)',
+      biomechanicalInstructions: <String>[
+        'Enchaîne deux pompes complètes à chaque passage au sol en gardant un gainage irréprochable.',
+        'Remonte avec tonus et garde une respiration rythmée du début à la fin.',
+        'Ajuste la cadence pour conserver une posture impeccable jusqu\'à la dernière seconde.',
+      ],
+      commonMistake: 'Réduire l\'amplitude de la deuxième pompe avec la fatigue.',
+      stealthVariantName: 'Double Pompe & Relevé Sans Saut',
+      stealthVariantDescription: 'Haute dépense énergétique zéro saut et zéro bruit.',
+      wristKneeVariantName: 'Double Pompe Marchée sur Poings',
+      wristKneeVariantDescription: 'Poignets alignés et zéro impact articulaire.',
+      masteryStandardLabel: '10 répétitions maîtrisées en 45s',
     ),
   ];
 
-  /// Exercice de mobilité RAMP (3 minutes).
+  /// Étape 1 de chaque séance : Échauffement articulaire doux 40+ (`60s` à `90s`).
   static const TacticalExercise rampMobilityExercise = TacticalExercise(
     id: 'ex_ramp_warmup',
-    code: 'RAMP_PREP',
-    name: 'Protocole RAMP FM 7-22 (Poignets, Scapula, Hanches)',
+    code: 'WARMUP_40',
+    name: 'Échauffement Articulaire Doux (Épaules, Dos, Hanches & Poignets)',
     family: BiomechanicalFamily.noBarPull,
     tier: DifficultyTier.tier1Recruit,
     motionKind: MannequinMotionKind.rampMobility,
@@ -882,30 +985,34 @@ class MakeFitCatalog {
       MuscleGroup.rectusAbdominis,
       MuscleGroup.hamstrings,
     ],
-    tempo: 'FLUIDE CONTINU',
-    defaultTargetReps: 10,
-    defaultHoldSeconds: 180,
+    tempo: 'Fluide & Doux',
+    defaultTargetReps: 8,
+    defaultHoldSeconds: 75,
     isIsometric: false,
     isPlyometric: false,
-    hudCues: <String>['MOBILITÉ POIGNETS', 'WORLD\'S GREATEST STRETCH', 'ACTIVATION SCAPULAIRE'],
-    biomechanicalInstructions: <String>[
-      '0:00–1:00 (Raise) : Marche tactique, grands cercles d\'épaules et Step-Jacks.',
-      '1:00–2:00 (Activate & Mobilize) : Bascules douces des poignets et World\'s Greatest Stretch G/D.',
-      '2:00–3:00 (Potentiate) : Deep Squat Pry thoracique et Walkout-to-Push-up.',
+    hudCues: <String>[
+      'CERCLES D\'ÉPAULES DOUX',
+      'OUVERTURE DOS & HANCHES',
+      'RÉVEIL DES POIGNETS',
     ],
-    commonMistake: 'Sauter l\'échauffement des poignets avant les séries de pompes.',
-    stealthVariantName: 'Protocole RAMP Silencieux (0 dB)',
-    stealthVariantDescription: '100 % sans saut ni impact.',
-    wristKneeVariantName: 'RAMP Décompression Articulaire Douce',
-    wristKneeVariantDescription: 'Amplitude progressive adaptée.',
-    masteryStandardLabel: '3 minutes avant chaque mission (+35 TXP)',
+    biomechanicalInstructions: <String>[
+      'Grands cercles d\'épaules vers l\'arrière et ouverture de la cage thoracique.',
+      'Rotations douces des poignets et déverrouillage du bassin et des hanches.',
+      'Flexions légères et torsions thoraciques contrôlées pour préparer le corps sans raideur.',
+    ],
+    commonMistake: 'Commencer les séries à froid sans préparer les épaules et les poignets.',
+    stealthVariantName: 'Échauffement Articulaire Silencieux',
+    stealthVariantDescription: '100 % fluide, sans saut ni impact.',
+    wristKneeVariantName: 'Échauffement Doux Spécial Articulations',
+    wristKneeVariantDescription: 'Amplitude progressive tout en douceur.',
+    masteryStandardLabel: '60s à 90s en début de chaque séance',
   );
 
-  /// Exercice de retour au calme H2F & Box Breathing Navy SEAL (2 minutes).
+  /// Récupération Active inter-séries & Retour au calme final (`15s–25s` / `60s–90s`).
   static const TacticalExercise h2fBoxBreathingExercise = TacticalExercise(
     id: 'ex_h2f_cooldown',
-    code: 'H2F_BOX',
-    name: 'Décompression H2F & Box Breathing (4-4-4-4)',
+    code: 'BREATH_CALM',
+    name: 'Retour au Calme, Étirements & Respiration Guidée',
     family: BiomechanicalFamily.ironCore,
     tier: DifficultyTier.tier1Recruit,
     motionKind: MannequinMotionKind.boxBreathingH2f,
@@ -917,24 +1024,50 @@ class MakeFitCatalog {
       MuscleGroup.latissimusDorsi,
       MuscleGroup.glutes,
     ],
-    tempo: '4S - 4S - 4S - 4S',
-    defaultTargetReps: 8,
-    defaultHoldSeconds: 120,
+    tempo: '4s - 4s - 4s - 4s',
+    defaultTargetReps: 6,
+    defaultHoldSeconds: 75,
     isIsometric: true,
     isPlyometric: false,
-    hudCues: <String>['INSPIRE 4S (NEZ)', 'GARDE 4S (CALME)', 'EXPIRE 4S • VIDE 4S'],
-    biomechanicalInstructions: <String>[
-      '0:00–1:00 : Cobra thoracique doux puis Child\'s Pose avec étirement latéral des dorsaux.',
-      '1:00–2:00 : Respiration carrée Navy SEAL (4s Inspiration, 4s Apnée Plein, 4s Expiration, 4s Apnée Vide).',
-      'Active le nerf vague et accélère la récupération parasympathique.',
+    hudCues: <String>[
+      'INSPIRE PAR LE NEZ (4S)',
+      'RELÂCHE LES ÉPAULES',
+      'EXPIRE LENTEMENT (4S)',
     ],
-    commonMistake: 'Respirer dans le haut de la poitrine au lieu du diaphragme.',
-    stealthVariantName: 'Box Breathing H2F (0 dB)',
-    stealthVariantDescription: 'Calme absolu.',
-    wristKneeVariantName: 'Box Breathing Assis ou Allongé',
-    wristKneeVariantDescription: 'Zéro contrainte articulaire.',
-    masteryStandardLabel: '2 minutes post-séance (+35 TXP + Combo +30 TXP)',
+    biomechanicalInstructions: <String>[
+      'Allonge le dos, relâche complètement les trapèzes et décrispe les mâchoires.',
+      'Suis le guide respiratoire (4s inspiration nasale, 4s calme, 4s expiration douce, 4s relâchement).',
+      'Fait redescendre le rythme cardiaque et élimine les tensions de la journée.',
+    ],
+    commonMistake: 'Respirer rapidement par le haut de la poitrine au lieu du ventre.',
+    stealthVariantName: 'Respiration & Relâchement du Dos',
+    stealthVariantDescription: 'Calme complet et récupération profonde.',
+    wristKneeVariantName: 'Respiration Guidée Assis ou Debout',
+    wristKneeVariantDescription: 'Aucune contrainte articulaire.',
+    masteryStandardLabel: '60s à 90s en fin de séance',
   );
+
+  /// Normalise toute durée de séance vers `6`, `8` ou `10` minutes MAX (jamais > 10 min).
+  static int normalizeSessionMinutes(int? rawMinutes) {
+    final int m = (rawMinutes ?? 10).clamp(6, 10);
+    if (m <= 6) {
+      return 6;
+    }
+    if (m <= 8) {
+      return 8;
+    }
+    return 10;
+  }
+
+  static String _familyClearBenefitLabel(BiomechanicalFamily family) {
+    return switch (family) {
+      BiomechanicalFamily.upperPush => 'Buste & Bras',
+      BiomechanicalFamily.noBarPull => 'Dos & Posture',
+      BiomechanicalFamily.tacticalLegs => 'Jambes & Tonus',
+      BiomechanicalFamily.ironCore => 'Gainage & Protection du Dos',
+      BiomechanicalFamily.metCon => 'Vitalité & Souffle',
+    };
+  }
 
   static TacticalExercise exerciseFor(
     BiomechanicalFamily family,
@@ -963,13 +1096,13 @@ class MakeFitCatalog {
     return null;
   }
 
-  /// Retourne la régression biomécanique sécurisée (`Tier k - 1`) de la même famille.
+  /// Retourne la variante plus douce (`Tier k - 1`) de la même famille.
   static TacticalExercise regressedExercise(TacticalExercise exercise) {
     final int prevIdx = math.max(0, exercise.tier.index - 1);
     return exerciseFor(exercise.family, DifficultyTier.values[prevIdx]);
   }
 
-  /// Retourne la progression biomécanique supérieure (`Tier k + 1`) de la même famille.
+  /// Retourne la variante supérieure (`Tier k + 1`) de la même famille.
   static TacticalExercise progressedExercise(TacticalExercise exercise) {
     final int nextIdx = math.min(
       DifficultyTier.values.length - 1,
@@ -984,8 +1117,11 @@ class MakeFitCatalog {
         .toList(growable: false);
   }
 
-  /// Génère une mission complète (avec RAMP 3 min + Corps équilibré Push/Pull + H2F 2 min).
-  /// Injecte automatiquement une série corrective de Tirage Sans Barre si `posturalBalanceRatio < 0.85`.
+  /// Génère une séance 100 % automatique de **6, 8 ou 10 minutes maximum** :
+  /// 1. Échauffement articulaire doux 40+ (`60s` à `90s`),
+  /// 2. Séries d'effort (`35s` à `45s`) systématiquement suivies d'une Récupération Active (`15s` à `25s`),
+  /// 3. Retour au calme & Respiration (`60s` à `90s`),
+  /// avec `isTimedWork: true` sur **100 % des étapes** pour un enchaînement fluide dès l'appui sur `GO`.
   static TacticalMission buildMission({
     required String id,
     required String code,
@@ -1003,7 +1139,15 @@ class MakeFitCatalog {
     double posturalBalanceRatio = 1.0,
     int extraRestSeconds = 0,
     int? durationMinutesOverride,
+    FitnessInitialLevel? fitnessLevel,
   }) {
+    final int effectiveMinutes = normalizeSessionMinutes(
+      durationMinutesOverride ??
+          (promotionTrialRank != null
+              ? 6
+              : (isRecoveryDay ? 6 : format.defaultMinutes)),
+    );
+
     final DifficultyTier pushTier =
         familyTiers?[BiomechanicalFamily.upperPush] ?? tier;
     final DifficultyTier pullTier =
@@ -1015,321 +1159,171 @@ class MakeFitCatalog {
     final DifficultyTier metconTier =
         familyTiers?[BiomechanicalFamily.metCon] ?? tier;
 
-    final TacticalExercise pushEx = exerciseFor(BiomechanicalFamily.upperPush, pushTier);
-    final TacticalExercise pullEx = exerciseFor(BiomechanicalFamily.noBarPull, pullTier);
-    final TacticalExercise legsEx = exerciseFor(BiomechanicalFamily.tacticalLegs, legsTier);
-    final TacticalExercise coreEx = exerciseFor(BiomechanicalFamily.ironCore, coreTier);
-    final TacticalExercise metconEx = exerciseFor(BiomechanicalFamily.metCon, metconTier);
+    final TacticalExercise pushEx = isRecoveryDay
+        ? exerciseFor(BiomechanicalFamily.upperPush, DifficultyTier.tier1Recruit)
+        : exerciseFor(BiomechanicalFamily.upperPush, pushTier);
+    final TacticalExercise pullEx = isRecoveryDay
+        ? exerciseFor(BiomechanicalFamily.noBarPull, DifficultyTier.tier1Recruit)
+        : exerciseFor(BiomechanicalFamily.noBarPull, pullTier);
+    final TacticalExercise legsEx = isRecoveryDay
+        ? exerciseFor(
+            BiomechanicalFamily.tacticalLegs,
+            DifficultyTier.tier1Recruit,
+          )
+        : exerciseFor(BiomechanicalFamily.tacticalLegs, legsTier);
+    final TacticalExercise coreEx = isRecoveryDay
+        ? exerciseFor(BiomechanicalFamily.ironCore, DifficultyTier.tier1Recruit)
+        : exerciseFor(BiomechanicalFamily.ironCore, coreTier);
+    final TacticalExercise metconEx = isRecoveryDay
+        ? exerciseFor(BiomechanicalFamily.metCon, DifficultyTier.tier1Recruit)
+        : exerciseFor(BiomechanicalFamily.metCon, metconTier);
 
     final int pushReps = math.max(
-      4,
+      6,
       repQuotas[BiomechanicalFamily.upperPush] ?? pushEx.defaultTargetReps,
     );
     final int pullReps = math.max(
-      4,
+      6,
       repQuotas[BiomechanicalFamily.noBarPull] ?? pullEx.defaultTargetReps,
     );
     final int legsReps = math.max(
-      6,
+      8,
       repQuotas[BiomechanicalFamily.tacticalLegs] ?? legsEx.defaultTargetReps,
     );
     final int coreReps = math.max(
-      6,
+      8,
       repQuotas[BiomechanicalFamily.ironCore] ?? coreEx.defaultTargetReps,
     );
     final int metconReps = math.max(
-      6,
+      10,
       repQuotas[BiomechanicalFamily.metCon] ?? metconEx.defaultTargetReps,
     );
 
+    // Calibrage du couple (Effort 35..45s + Récupération 15..25s = 60s exactes par bloc)
+    final int baseWorkSeconds = isRecoveryDay
+        ? 35
+        : (fitnessLevel?.workSeconds ??
+              (format == WorkoutFormatType.flashPt5Min ? 35 : 40));
+    final int restShift = extraRestSeconds >= 5 ? 5 : 0;
+    final int workSeconds = (baseWorkSeconds - restShift).clamp(35, 45);
+    final int restSeconds = (60 - workSeconds).clamp(15, 25);
+
+    // Découpage mathématique exact :
+    // - 6 min (360s)  = 60s Échauffement + 4 × (work + rest = 60s) + 60s Retour au calme
+    // - 8 min (480s)  = 60s Échauffement + 6 × (work + rest = 60s) + 60s Retour au calme
+    // - 10 min (600s) = 90s Échauffement + 7 × (work + rest = 60s) + 90s Retour au calme
+    final int warmupSeconds = effectiveMinutes == 10 ? 90 : 60;
+    final int cooldownSeconds = effectiveMinutes == 10 ? 90 : 60;
+
+    final bool needsExtraBackCare = !isRecoveryDay && posturalBalanceRatio < 0.85;
+
+    final List<(TacticalExercise, int)> plannedSeries =
+        switch (effectiveMinutes) {
+          6 => <(TacticalExercise, int)>[
+            (pushEx, pushReps),
+            (pullEx, pullReps),
+            (legsEx, legsReps),
+            (coreEx, coreReps),
+          ],
+          8 => <(TacticalExercise, int)>[
+            (pushEx, pushReps),
+            (pullEx, pullReps),
+            (legsEx, legsReps),
+            (coreEx, coreReps),
+            (isRecoveryDay ? pullEx : metconEx, isRecoveryDay ? pullReps : metconReps),
+            (needsExtraBackCare ? pullEx : coreEx, needsExtraBackCare ? pullReps : coreReps),
+          ],
+          _ => <(TacticalExercise, int)>[
+            (pushEx, pushReps),
+            (pullEx, pullReps),
+            (legsEx, legsReps),
+            (coreEx, coreReps),
+            (
+              needsExtraBackCare ? pullEx : pushEx,
+              needsExtraBackCare ? pullReps : math.max(6, (pushReps * 0.9).round()),
+            ),
+            (pullEx, pullReps),
+            (
+              isRecoveryDay || format == WorkoutFormatType.tacticalPyramid
+                  ? legsEx
+                  : metconEx,
+              isRecoveryDay || format == WorkoutFormatType.tacticalPyramid
+                  ? legsReps
+                  : metconReps,
+            ),
+          ],
+        };
+
+    final int totalSeries = plannedSeries.length;
     final List<WorkoutStationStep> steps = <WorkoutStationStep>[
-      const WorkoutStationStep(
+      WorkoutStationStep(
         stage: WorkoutStepStage.rampWarmup,
-        title: 'Phase 1 — Échauffement RAMP FM 7-22',
-        subtitle: 'Poignets, Scapula, Hanches & Activation SNC',
+        title: 'Échauffement Articulaire Doux (${warmupSeconds}s)',
+        subtitle: 'Réveil progressif des épaules, du dos, des hanches et des poignets',
         exercise: rampMobilityExercise,
-        durationSeconds: 180,
-        targetReps: 10,
+        durationSeconds: warmupSeconds,
+        targetReps: 8,
         isTimedWork: true,
         roundIndex: 1,
         totalRounds: 1,
       ),
     ];
 
-    // Loi scientifique @Spartan §4.2.3 : si B_postural < 0.85, injection automatique
-    // d'une série corrective de Tirage Sans Barre pour prévenir la cyphose thoracique.
-    if (!isRecoveryDay && posturalBalanceRatio < 0.85) {
+    for (int i = 0; i < totalSeries; i++) {
+      final (TacticalExercise ex, int reps) = plannedSeries[i];
+      final int seriesNum = i + 1;
+      final String benefit = _familyClearBenefitLabel(ex.family);
+      final TacticalExercise? upcomingEx = (i + 1 < totalSeries)
+          ? plannedSeries[i + 1].$1
+          : null;
+
       steps.add(
         WorkoutStationStep(
           stage: WorkoutStepStage.mainWork,
-          title: 'Correction Posturale Anti-Cyphose (${pullEx.code})',
+          title: 'Série $seriesNum/$totalSeries — ${ex.name} ($benefit)',
           subtitle:
-              'Série bonus auto-injectée (Ratio Push/Pull ${posturalBalanceRatio.toStringAsFixed(2)} < 0.85)',
-          exercise: pullEx,
-          durationSeconds: 45,
-          targetReps: pullReps,
-          isTimedWork: false,
-          roundIndex: 1,
-          totalRounds: 1,
+              '${workSeconds}s à ton rythme • Objectif ~$reps répétitions fluides',
+          exercise: ex,
+          durationSeconds: workSeconds,
+          targetReps: reps,
+          isTimedWork: true,
+          roundIndex: seriesNum,
+          totalRounds: totalSeries,
+        ),
+      );
+
+      steps.add(
+        WorkoutStationStep(
+          stage: WorkoutStepStage.restRecovery,
+          title:
+              'Récupération Active (${restSeconds}s) — Souffle & Relâche les épaules',
+          subtitle: upcomingEx != null
+              ? 'Respire calmement • Prochaine série : ${upcomingEx.name}'
+              : 'Belle dernière série ! Respire avant le retour au calme',
+          exercise: h2fBoxBreathingExercise,
+          durationSeconds: restSeconds,
+          targetReps: 2,
+          isTimedWork: true,
+          roundIndex: seriesNum,
+          totalRounds: totalSeries,
         ),
       );
     }
 
-    final int restDuration = (25 + extraRestSeconds).clamp(15, 60);
-
-    if (isRecoveryDay || format == WorkoutFormatType.flashPt5Min) {
-      final List<TacticalExercise> flashStations = <TacticalExercise>[
-        pushEx,
-        pullEx,
-        legsEx,
-        coreEx,
-      ];
-      for (int i = 0; i < flashStations.length; i++) {
-        final TacticalExercise ex = flashStations[i];
-        steps.add(
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Flash PT Station ${i + 1}/4 — ${ex.family.shortLabel}',
-            subtitle: ex.name,
-            exercise: ex,
-            durationSeconds: 45,
-            targetReps: ex.defaultTargetReps,
-            isTimedWork: false,
-            roundIndex: i + 1,
-            totalRounds: 4,
-          ),
-        );
-      }
-    } else if (format == WorkoutFormatType.tabataHiit) {
-      // Protocole Tabata Tactique 40s Effort / 20s Repos (100 % guidé au bip sans compter)
-      const int tabataRounds = 2;
-      final int intervalRest = (20 + extraRestSeconds).clamp(10, 45);
-      for (int r = 1; r <= tabataRounds; r++) {
-        steps.addAll(<WorkoutStationStep>[
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Intervalle $r/$tabataRounds • 40s Poussée (${pushEx.code})',
-            subtitle: 'Effort continu tempo propre • Ratio 1:1 avec Tirage',
-            exercise: pushEx,
-            durationSeconds: 40,
-            targetReps: pushReps,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.restRecovery,
-            title: 'Transition Tactique (${intervalRest}s)',
-            subtitle: 'Relâchement épaules • Préparation Tirage au Sol',
-            exercise: h2fBoxBreathingExercise,
-            durationSeconds: intervalRest,
-            targetReps: 2,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Intervalle $r/$tabataRounds • 40s Tirage (${pullEx.code})',
-            subtitle: 'Rétraction scapulaire & protection coiffe des rotateurs',
-            exercise: pullEx,
-            durationSeconds: 40,
-            targetReps: pullReps,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.restRecovery,
-            title: 'Transition Tactique (${intervalRest}s)',
-            subtitle: 'Respiration nasale • Mise en place Membres Inférieurs',
-            exercise: h2fBoxBreathingExercise,
-            durationSeconds: intervalRest,
-            targetReps: 2,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Intervalle $r/$tabataRounds • 40s Jambes (${legsEx.code})',
-            subtitle: 'Amplitude contrôlée sans impact excessif',
-            exercise: legsEx,
-            durationSeconds: 40,
-            targetReps: legsReps,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Intervalle $r/$tabataRounds • 40s ${r.isOdd ? "Core" : "MetCon"}',
-            subtitle: r.isOdd
-                ? 'Gainage anti-extension maximal'
-                : 'Densité cardio-métabolique',
-            exercise: r.isOdd ? coreEx : metconEx,
-            durationSeconds: 40,
-            targetReps: r.isOdd ? coreReps : metconReps,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: tabataRounds,
-          ),
-        ]);
-      }
-    } else if (format == WorkoutFormatType.tacticalPyramid) {
-      // Pyramide Tactique Symétrique 1 -> Sommet -> 1 (Loi des multiplicateurs NSW)
-      const List<double> ladderFactors = <double>[0.65, 1.00, 0.75];
-      final int totalRungs = ladderFactors.length;
-      for (int i = 0; i < totalRungs; i++) {
-        final int r = i + 1;
-        final double f = ladderFactors[i];
-        final String rungLabel = i == 0
-            ? 'Montée'
-            : (i == 1 ? 'Sommet Pic' : 'Redescente');
-        steps.addAll(<WorkoutStationStep>[
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Échelon $r/$totalRungs ($rungLabel) • Poussée (${pushEx.code})',
-            subtitle: 'Pyramide symétrique 1:1 avec Tirage au Sol',
-            exercise: pushEx,
-            durationSeconds: 60,
-            targetReps: math.max(4, (pushReps * f).round()),
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: totalRungs,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Échelon $r/$totalRungs ($rungLabel) • Tirage (${pullEx.code})',
-            subtitle: 'Fixateurs d\'omoplates & chaîne postérieure',
-            exercise: pullEx,
-            durationSeconds: 60,
-            targetReps: math.max(4, (pullReps * f).round()),
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: totalRungs,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.restRecovery,
-            title: 'Repos Tactique Inter-Échelon',
-            subtitle: 'Respiration nasale lente • Relâchement épaules',
-            exercise: h2fBoxBreathingExercise,
-            durationSeconds: restDuration,
-            targetReps: 4,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: totalRungs,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Échelon $r/$totalRungs ($rungLabel) • Jambes (${legsEx.code})',
-            subtitle: 'Puissance locomotrice sans matériel',
-            exercise: legsEx,
-            durationSeconds: 60,
-            targetReps: math.max(6, (legsReps * f).round()),
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: totalRungs,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Échelon $r/$totalRungs ($rungLabel) • Core & MetCon',
-            subtitle: 'Résilience mentale sous pré-fatigue',
-            exercise: i == 1 ? metconEx : coreEx,
-            durationSeconds: 60,
-            targetReps: math.max(
-              6,
-              ((i == 1 ? metconReps : coreReps) * f).round(),
-            ),
-            isTimedWork: i != 1 && coreEx.isIsometric,
-            roundIndex: r,
-            totalRounds: totalRungs,
-          ),
-        ]);
-      }
-    } else {
-      // EMOM Opérationnel & AMRAP Haute Densité
-      const int rounds = 2;
-      for (int r = 1; r <= rounds; r++) {
-        steps.addAll(<WorkoutStationStep>[
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Tour $r/$rounds • Poussée (${pushEx.code})',
-            subtitle: 'Ratio équilibré 1:1 avec Tirage au Sol',
-            exercise: pushEx,
-            durationSeconds: 60,
-            targetReps: pushReps,
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: rounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Tour $r/$rounds • Tirage Sans Barre (${pullEx.code})',
-            subtitle: 'Protection épaules & rétraction scapulaire',
-            exercise: pullEx,
-            durationSeconds: 60,
-            targetReps: pullReps,
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: rounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.restRecovery,
-            title: 'Repos Tactique Inter-Couple',
-            subtitle: 'Respiration nasale lente • Relâchement épaules',
-            exercise: h2fBoxBreathingExercise,
-            durationSeconds: restDuration,
-            targetReps: 4,
-            isTimedWork: true,
-            roundIndex: r,
-            totalRounds: rounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Tour $r/$rounds • Jambes (${legsEx.code})',
-            subtitle: 'Puissance locomotrice sans matériel',
-            exercise: legsEx,
-            durationSeconds: 60,
-            targetReps: legsReps,
-            isTimedWork: false,
-            roundIndex: r,
-            totalRounds: rounds,
-          ),
-          WorkoutStationStep(
-            stage: WorkoutStepStage.mainWork,
-            title: 'Tour $r/$rounds • Gainage & MetCon (${r.isOdd ? coreEx.code : metconEx.code})',
-            subtitle: 'Sangle abdominale anti-extension & densité cardio',
-            exercise: r.isOdd ? coreEx : metconEx,
-            durationSeconds: 60,
-            targetReps: r.isOdd ? coreReps : metconReps,
-            isTimedWork: r.isOdd,
-            roundIndex: r,
-            totalRounds: rounds,
-          ),
-        ]);
-      }
-    }
-
     steps.add(
-      const WorkoutStationStep(
+      WorkoutStationStep(
         stage: WorkoutStepStage.h2fCooldown,
-        title: 'Phase Finale — Décompression H2F & Box Breathing (4-4-4-4)',
-        subtitle: '2 min • Retour au calme parasympathique (+35 TXP)',
+        title: 'Retour au Calme & Respiration (${cooldownSeconds}s)',
+        subtitle:
+            'Relâchement du dos, ouverture thoracique & respiration apaisante 4-4-4-4',
         exercise: h2fBoxBreathingExercise,
-        durationSeconds: 120,
-        targetReps: 8,
+        durationSeconds: cooldownSeconds,
+        targetReps: 6,
         isTimedWork: true,
         roundIndex: 1,
         totalRounds: 1,
       ),
     );
-
-    final int effectiveDuration =
-        durationMinutesOverride ??
-        (isRecoveryDay
-            ? 5
-            : (promotionTrialRank != null ? 6 : format.defaultMinutes));
 
     return TacticalMission(
       id: id,
@@ -1337,7 +1331,7 @@ class MakeFitCatalog {
       title: title,
       subtitle: subtitle,
       format: format,
-      durationMinutes: effectiveDuration,
+      durationMinutes: effectiveMinutes,
       recommendedTier: tier,
       targetRpe: isRecoveryDay ? 2 : (isBossMission ? 4 : 3),
       steps: steps,
@@ -1349,19 +1343,19 @@ class MakeFitCatalog {
     );
   }
 
-  /// Génère une séance 100 % personnalisée selon le profil du soldat (Tiers par famille,
-  /// quotas auto-régulés par RPE, ratio postural Push/Pull et durée choisie).
+  /// Génère une séance personnalisée (strictement `6`, `8` ou `10` minutes max) adaptée
+  /// au profil de l'utilisateur (niveau 40+, objectif, durée préférée et équilibre du dos).
   static TacticalMission buildPersonalizedMission({
     required SoldierProfileState profile,
     required WorkoutFormatType format,
     int? durationMinutes,
     BiomechanicalFamily? focusFamily,
   }) {
-    final int minutes = durationMinutes ?? format.defaultMinutes;
-    final bool isFlash = format == WorkoutFormatType.flashPt5Min;
-    final int extraRest = profile.lastRpeScore >= 5
-        ? 15
-        : (profile.lastRpeScore == 4 ? 5 : 0);
+    final int minutes = normalizeSessionMinutes(
+      durationMinutes ?? format.defaultMinutes,
+    );
+    final bool isExpress = format == WorkoutFormatType.flashPt5Min;
+    final int extraRest = profile.lastRpeScore >= 4 ? 5 : 0;
 
     final Map<BiomechanicalFamily, int> scaledQuotas =
         <BiomechanicalFamily, int>{};
@@ -1370,32 +1364,28 @@ class MakeFitCatalog {
       if (focusFamily != null && fam == focusFamily) {
         mult = 1.15;
       }
-      // Si l'utilisateur choisit un focus Upper Push, on augmente aussi No-Bar Pull
-      // afin de préserver la règle d'or 1:1 d'intégrité scapulaire !
       if (focusFamily == BiomechanicalFamily.upperPush &&
           fam == BiomechanicalFamily.noBarPull) {
         mult = 1.15;
       }
-      scaledQuotas[fam] = math.max(5, (baseQuota * mult).round());
+      scaledQuotas[fam] = math.max(6, (baseQuota * mult).round());
     });
 
-    final DifficultyTier dominantTier =
-        focusFamily != null
-        ? (profile.familyTiers[focusFamily] ??
-              profile.activeCampaignId.recommendedTier)
-        : profile.activeCampaignId.recommendedTier;
+    final DifficultyTier dominantTier = focusFamily != null
+        ? (profile.familyTiers[focusFamily] ?? profile.fitnessLevel.recommendedTier)
+        : profile.fitnessLevel.recommendedTier;
 
     final String focusTag = focusFamily != null
-        ? ' • Focus ${focusFamily.shortLabel}'
+        ? ' • Focus ${_familyClearBenefitLabel(focusFamily)}'
         : '';
 
     return buildMission(
       id: 'custom_${format.code.toLowerCase()}_${minutes}m',
-      code: 'CUSTOM • ${format.code}',
-      title: '${format.title} Personnalisé ($minutes min$focusTag)',
-      subtitle: isFlash
-          ? '5 min • Réveil articulaire, Mobilité H2F & Bouclier Streak'
-          : '$minutes min • Calibré IAO ${profile.iaoCalibrationScore}/100 • Ratio Push/Pull ${profile.posturalBalanceRatio.toStringAsFixed(2)}',
+      code: 'SÉANCE • ${minutes}M',
+      title: '${format.title}$focusTag',
+      subtitle: isExpress
+          ? '$minutes min • Réveil articulaire, posture & tonicité express'
+          : '$minutes min • Séries & récupérations 100 % auto-enchaînées (${profile.fitnessLevel.title})',
       format: format,
       tier: dominantTier,
       repQuotas: scaledQuotas,
@@ -1403,11 +1393,12 @@ class MakeFitCatalog {
       posturalBalanceRatio: profile.posturalBalanceRatio,
       extraRestSeconds: extraRest,
       durationMinutesOverride: minutes,
-      isRecoveryDay: isFlash,
+      isRecoveryDay: isExpress,
+      fitnessLevel: profile.fitnessLevel,
     );
   }
 
-  /// Génère le catalogue des 5 séances rapides "Zero-Friction" personnalisées au profil.
+  /// Génère les 5 séances rapides guidées (`6 min`, `8 min` ou `10 min max`).
   static List<TacticalMission> buildQuickFormatMissions(
     SoldierProfileState profile,
   ) {
@@ -1419,24 +1410,41 @@ class MakeFitCatalog {
         .toList(growable: false);
   }
 
-  /// Génère les 28 missions d'une Campagne Opérationnelle avec périodisation ondulatoire
-  /// sur 4 semaines (Acclimatation -> Accumulation -> Intensification -> Affûtage & Boss).
+  static String _dayFocusTheme(int day, OperationalCampaignId campaign) {
+    const List<String> themes = <String>[
+      'Remise en Forme Complète',
+      'Tonus Buste & Dos Solide',
+      'Vitalité Jambes & Gainage',
+      'Mobilité Douce & Dos Détendu',
+      'Posture & Énergie Globale',
+      'Ventre Plat & Souffle',
+      'Récupération Active & Souplesse',
+    ];
+    if (day == 1) {
+      return 'Remise en Forme Complète';
+    }
+    return themes[(day - 1) % themes.length];
+  }
+
+  /// Génère les 28 séances quotidiennes d'un Programme de 28 Jours (`6`, `8` ou `10` min max).
   static List<TacticalMission> missionsForCampaign(
     OperationalCampaignId campaign,
     Map<BiomechanicalFamily, int> repQuotas, {
     Map<BiomechanicalFamily, DifficultyTier>? familyTiers,
     double posturalBalanceRatio = 1.0,
     int extraRestSeconds = 0,
+    int? preferredSessionMinutes,
+    FitnessInitialLevel? fitnessLevel,
   }) {
     final List<TacticalMission> list = <TacticalMission>[];
     const List<WorkoutFormatType> cycleFormats = <WorkoutFormatType>[
-      WorkoutFormatType.emomOperational,
-      WorkoutFormatType.tabataHiit,
-      WorkoutFormatType.amrapHighDensity,
-      WorkoutFormatType.flashPt5Min, // J4 Recovery active
-      WorkoutFormatType.tacticalPyramid,
-      WorkoutFormatType.emomOperational,
-      WorkoutFormatType.flashPt5Min, // J7 Recovery active
+      WorkoutFormatType.emomOperational, // J1 : 10 min
+      WorkoutFormatType.amrapHighDensity, // J2 : 8 min
+      WorkoutFormatType.tabataHiit, // J3 : 8 min
+      WorkoutFormatType.flashPt5Min, // J4 : 6 min Mobilité & Récupération
+      WorkoutFormatType.tacticalPyramid, // J5 : 10 min
+      WorkoutFormatType.emomOperational, // J6 : 10 min
+      WorkoutFormatType.flashPt5Min, // J7 : 6 min Mobilité & Récupération
     ];
 
     for (int day = 1; day <= 28; day++) {
@@ -1445,33 +1453,40 @@ class MakeFitCatalog {
       final WorkoutFormatType format = isBoss
           ? WorkoutFormatType.tacticalPyramid
           : cycleFormats[(day - 1) % cycleFormats.length];
+
       final int week = ((day - 1) ~/ 7) + 1;
-      final (String weekPhase, double weekVolumeFactor) = switch (week) {
-        1 => ('S1 Acclimatation', 0.92),
-        2 => ('S2 Accumulation', 1.00),
-        3 => ('S3 Intensification', 1.12),
-        _ => ('S4 Affûtage & Boss', isBoss ? 1.20 : 0.86),
+      final (String weekLabel, double weekVolumeFactor) = switch (week) {
+        1 => ('Semaine 1 • Mise en route', 0.92),
+        2 => ('Semaine 2 • Régularité', 1.00),
+        3 => ('Semaine 3 • Tonus & Vitalité', 1.08),
+        _ => ('Semaine 4 • Forme durable', isBoss ? 1.15 : 0.95),
       };
+
+      final int dayMinutes = preferredSessionMinutes != null
+          ? normalizeSessionMinutes(preferredSessionMinutes)
+          : normalizeSessionMinutes(isRecovery ? 6 : format.defaultMinutes);
 
       final Map<BiomechanicalFamily, int> dayQuotas =
           <BiomechanicalFamily, int>{
             for (final MapEntry<BiomechanicalFamily, int> e
                 in repQuotas.entries)
-              e.key: math.max(5, (e.value * weekVolumeFactor).round()),
+              e.key: math.max(6, (e.value * weekVolumeFactor).round()),
           };
+
+      final String theme = _dayFocusTheme(day, campaign);
 
       list.add(
         buildMission(
           id: '${campaign.code.toLowerCase()}_d$day',
-          code: '${campaign.code} • J${day.toString().padLeft(2, '0')}',
+          code: 'JOUR $day • ${dayMinutes}M',
           title: isBoss
-              ? 'BOSS MISSION J28 — Épreuve Finale ${campaign.title}'
+              ? 'Séance Jour 28 — Bilan Final ${campaign.title} ($dayMinutes min)'
               : isRecovery
-              ? 'Jour $day — Mobilité Active H2F & Streak Shield'
-              : 'Jour $day — $weekPhase (${format.title})',
+              ? 'Séance Jour $day — Mobilité Douce & Récupération ($dayMinutes min)'
+              : 'Séance Jour $day — $theme ($dayMinutes min)',
           subtitle: isRecovery
-              ? '5 min • Décompression articulaire & Box Breathing (Valide 100% du Streak)'
-              : '${format.defaultMinutes} min • Ratio Push/Pull 1:1 • ${campaign.recommendedTier.shortTitle}',
+              ? '$dayMinutes min • Dérouillage articulaire, dos relâché & respiration guidée'
+              : '$dayMinutes min • $weekLabel • Échauffement, séries & repos automatiques',
           format: format,
           tier: campaign.recommendedTier,
           repQuotas: dayQuotas,
@@ -1482,95 +1497,101 @@ class MakeFitCatalog {
           familyTiers: familyTiers,
           posturalBalanceRatio: posturalBalanceRatio,
           extraRestSeconds: extraRestSeconds,
+          durationMinutesOverride: dayMinutes,
+          fitnessLevel: fitnessLevel,
         ),
       );
     }
     return list;
   }
 
-  /// Les 4 Examens PT de Promotion (6 minutes).
+  /// Les 4 Défis de Progression (6 minutes chrono, 100 % guidés automatiquement).
   static List<PromotionTrialSpec> buildPromotionTrials(
     Map<BiomechanicalFamily, int> repQuotas,
   ) {
     return <PromotionTrialSpec>[
       PromotionTrialSpec(
         targetRank: MilitaryRank.e3Corporal,
-        code: 'PT-TRIAL-01',
-        title: 'Examen PT #1 — Bootcamp Qualification (E-3 Caporal)',
+        code: 'DEFI-01',
+        title: 'Défi Progression #1 — Fondations Toniques (6 min)',
         bonusTxp: 500,
-        block1Description: 'Bloc 1 (2m) : 15 Military Push-ups + 15 Prone I-Y-T-W Raises',
-        block2Description: 'Bloc 2 (2m) : 30 Air Squats stricts sous la parallèle',
-        block3Description: 'Bloc 3 (2m) : 45s RKC Plank + 25 Jumping Jacks / Step-Jacks',
-        stealthAdaptationNote: 'Mode Silencieux : 25 Speed Step-Jacks (0 saut)',
+        block1Description: 'Haut du corps : Pompes classiques & ouverture du dos au sol',
+        block2Description: 'Jambes : Squats contrôlés & fentes arrière douces',
+        block3Description: 'Gainage : Planche sur avant-bras & pas dynamiques',
+        stealthAdaptationNote: 'Option Sans Saut : Pas latéraux dynamiques sans impact',
         mission: buildMission(
           id: 'trial_e3',
-          code: 'PT-TRIAL-E3',
-          title: 'Examen PT #1 — Qualification Caporal E-3',
-          subtitle: '6 min • Prime +500 TXP & Déblocage Tier 2',
+          code: 'DEFI • 6M',
+          title: 'Défi Progression #1 — Fondations Toniques (6 min)',
+          subtitle: '6 min • Séance bilan complète (+500 XP)',
           format: WorkoutFormatType.emomOperational,
           tier: DifficultyTier.tier2Soldier,
           repQuotas: repQuotas,
           promotionTrialRank: MilitaryRank.e3Corporal,
+          durationMinutesOverride: 6,
         ),
       ),
       PromotionTrialSpec(
         targetRank: MilitaryRank.e5StaffSergeant,
-        code: 'PT-TRIAL-02',
-        title: 'Examen PT #2 — NCO Tactical Trial (E-5 Sergent-Chef)',
+        code: 'DEFI-02',
+        title: 'Défi Progression #2 — Vitalité & Gainage Solide (6 min)',
         bonusTxp: 750,
-        block1Description: 'Bloc 1 (2m) : 25 Military Push-ups + 20 Supine Elbow Presses',
-        block2Description: 'Bloc 2 (2m) : 40 Air Squats + 20 Reverse Lunges alternés',
-        block3Description: 'Bloc 3 (2m) : 45s Hollow Body Hold + 12 6-Count Military Burpees',
-        stealthAdaptationNote: 'Mode Silencieux : 12 No-Jump Step-Back Burpees',
+        block1Description: 'Haut du corps : Pompes toniques & renforcement haut du dos',
+        block2Description: 'Jambes : Squats pause & fentes alternées',
+        block3Description: 'Gainage & Souffle : Gainage creux & burpees maîtrisés',
+        stealthAdaptationNote: 'Option Sans Saut : Burpees décomposés un pied après l\'autre',
         mission: buildMission(
           id: 'trial_e5',
-          code: 'PT-TRIAL-E5',
-          title: 'Examen PT #2 — Qualification Sergent-Chef E-5',
-          subtitle: '6 min • Prime +750 TXP & Déblocage Opération 02 Silent Recon',
+          code: 'DEFI • 6M',
+          title: 'Défi Progression #2 — Vitalité & Gainage Solide (6 min)',
+          subtitle: '6 min • Séance bilan intermédiaire (+750 XP)',
           format: WorkoutFormatType.amrapHighDensity,
           tier: DifficultyTier.tier3Nco,
           repQuotas: repQuotas,
           promotionTrialRank: MilitaryRank.e5StaffSergeant,
+          durationMinutesOverride: 6,
         ),
       ),
       PromotionTrialSpec(
         targetRank: MilitaryRank.o1Lieutenant,
-        code: 'PT-TRIAL-03',
-        title: 'Examen PT #3 — Officer Endurance Crucible (O-1 Lieutenant)',
+        code: 'DEFI-03',
+        title: 'Défi Progression #3 — Posture & Endurance Active (6 min)',
         bonusTxp: 1200,
-        block1Description: 'Bloc 1 (2m) : 20 Diamond Push-ups + 15 Pike + 20 Floor Back Widows',
-        block2Description: 'Bloc 2 (2m) : 15 Cossack Squats/côté + 20 Pause Squats (3-2-1)',
-        block3Description: 'Bloc 3 (2m) : 60s Hollow Rocks + 18 8-Count Navy SEAL Bodybuilders',
-        stealthAdaptationNote: 'Mode Silencieux : 18 Stealth 8-Count Bodybuilders + Bear Crawl',
+        block1Description: 'Haut du corps : Pompes épaules & tirage glissé au sol',
+        block2Description: 'Jambes : Fentes latérales & squats pause toniques',
+        block3Description: 'Gainage & Cardio : Fermetures abdos & circuit complet',
+        stealthAdaptationNote: 'Option Sans Saut : Circuit complet en pas alternés silencieux',
         mission: buildMission(
           id: 'trial_o1',
-          code: 'PT-TRIAL-O1',
-          title: 'Examen PT #3 — Qualification Officier O-1',
-          subtitle: '6 min • Prime +1 200 TXP & Déblocage Tier 4 Avancé',
+          code: 'DEFI • 6M',
+          title: 'Défi Progression #3 — Posture & Endurance Active (6 min)',
+          subtitle: '6 min • Séance bilan avancée (+1 200 XP)',
           format: WorkoutFormatType.tacticalPyramid,
           tier: DifficultyTier.tier4Officer,
           repQuotas: repQuotas,
           promotionTrialRank: MilitaryRank.o1Lieutenant,
+          durationMinutesOverride: 6,
         ),
       ),
       PromotionTrialSpec(
         targetRank: MilitaryRank.sf1Operator,
-        code: 'PT-TRIAL-04',
-        title: 'Examen PT #4 — SpecOps Hell Week Trial (SF-1 Opérateur)',
+        code: 'DEFI-04',
+        title: 'Défi Progression #4 — Maîtrise Athlétique Complète (6 min)',
         bonusTxp: 2000,
-        block1Description: 'Bloc 1 (2m) : 20 Archer Push-ups + 20 Sliding Floor Pull-ups',
-        block2Description: 'Bloc 2 (2m) : 8 Pistol Squats stricts/jambe + 20 Cossack Squats',
-        block3Description: 'Bloc 3 (2m) : 30 Tactical V-Ups + 22 Devil Burpees (Double Push-up)',
-        stealthAdaptationNote: 'Mode Silencieux : 22 Double-Push-up Stealth Burpees sans saut',
+        block1Description: 'Haut du corps : Pompes latérales & pont thoracique',
+        block2Description: 'Jambes : Flexions sur 1 jambe & fentes latérales',
+        block3Description: 'Gainage & Énergie : Équerre assise & double pompe',
+        stealthAdaptationNote: 'Option Sans Saut : Double pompe & relevé fluide sans sauter',
         mission: buildMission(
           id: 'trial_sf1',
-          code: 'PT-TRIAL-SF1',
-          title: 'Examen PT #4 — Qualification SpecOps SF-1',
-          subtitle: '6 min • Prime +2 000 TXP & Déblocage Tier 5 Élite',
+          code: 'DEFI • 6M',
+          title: 'Défi Progression #4 — Maîtrise Athlétique Complète (6 min)',
+          subtitle: '6 min • Séance bilan maîtrise (+2 000 XP)',
           format: WorkoutFormatType.tacticalPyramid,
           tier: DifficultyTier.tier5SpecOps,
           repQuotas: repQuotas,
           promotionTrialRank: MilitaryRank.sf1Operator,
+          durationMinutesOverride: 6,
         ),
       ),
     ];

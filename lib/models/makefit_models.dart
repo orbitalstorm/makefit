@@ -99,45 +99,45 @@ enum DifficultyTier {
   final double txpCoefficient;
 }
 
-/// Les 5 formats de routines simples ("Zero-Friction").
+/// Les 5 formats de séances guidées (10 minutes max, 100 % enchaînés automatiquement).
 enum WorkoutFormatType {
   flashPt5Min(
-    code: 'FLASH_PT',
-    title: 'Flash PT & Mobilité',
-    subtitle: '5 min • Réveil articulaire & maintien Streak',
-    defaultMinutes: 5,
+    code: 'EXPRESS_6',
+    title: 'Séance Express 6 min',
+    subtitle: '6 min • Réveil articulaire, posture & tonicité rapide',
+    defaultMinutes: 6,
     txpMultiplier: 1.00,
     accentColor: Color(0xFF10B981),
   ),
   emomOperational(
-    code: 'EMOM',
-    title: 'EMOM Opérationnel',
-    subtitle: '10–20 min • Départ chaque minute au bip',
-    defaultMinutes: 14,
+    code: 'CIRCUIT_10',
+    title: 'Remise en Forme 10 min',
+    subtitle: '10 min • Circuit complet guidé (Échauffement, Séries & Repos)',
+    defaultMinutes: 10,
     txpMultiplier: 1.10,
     accentColor: Color(0xFFF59E0B),
   ),
   amrapHighDensity(
-    code: 'AMRAP',
-    title: 'AMRAP Haute Densité',
-    subtitle: '12–18 min • Max de tours Push/Pull/Legs/Core',
-    defaultMinutes: 12,
+    code: 'TONIC_8',
+    title: 'Tonus & Gainage 8 min',
+    subtitle: '8 min • Haut du corps, dos solide, jambes & abdos',
+    defaultMinutes: 8,
     txpMultiplier: 1.15,
     accentColor: Color(0xFF06B6D4),
   ),
   tacticalPyramid(
-    code: 'PYRAMID',
-    title: 'Pyramide Tactique 1→N→1',
-    subtitle: '15–25 min • Échelle commando 1:2:3:4',
-    defaultMinutes: 18,
+    code: 'FORCE_10',
+    title: 'Renforcement Progressif 10 min',
+    subtitle: '10 min • Montée en puissance contrôlée & sans impact',
+    defaultMinutes: 10,
     txpMultiplier: 1.20,
     accentColor: Color(0xFF8B5CF6),
   ),
   tabataHiit(
-    code: 'TABATA',
-    title: 'Tabata / Intervalle 40s/20s',
-    subtitle: '12–16 min • 100 % guidé au bip sans compter',
-    defaultMinutes: 12,
+    code: 'CARDIO_8',
+    title: 'Vitalité & Brûle-Graisse 8 min',
+    subtitle: '8 min • 40s Effort / 20s Repos 100 % automatique',
+    defaultMinutes: 8,
     txpMultiplier: 1.05,
     accentColor: Color(0xFFEF4444),
   );
@@ -157,6 +157,94 @@ enum WorkoutFormatType {
   final int defaultMinutes;
   final double txpMultiplier;
   final Color accentColor;
+}
+
+/// Objectif principal de remise en forme (spécialement pensé pour un homme de 40 ans).
+enum FitnessGoal40Plus {
+  vitalityAndEnergy(
+    code: 'VITALITY',
+    title: 'Remise en forme & Énergie',
+    subtitle: 'Retrouver du souffle, de la vitalité et l\'habitude de bouger 10 min/jour',
+    motivationalTagline: '10 minutes par jour suffisent pour transformer ton énergie.',
+    icon: Icons.bolt_rounded,
+    accentColor: Color(0xFFF59E0B),
+  ),
+  coreAndBackHealth(
+    code: 'CORE_BACK',
+    title: 'Ventre plat, Gainage & Dos solide',
+    subtitle: 'Renforcer la sangle abdominale profonde et protéger le dos au quotidien',
+    motivationalTagline: 'Un centre fort et un dos mobile, c\'est la clé d\'un corps sans douleur à 40 ans.',
+    icon: Icons.shield_rounded,
+    accentColor: Color(0xFF10B981),
+  ),
+  strengthAndPosture(
+    code: 'TONE_POSTURE',
+    title: 'Tonicité musculaire & Posture',
+    subtitle: 'Raffermir buste, épaules, bras et jambes au poids du corps sans matériel',
+    motivationalTagline: 'Chaque série redresse ta posture et reconstruit ta force naturelle.',
+    icon: Icons.fitness_center_rounded,
+    accentColor: Color(0xFF06B6D4),
+  );
+
+  const FitnessGoal40Plus({
+    required this.code,
+    required this.title,
+    required this.subtitle,
+    required this.motivationalTagline,
+    required this.icon,
+    required this.accentColor,
+  });
+
+  final String code;
+  final String title;
+  final String subtitle;
+  final String motivationalTagline;
+  final IconData icon;
+  final Color accentColor;
+}
+
+/// Niveau initial choisi lors de la création du profil.
+enum FitnessInitialLevel {
+  gentleRestart(
+    code: 'GENTLE',
+    title: 'Reprise en douceur',
+    subtitle: 'Je reprends le sport progressivement • Priorité confort articulaire',
+    recommendedTier: DifficultyTier.tier1Recruit,
+    workSeconds: 35,
+    restSeconds: 25,
+  ),
+  activeIntermediate(
+    code: 'REGULAR',
+    title: 'Forme régulière',
+    subtitle: 'Je suis modérément actif • Séances équilibrées et toniques',
+    recommendedTier: DifficultyTier.tier2Soldier,
+    workSeconds: 40,
+    restSeconds: 20,
+  ),
+  dynamicFit(
+    code: 'DYNAMIC',
+    title: 'Dynamique & Tonique',
+    subtitle: 'Bonne base physique • Rythme soutenu en 10 minutes',
+    recommendedTier: DifficultyTier.tier3Nco,
+    workSeconds: 45,
+    restSeconds: 15,
+  );
+
+  const FitnessInitialLevel({
+    required this.code,
+    required this.title,
+    required this.subtitle,
+    required this.recommendedTier,
+    required this.workSeconds,
+    required this.restSeconds,
+  });
+
+  final String code;
+  final String title;
+  final String subtitle;
+  final DifficultyTier recommendedTier;
+  final int workSeconds;
+  final int restSeconds;
 }
 
 /// Les 12 Grades Militaires officiels de MakeFit (`E-1` à `SF-2`).
@@ -433,10 +521,10 @@ class TacticalExercise {
 
 /// Phase d'une étape de séance.
 enum WorkoutStepStage {
-  rampWarmup('ÉCHAUFFEMENT RAMP (3 MIN)', Color(0xFF10B981)),
-  mainWork('EFFORT OPÉRATIONNEL', Color(0xFFF59E0B)),
-  restRecovery('REPOS & RESPIRATION', Color(0xFF06B6D4)),
-  h2fCooldown('DÉCOMPRESSION H2F & BOX BREATHING', Color(0xFF10B981));
+  rampWarmup('ÉCHAUFFEMENT ARTICULAIRE', Color(0xFF10B981)),
+  mainWork('SÉRIE EN COURS', Color(0xFFF59E0B)),
+  restRecovery('RÉCUPÉRATION ACTIVE', Color(0xFF06B6D4)),
+  h2fCooldown('RETOUR AU CALME & RESPIRATION', Color(0xFF10B981));
 
   const WorkoutStepStage(this.bannerLabel, this.color);
   final String bannerLabel;
@@ -469,39 +557,39 @@ class WorkoutStationStep {
   final int totalRounds;
 }
 
-/// Identifiant des 4 Campagnes Opérationnelles de 28 Jours.
+/// Identifiant des 4 Programmes Progressifs de 28 Jours (10 min max / jour).
 enum OperationalCampaignId {
   op1BasicBootcamp(
-    code: 'OP-01',
-    title: 'Opération 01 : Basic Bootcamp',
-    subtitle: '28 Jours • Fondations Posturales, Gainage & Habitude (10–15 min/j)',
+    code: 'PROG-01',
+    title: 'Remise en Forme 40+ (Fondations)',
+    subtitle: '28 Jours • Posture, Gainage, Dos solide & Vitalité (10 min/j max)',
     thumbnailAsset: 'assets/branding/thumbnails/thumb_op1_basic_bootcamp.png',
     recommendedTier: DifficultyTier.tier1Recruit,
     accentColor: Color(0xFF10B981),
     isStealthDefault: false,
   ),
   op2SilentRecon(
-    code: 'OP-02',
-    title: 'Opération 02 : Silent Recon',
-    subtitle: '28 Jours • Spécial Appartement Zéro Saut, Tempo Lent & Isométrie (15 min/j)',
+    code: 'PROG-02',
+    title: 'Douceur Articulaire & Sans Saut',
+    subtitle: '28 Jours • Zéro impact, Tonus profond & Mobilité (8–10 min/j)',
     thumbnailAsset: 'assets/branding/thumbnails/thumb_op2_silent_recon.png',
     recommendedTier: DifficultyTier.tier2Soldier,
     accentColor: Color(0xFF06B6D4),
     isStealthDefault: true,
   ),
   op3AirborneConditioning(
-    code: 'OP-03',
-    title: 'Opération 03 : Airborne Conditioning',
-    subtitle: '28 Jours • Haute Densité EMOM/AMRAP & Endurance Cardio (20 min/j)',
+    code: 'PROG-03',
+    title: 'Énergie, Cardio & Ventre Plat',
+    subtitle: '28 Jours • Circuit dynamique brûle-graisse & abdos (10 min/j)',
     thumbnailAsset: 'assets/branding/thumbnails/thumb_op3_airborne_conditioning.png',
     recommendedTier: DifficultyTier.tier3Nco,
     accentColor: Color(0xFFF59E0B),
     isStealthDefault: false,
   ),
   op4SpecOpsSelection(
-    code: 'OP-04',
-    title: 'Opération 04 : SpecOps Selection',
-    subtitle: '28 Jours • Pyramides Lourdes 1→10→1, Force Unilatérale & Mental (25–30 min/j)',
+    code: 'PROG-04',
+    title: 'Force Fonctionnelle & Athlétique',
+    subtitle: '28 Jours • Tonicité musculaire avancée en 10 min chrono',
     thumbnailAsset: 'assets/branding/thumbnails/thumb_op4_specops_selection.png',
     recommendedTier: DifficultyTier.tier4Officer,
     accentColor: Color(0xFFEF4444),
@@ -527,7 +615,7 @@ enum OperationalCampaignId {
   final bool isStealthDefault;
 }
 
-/// Mission d'entraînement complète (Campagne J1..J28, Routine Rapide ou Examen PT).
+/// Mission d'entraînement complète (Séance du Jour 10 min max, Routine Express ou Défi).
 @immutable
 class TacticalMission {
   const TacticalMission({
@@ -561,9 +649,15 @@ class TacticalMission {
   final bool isRecoveryDay;
   final bool isBossMission;
   final MilitaryRank? promotionTrialRank;
+
+  /// Durée totale exacte en secondes de toutes les étapes enchaînées.
+  int get totalDurationSeconds => steps.fold<int>(
+    0,
+    (int sum, WorkoutStationStep s) => sum + s.durationSeconds,
+  );
 }
 
-/// Spécification d'un Examen PT de Promotion (6 minutes).
+/// Spécification d'un Défi / Examen de Niveau (6 minutes).
 @immutable
 class PromotionTrialSpec {
   const PromotionTrialSpec({
@@ -589,7 +683,7 @@ class PromotionTrialSpec {
   final TacticalMission mission;
 }
 
-/// Résultat mathématique du Test PT Initial de Calibration (6 min — IAO sur 100).
+/// Résultat mathématique du Test d'Évaluation Initial (6 min — Score sur 100).
 @immutable
 class BaselinePtCalibrationResult {
   const BaselinePtCalibrationResult({
@@ -609,7 +703,7 @@ class BaselinePtCalibrationResult {
   final MilitaryRank initialUnlockedRank;
 }
 
-/// Décomposition déterministe des TXP gagnés en fin de séance.
+/// Décomposition déterministe des points d'expérience (XP/TXP) gagnés en fin de séance.
 @immutable
 class TxpBreakdown {
   const TxpBreakdown({
@@ -647,19 +741,19 @@ enum WorkoutExecutionPhase {
   debriefingVictory,
 }
 
-/// Phase respiratoire du Box Breathing Navy SEAL (`4s - 4s - 4s - 4s`).
+/// Phase respiratoire guidée (`4s - 4s - 4s - 4s`).
 enum BoxBreathingPhase {
-  inhale('INSPIRATION NASALE (4S)', Color(0xFF06B6D4)),
-  holdFull('APNÉE POUMONS PLEINS (4S)', Color(0xFF10B981)),
-  exhale('EXPIRATION LENTE (4S)', Color(0xFFF59E0B)),
-  holdEmpty('APNÉE POUMONS VIDES (4S)', Color(0xFF8B5CF6));
+  inhale('INSPIRE LENTEMENT PAR LE NEZ (4S)', Color(0xFF06B6D4)),
+  holdFull('GARDE L\'AIR POUMONS PLEINS (4S)', Color(0xFF10B981)),
+  exhale('EXPIRE DOUCEMENT PAR LA BOUCHE (4S)', Color(0xFFF59E0B)),
+  holdEmpty('RELÂCHE LES ÉPAULES (4S)', Color(0xFF8B5CF6));
 
   const BoxBreathingPhase(this.instruction, this.color);
   final String instruction;
   final Color color;
 }
 
-/// Snapshot immuable à 60 Hz pilotant le HUD de séance (lisible à 2 mètres).
+/// Snapshot immuable à 60 Hz pilotant le Coach de Séance Animé.
 @immutable
 class WorkoutLiveSnapshot {
   const WorkoutLiveSnapshot({
@@ -701,6 +795,67 @@ class WorkoutLiveSnapshot {
   WorkoutStationStep get currentStep =>
       mission.steps[currentStepIndex.clamp(0, mission.steps.length - 1)];
 
+  /// Étape immédiatement suivante dans la séquence (repos, exercice ou retour au calme).
+  WorkoutStationStep? get nextStep {
+    final int nextIdx = currentStepIndex + 1;
+    if (nextIdx >= 0 && nextIdx < mission.steps.length) {
+      return mission.steps[nextIdx];
+    }
+    return null;
+  }
+
+  /// Prochain exercice actif à venir (utile pendant une phase de repos pour préparer la suite).
+  WorkoutStationStep? get nextWorkStep {
+    for (int i = currentStepIndex + 1; i < mission.steps.length; i++) {
+      final WorkoutStationStep candidate = mission.steps[i];
+      if (candidate.stage != WorkoutStepStage.restRecovery) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  /// Temps total restant en secondes jusqu'à la fin de la séance.
+  int get totalRemainingSeconds {
+    int remaining = stepRemainingSeconds < 0 ? 0 : stepRemainingSeconds;
+    for (int i = currentStepIndex + 1; i < mission.steps.length; i++) {
+      remaining += mission.steps[i].durationSeconds;
+    }
+    return remaining;
+  }
+
+  /// Message de coaching et de motivation dynamique adapté en temps réel à l'avancement.
+  String get motivationalCoachMessage {
+    if (phase == WorkoutExecutionPhase.paused) {
+      return 'Séance en pause — Reprends ton souffle et appuie sur Reprendre dès que tu es prêt.';
+    }
+    final WorkoutStationStep step = currentStep;
+    switch (step.stage) {
+      case WorkoutStepStage.rampWarmup:
+        if (stepRemainingSeconds > 45) {
+          return 'C\'est parti ! Réveille tes articulations en douceur, suis le mouvement à l\'écran.';
+        }
+        return 'Tes épaules et ton dos sont prêts — le circuit commence dans quelques secondes !';
+      case WorkoutStepStage.restRecovery:
+        final WorkoutStationStep? upcoming = nextWorkStep;
+        final String nextName = upcoming?.exercise.name ?? 'la suite';
+        if (stepRemainingSeconds <= 5) {
+          return 'En position pour $nextName — départ dans ${stepRemainingSeconds}s !';
+        }
+        return 'Bravo pour cette série ! Respire profondément et relâche les épaules.';
+      case WorkoutStepStage.h2fCooldown:
+        return 'Excellent travail ! Relâche la pression et suis le rythme respiratoire pour récupérer.';
+      case WorkoutStepStage.mainWork:
+        if (stepRemainingSeconds <= 5) {
+          return 'Dernières secondes ! Garde une posture propre jusqu\'au bip !';
+        }
+        if (stepRemainingSeconds <= 15) {
+          return 'Super rythme ! Tu as fait le plus dur de cette série, tiens bon !';
+        }
+        return 'Suis la cadence de l\'animation : mouvement fluide, gainage engagé et respiration régulière.';
+    }
+  }
+
   double get stepProgress {
     final int total = currentStep.durationSeconds <= 0
         ? 1
@@ -731,7 +886,7 @@ class WorkoutLiveSnapshot {
   }
 }
 
-/// État immuable complet du Profil Soldat (persisté hors-ligne).
+/// État immuable complet du Profil Utilisateur (démarre à zéro, sans données d'exemple).
 @immutable
 class SoldierProfileState {
   const SoldierProfileState({
@@ -756,6 +911,12 @@ class SoldierProfileState {
     required this.activeCampaignId,
     required this.currentCampaignDay,
     required this.activityHeatmap28Days,
+    this.isProfileCreated = false,
+    this.ageYears = 40,
+    this.fitnessGoal = FitnessGoal40Plus.vitalityAndEnergy,
+    this.fitnessLevel = FitnessInitialLevel.gentleRestart,
+    this.preferredSessionMinutes = 10,
+    this.totalMinutesTrained = 0,
   });
 
   final String callsign;
@@ -780,17 +941,44 @@ class SoldierProfileState {
   final int currentCampaignDay;
   final List<int> activityHeatmap28Days;
 
+  /// Indique si l'utilisateur a créé son profil (false au premier lancement -> ouvre l'écran de création).
+  final bool isProfileCreated;
+
+  /// Âge de l'utilisateur (cible remise en forme : 40 ans par défaut).
+  final int ageYears;
+
+  /// Objectif principal choisi lors de la création du profil.
+  final FitnessGoal40Plus fitnessGoal;
+
+  /// Niveau initial choisi lors de la création du profil.
+  final FitnessInitialLevel fitnessLevel;
+
+  /// Durée quotidienne souhaitée en minutes (strictement <= 10 min : 6, 8 ou 10 min).
+  final int preferredSessionMinutes;
+
+  /// Cumul réel des minutes d'entraînement effectuées depuis le Jour 1 (0 au départ).
+  final int totalMinutesTrained;
+
+  /// Prénom affiché dans l'interface.
+  String get displayName {
+    final String trimmed = callsign.trim();
+    return trimmed.isEmpty ? 'Athlète' : trimmed;
+  }
+
   /// Ratio d'équilibre postural Push / Pull sur 7 jours (Cible optimale : 0.85 à 1.15).
   double get posturalBalanceRatio {
-    final int pushVol = weeklyFamilyVolumes[BiomechanicalFamily.upperPush] ?? 1;
-    final int pullVol = weeklyFamilyVolumes[BiomechanicalFamily.noBarPull] ?? 1;
+    final int pushVol = weeklyFamilyVolumes[BiomechanicalFamily.upperPush] ?? 0;
+    final int pullVol = weeklyFamilyVolumes[BiomechanicalFamily.noBarPull] ?? 0;
+    if (pushVol <= 0 && pullVol <= 0) {
+      return 1.0;
+    }
     if (pushVol <= 0) {
       return 1.0;
     }
     return pullVol / pushVol;
   }
 
-  /// Progression 0.0 -> 1.0 vers le prochain grade militaire.
+  /// Progression 0.0 -> 1.0 vers le prochain niveau.
   double get progressToNextRank {
     final MilitaryRank? next = rank.nextRank;
     if (next == null) {
@@ -803,7 +991,7 @@ class SoldierProfileState {
     return ((totalTxp - rank.minTxp) / span).clamp(0.0, 1.0);
   }
 
-  /// Indique si un Examen PT de Promotion est disponible dès maintenant.
+  /// Indique si un Défi de Promotion est disponible dès maintenant.
   MilitaryRank? get pendingPromotionTrialRank {
     final MilitaryRank? next = rank.nextRank;
     if (next != null &&
@@ -837,6 +1025,12 @@ class SoldierProfileState {
     OperationalCampaignId? activeCampaignId,
     int? currentCampaignDay,
     List<int>? activityHeatmap28Days,
+    bool? isProfileCreated,
+    int? ageYears,
+    FitnessGoal40Plus? fitnessGoal,
+    FitnessInitialLevel? fitnessLevel,
+    int? preferredSessionMinutes,
+    int? totalMinutesTrained,
   }) {
     return SoldierProfileState(
       callsign: callsign ?? this.callsign,
@@ -864,6 +1058,13 @@ class SoldierProfileState {
       currentCampaignDay: currentCampaignDay ?? this.currentCampaignDay,
       activityHeatmap28Days:
           activityHeatmap28Days ?? this.activityHeatmap28Days,
+      isProfileCreated: isProfileCreated ?? this.isProfileCreated,
+      ageYears: ageYears ?? this.ageYears,
+      fitnessGoal: fitnessGoal ?? this.fitnessGoal,
+      fitnessLevel: fitnessLevel ?? this.fitnessLevel,
+      preferredSessionMinutes:
+          preferredSessionMinutes ?? this.preferredSessionMinutes,
+      totalMinutesTrained: totalMinutesTrained ?? this.totalMinutesTrained,
     );
   }
 }

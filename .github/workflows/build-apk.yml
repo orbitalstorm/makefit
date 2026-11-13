@@ -46,7 +46,7 @@ jobs:
       - name: Copy APK with versioned names
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
-          if [[ "$TAG_NAME" != v* ]]; then TAG_NAME="v1.0.0"; fi
+          if [[ "$TAG_NAME" != v* ]]; then TAG_NAME="v1.1.0"; fi
           cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/makefit-${TAG_NAME}.apk"
           ls -lh build/app/outputs/flutter-apk/
           ls -lh build/app/outputs/bundle/release/
@@ -83,6 +83,6 @@ jobs:
               assets/branding/makefit_feature_graphic_1024x500.png \
               assets/branding/thumbnails/*.png \
               screenshots/*.png \
-              --title "MakeFit $TAG_NAME — Military Calisthenics Tactical RPG (100% Sans Matériel • Android APK + AAB)" \
+              --title "MakeFit $TAG_NAME — Remise en Forme 40+ • Séances Guidées 10 Min Max & Coach Animé Auto (Android APK + AAB)" \
               --generate-notes
           fi

@@ -1,7 +1,7 @@
 name: makefit
-description: "MakeFit (Tactical Bodyweight Ops) — Application Flutter Store-Ready & Gamifiée de Military Calisthenics 100% Sans Matériel."
+description: "MakeFit (Remise en Forme 40+ • 10 Min Max) — Application Flutter de remise en forme quotidienne guidée, animée et motivante sans matériel."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.13.7

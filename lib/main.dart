@@ -5,6 +5,7 @@ import 'models/makefit_models.dart';
 import 'ui/barracks_and_trials_tab.dart';
 import 'ui/command_center_tab.dart';
 import 'ui/makefit_juicy_widgets.dart';
+import 'ui/profile_onboarding_screen.dart';
 import 'ui/skill_tree_and_codex_tab.dart';
 import 'ui/workout_player_modal.dart';
 
@@ -16,7 +17,7 @@ void main() {
 /// Alias de compatibilité descendante.
 typedef MyApp = MakeFitApp;
 
-/// Application racine MakeFit (`v1.0.0` — Tactical RPG Military Calisthenics 100 % Sans Matériel).
+/// Application racine MakeFit 40+ (`v1.1.0` — Remise en Forme 10 Min / Jour, Coach Animé Auto).
 class MakeFitApp extends StatefulWidget {
   const MakeFitApp({
     super.key,
@@ -79,7 +80,7 @@ class _MakeFitAppState extends State<MakeFitApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MakeFit — Tactical Calisthenics RPG',
+      title: 'MakeFit 40+ — Remise en forme 10 min/jour',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -93,50 +94,51 @@ class _MakeFitAppState extends State<MakeFitApp> {
         useMaterial3: true,
       ),
       home: ListenableBuilder(
-        listenable: _engine,
+        listenable: Listenable.merge(<Listenable>[
+          _engine,
+          _engine.liveWorkoutNotifier,
+        ]),
         builder: (BuildContext context, Widget? _) {
+          final bool profileCreated = _engine.profile.isProfileCreated;
+          final WorkoutLiveSnapshot? liveSnap =
+              _engine.liveWorkoutNotifier.value;
+
           return Scaffold(
             backgroundColor: MakeFitTheme.oledBlack,
             body: SafeArea(
               child: Stack(
                 children: <Widget>[
-                  IndexedStack(
-                    index: _selectedTabIndex,
-                    children: <Widget>[
-                      CommandCenterTab(engine: _engine),
-                      SkillTreeAndCodexTab(engine: _engine),
-                      BarracksAndTrialsTab(engine: _engine),
-                    ],
-                  ),
-                  ValueListenableBuilder<WorkoutLiveSnapshot?>(
-                    valueListenable: _engine.liveWorkoutNotifier,
-                    builder: (
-                      BuildContext context,
-                      WorkoutLiveSnapshot? liveSnap,
-                      Widget? _,
-                    ) {
-                      if (liveSnap == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return Positioned.fill(
-                        child: WorkoutPlayerModal(
-                          engine: _engine,
-                          snapshot: liveSnap,
-                        ),
-                      );
-                    },
-                  ),
+                  if (!profileCreated)
+                    ProfileOnboardingScreen(engine: _engine)
+                  else
+                    IndexedStack(
+                      index: _selectedTabIndex,
+                      children: <Widget>[
+                        CommandCenterTab(engine: _engine),
+                        SkillTreeAndCodexTab(engine: _engine),
+                        BarracksAndTrialsTab(engine: _engine),
+                      ],
+                    ),
+                  if (liveSnap != null)
+                    Positioned.fill(
+                      child: WorkoutPlayerModal(
+                        engine: _engine,
+                        snapshot: liveSnap,
+                      ),
+                    ),
                 ],
               ),
             ),
-            bottomNavigationBar: _buildTacticalBottomBar(),
+            bottomNavigationBar: (profileCreated && liveSnap == null)
+                ? _buildBottomNavigationBar()
+                : null,
           );
         },
       ),
     );
   }
 
-  Widget _buildTacticalBottomBar() {
+  Widget _buildBottomNavigationBar() {
     return Container(
       decoration: const BoxDecoration(
         color: MakeFitTheme.slateSurface,
@@ -156,7 +158,7 @@ class _MakeFitAppState extends State<MakeFitApp> {
                     ? MakeFitTheme.amberTactical
                     : MakeFitTheme.textSecondary,
                 fontWeight: FontWeight.w900,
-                fontSize: 11,
+                fontSize: 11.5,
                 letterSpacing: 0.4,
               );
             },
@@ -169,36 +171,36 @@ class _MakeFitAppState extends State<MakeFitApp> {
           destinations: const <NavigationDestination>[
             NavigationDestination(
               icon: Icon(
-                Icons.radar_rounded,
+                Icons.play_circle_outline_rounded,
                 color: MakeFitTheme.textSecondary,
               ),
               selectedIcon: Icon(
-                Icons.radar_rounded,
+                Icons.play_circle_fill_rounded,
                 color: MakeFitTheme.amberTactical,
               ),
-              label: 'COMMAND CENTER',
+              label: 'AUJOURD\'HUI',
             ),
             NavigationDestination(
               icon: Icon(
-                Icons.account_tree_rounded,
+                Icons.fitness_center_rounded,
                 color: MakeFitTheme.textSecondary,
               ),
               selectedIcon: Icon(
-                Icons.account_tree_rounded,
+                Icons.fitness_center_rounded,
                 color: MakeFitTheme.amberTactical,
               ),
-              label: 'SKILL TREE 25',
+              label: 'EXERCICES',
             ),
             NavigationDestination(
               icon: Icon(
-                Icons.military_tech_rounded,
+                Icons.person_outline_rounded,
                 color: MakeFitTheme.textSecondary,
               ),
               selectedIcon: Icon(
-                Icons.military_tech_rounded,
+                Icons.person_rounded,
                 color: MakeFitTheme.amberTactical,
               ),
-              label: 'CASERNE & PT',
+              label: 'MON PROFIL',
             ),
           ],
         ),
